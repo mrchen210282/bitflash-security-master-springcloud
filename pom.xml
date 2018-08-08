@@ -42,6 +42,7 @@
         <module>bitflash-bean</module>
         <module>bitflash-trade</module>
         <module>bitflash-sys</module>
+        <module>bitflash-user</module>
     </modules>
 
 </project>

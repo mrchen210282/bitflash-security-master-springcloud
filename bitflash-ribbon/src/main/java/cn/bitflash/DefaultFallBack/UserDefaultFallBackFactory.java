@@ -1,6 +1,7 @@
-package cn.bitflash.prod.DefaultFallBack;
+/*
+package cn.bitflash.DefaultFallBack;
 
-import cn.bitflash.prod.feign.LoginRibbon;
+import cn.bitflash.feign.LoginRibbon;
 import cn.bitflash.user.LoginForm;
 import cn.bitflash.utils.R;
 import feign.hystrix.FallbackFactory;
@@ -18,6 +19,11 @@ public class UserDefaultFallBackFactory implements FallbackFactory<LoginRibbon> 
 
 
             @Override
+            public R login(LoginForm form) {
+                return null;
+            }
+
+            @Override
             public R logout(String uid) {
                 log.error("调用登出接口错误原因："+throwable);
                 return R.error();
@@ -25,3 +31,4 @@ public class UserDefaultFallBackFactory implements FallbackFactory<LoginRibbon> 
         };
     }
 }
+*/

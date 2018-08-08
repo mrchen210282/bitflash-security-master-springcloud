@@ -1,5 +1,6 @@
 package cn.bitflash.feign;
 
+import cn.bitflash.DefaultFallBack.DefaultFallBackFactory;
 import cn.bitflash.user.LoginForm;
 import cn.bitflash.utils.R;
 import org.springframework.cloud.openfeign.FeignClient;

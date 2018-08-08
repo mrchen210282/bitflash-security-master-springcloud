@@ -15,4 +15,7 @@ public interface LoginFeign {
     @PostMapping("/api/user-app/logout")
     public Map<String,Object> logout(@RequestBody TokenEntity tokenEntity);
 
+    @PostMapping("/api/token")
+    TokenEntity getTokenByToken(@RequestParam("token")String token);
+
 }

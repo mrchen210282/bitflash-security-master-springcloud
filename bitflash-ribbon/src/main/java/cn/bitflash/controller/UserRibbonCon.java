@@ -1,14 +1,12 @@
-package cn.bitflash.prod.controller;
+/*
+package cn.bitflash.controller;
 
-import cn.bitflash.prod.feign.LoginRibbon;
-import cn.bitflash.prod.feign.UserRibbon;
-import cn.bitflash.user.LoginForm;
+import cn.bitflash.feign.UserRibbon;
 import cn.bitflash.user.UserEntity;
 import cn.bitflash.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -18,10 +16,12 @@ public class UserRibbonCon {
 
     @Autowired
     private UserRibbon userRibbon;
-    /**
+    */
+/**
      *获取账户信息
      * @return
-     */
+     *//*
+
 
     @GetMapping("/userInfo")
     public R userInfo(){
@@ -54,9 +54,11 @@ public class UserRibbonCon {
     }
 
 
-    /**
+    */
+/**
      * 用户交易密码
-     */
+     *//*
+
 
     @PostMapping("/payPwd/addPayPwd")
     public R addPayPassword(@RequestParam String payPassword){
@@ -69,9 +71,11 @@ public class UserRibbonCon {
     }
 
 
-    /**
+    */
+/**
      * 获取用户vip信息
-     */
+     *//*
+
     @PostMapping("/vip/getVipLevel")
     public R getVipLevel(){
         return userRibbon.getVipLevel();
@@ -82,12 +86,15 @@ public class UserRibbonCon {
         return userRibbon.updateVipLevel();
     }
 
-    /**
+    */
+/**
      * 用户操作
-     */
+     *//*
+
     @GetMapping("/api/user/selectOne")
     public List<UserEntity> selectOne(@RequestParam Map<String, Object> params){
         return userRibbon.selectOne(params);
     }
 
 }
+*/

@@ -11,6 +11,11 @@
 
     <artifactId>bitflash-sys</artifactId>
 
+    <properties>
+        <mysql.version>5.1.38</mysql.version>
+        <mybatisplus.version>2.1.9</mybatisplus.version>
+        <mybatisplus.spring.boot.version>1.0.5</mybatisplus.spring.boot.version>
+    </properties>
     <dependencies>
         <!--注册中心客户端依赖-->
         <dependency>
@@ -31,6 +36,20 @@
             <groupId>cn.bitflash</groupId>
             <artifactId>bitflash-common</artifactId>
             <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatisplus-spring-boot-starter</artifactId>
+            <version>${mybatisplus.spring.boot.version}</version>
+        </dependency>
+        <!--spring cloud finchley.release版的 feign-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
         </dependency>
     </dependencies>
 </project>

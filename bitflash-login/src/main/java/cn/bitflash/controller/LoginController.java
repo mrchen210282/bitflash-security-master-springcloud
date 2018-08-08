@@ -3,6 +3,7 @@ package cn.bitflash.controller;
 import cn.bitflash.service.TokenService;
 import cn.bitflash.service.UserService;
 import cn.bitflash.user.LoginForm;
+import cn.bitflash.user.TokenEntity;
 import cn.bitflash.utils.R;
 import cn.bitflash.annotation.Login;
 import common.validator.ValidatorUtils;
@@ -31,12 +32,12 @@ public class LoginController {
         return R.ok(map);
     }
 
-    @Login
+    //@Login
     @PostMapping("logout" )
-    public R logout(String uid) {
-        System.out.println("login:"+uid);
-        tokenService.expireToken(uid);
-        return R.ok();
+    public R logout(@RequestBody TokenEntity tokenEntity) {
+        System.out.println("login:"+tokenEntity.getUid());
+        //tokenService.expireToken(uid);
+        return R.ok(tokenEntity.getUid());
     }
 
 }

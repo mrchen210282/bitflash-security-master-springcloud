@@ -70,7 +70,7 @@ public class ApiAccountController {
                 UserAccountBean userAccount = userAccountService.selectUserAccount(map);
                 if (null != userAccount) {
                     account.setDailyIncome(userAccount.getDailyIncome());
-
+                    
                     //昨日购买
                     Object yesterDayPurchase = null;
                     //总购买

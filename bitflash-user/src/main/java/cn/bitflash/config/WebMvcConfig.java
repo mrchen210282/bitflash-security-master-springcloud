@@ -1,4 +1,4 @@
-package cn.bitflash.prod.config;
+package cn.bitflash.config;
 
 import cn.bitflash.interceptor.ApiLoginInterceptor;
 import org.springframework.context.annotation.Configuration;

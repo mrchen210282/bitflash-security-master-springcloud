@@ -20,10 +20,10 @@ import cn.bitflash.service.UserAccountService;
 @Service("userAccountService" )
 public class UserAccountServiceImpl extends ServiceImpl<UserAccountDao, UserAccountEntity> implements UserAccountService {
 
+    @Override
     public void updateUserAccountByParam(UserAccountEntity userAccount) {
         baseMapper.updateUserAccountByParam(userAccount);
     }
-
 
     @Override
     public List<UserAccountEntity> selectByMobile(String mobile) {

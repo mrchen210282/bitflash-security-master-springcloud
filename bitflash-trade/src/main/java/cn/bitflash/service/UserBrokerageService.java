@@ -14,32 +14,18 @@
  * the License.
  */
 
-package cn.bitflash.user;
+package cn.bitflash.service;
 
-import java.io.Serializable;
+import cn.bitflash.trade.UserBrokerageEntity;
+import com.baomidou.mybatisplus.service.IService;
+
+import cn.bitflash.trade.UserBrokerageEntity;
 
 /**
  * 用户
  *
- * @author eric
+ * @author wangjun
  */
-public class UserAccountBean extends UserAccountEntity implements Serializable  {
-
-
-    private static final long serialVersionUID = -3272015324293238491L;
-
-    /**
-     * 是否已修改过昵称
-     */
-    private String nicklock;
-
-    public String getNicklock() {
-        return nicklock;
-    }
-
-    public void setNicklock(String nicklock) {
-        this.nicklock = nicklock;
-    }
-
+public interface UserBrokerageService extends IService<UserBrokerageEntity> {
 
 }

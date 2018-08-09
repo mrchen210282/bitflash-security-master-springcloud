@@ -2,8 +2,6 @@ package cn.bitflash.service.impl;
 
 import cn.bitflash.dao.UserAccountDao;
 import cn.bitflash.service.UserAccountService;
-import cn.bitflash.user.UserAccountBean;
-import cn.bitflash.user.UserAccountEntity;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 

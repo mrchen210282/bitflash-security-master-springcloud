@@ -19,7 +19,6 @@ package cn.bitflash.resolver;
 import cn.bitflash.annotation.UserAccount;
 import cn.bitflash.interceptor.AuthorizationInterceptor;
 import cn.bitflash.service.UserAccountService;
-import cn.bitflash.user.UserAccountEntity;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;

@@ -6,10 +6,7 @@ import cn.bitflash.service.TokenService;
 import cn.bitflash.service.UserService;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/login")
@@ -32,7 +29,7 @@ public class ApiWithinLoginController {
     }
 
     @PostMapping("/withinUser/update")
-    public boolean updateByUser(@RequestBody UserEntity userEntity,@RequestBody EntityWrapper<UserEntity> entityWrapper){
+    public boolean updateByUser(@RequestBody UserEntity userEntity,@RequestParam EntityWrapper<UserEntity> entityWrapper){
         return userService.update(userEntity,entityWrapper);
     }
 }

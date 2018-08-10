@@ -39,12 +39,6 @@ public class ApiRegisterController {
 	private UserService userService;
 
 	@Autowired
-	private UserFeign userFeign;
-
-	@Autowired
-	private UserTradeFeign userTradeFeign;
-
-	@Autowired
 	private AuthorityUserService authorityUserService;
 	
 	@Autowired
@@ -52,6 +46,12 @@ public class ApiRegisterController {
 	
 	@Autowired
 	private TokenService tokenService;
+
+	@Autowired
+	private UserFeign userFeign;
+
+	@Autowired
+	private UserTradeFeign userTradeFeign;
 	
 	private final Logger log = LoggerFactory.getLogger(ApiRegisterController.class);
 
@@ -62,7 +62,7 @@ public class ApiRegisterController {
 	 */
 	@Transactional
 	@PostMapping("register")
-	public R register(@RequestBody RegisterForm form, HttpServletResponse response) {
+	public R register(@RequestBody RegisterForm form) {
 		UserEntity oldUser = userService.selectById(form.getMobile());
 		if (oldUser != null) {
 			return R.error(501, "手机号已经存在");

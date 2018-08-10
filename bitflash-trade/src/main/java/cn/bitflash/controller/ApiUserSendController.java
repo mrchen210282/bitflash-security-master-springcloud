@@ -5,7 +5,6 @@ import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.common.utils.R;
 import cn.bitflash.entity.*;
 import cn.bitflash.service.*;
-import cn.bitflash.user.UserAccountEntity;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

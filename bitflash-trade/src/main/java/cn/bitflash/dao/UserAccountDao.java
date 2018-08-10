@@ -1,14 +1,12 @@
 package cn.bitflash.dao;
 
-import java.util.List;
-import java.util.Map;
-
+import cn.bitflash.trade.UserAccountBean;
+import cn.bitflash.trade.UserAccountEntity;
+import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.springframework.stereotype.Repository;
 
-import com.baomidou.mybatisplus.mapper.BaseMapper;
-
-import cn.bitflash.entity.UserAccountBean;
-import cn.bitflash.entity.UserAccountEntity;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author soso

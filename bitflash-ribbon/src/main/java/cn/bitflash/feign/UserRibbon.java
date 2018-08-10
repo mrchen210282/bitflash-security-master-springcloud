@@ -1,31 +1,32 @@
-/*
+package cn.bitflash.prod.feign;
 package cn.bitflash.feign;
 
+
+import cn.bitflash.prod.DefaultFallBack.UserDefaultFallBackFactory;
+import cn.bitflash.DefaultFallBack.DefaultFallBackFactory;
 import cn.bitflash.DefaultFallBack.UserDefaultFallBackFactory;
 import cn.bitflash.user.UserEntity;
 import cn.bitflash.utils.R;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
 
-*/
 /**
  * name为资源提供者的spring.application.name
  * @author eric
- *//*
-
+ */
 @FeignClient(value="bitflash-user-app",fallbackFactory = UserDefaultFallBackFactory.class)
+@FeignClient(value="bitflash-user-app",fallbackFactory = DefaultFallBackFactory.class)
 public interface UserRibbon {
-    */
-/**
+    /**
      *获取账户信息
      * @return
-     *//*
-
+     */
 
     @GetMapping("/api/userInfo")
     public R userInfo();
@@ -46,11 +47,9 @@ public interface UserRibbon {
     public R changePwd2(@RequestParam String mobile, @RequestParam String newPwd);
 
 
-    */
-/**
+    /**
      * 用户交易密码
-     *//*
-
+     */
 
     @PostMapping("/api/payPwd/addPayPwd")
     public R addPayPassword(@RequestParam String payPassword);
@@ -59,25 +58,20 @@ public interface UserRibbon {
     public R updatePayPwd(@RequestParam String oldPwd, @RequestParam String newPwd);
 
 
-    */
-/**
+    /**
      * 获取用户vip信息
-     *//*
-
+     */
     @PostMapping("/api/vip/getVipLevel")
     public R getVipLevel();
 
     @PostMapping("/api/vip/updateVipLevel")
     public R updateVipLevel();
 
-    */
-/**
+    /**
      * 用户操作
-     *//*
-
+     */
     @GetMapping("/api/user/selectOne")
     public List<UserEntity> selectOne(@RequestParam Map<String, Object> params);
 
 
 }
-*/

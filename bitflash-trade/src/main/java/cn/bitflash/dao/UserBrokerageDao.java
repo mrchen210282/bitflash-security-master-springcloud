@@ -14,30 +14,22 @@
  * the License.
  */
 
-package cn.bitflash.service;
+package cn.bitflash.dao;
 
-import cn.bitflash.login.LoginForm;
-import cn.bitflash.user.UserEntity;
-import com.baomidou.mybatisplus.service.IService;
+import cn.bitflash.trade.UserBrokerageEntity;
+import org.springframework.stereotype.Repository;
 
-import java.util.Map;
+import com.baomidou.mybatisplus.mapper.BaseMapper;
+
+import cn.bitflash.trade.UserBrokerageEntity;
 
 /**
  * 用户
  *
- * @author chenshun
- * @email sunlightcs@gmail.com
- * @date 2017-03-23 15:22:06
+ * @author wangjun
  */
-public interface UserService extends IService<UserEntity> {
+@Repository
+public interface UserBrokerageDao extends BaseMapper<UserBrokerageEntity> {
 
-    UserEntity queryByMobile(String mobile);
 
-    /**
-     * 用户登录
-     *
-     * @param form 登录表单
-     * @return 返回登录信息
-     */
-    Map<String, Object> login(LoginForm form);
 }

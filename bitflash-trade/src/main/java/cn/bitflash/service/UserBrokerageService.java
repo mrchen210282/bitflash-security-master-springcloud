@@ -16,34 +16,16 @@
 
 package cn.bitflash.service;
 
-import cn.bitflash.user.TokenEntity;
-import cn.bitflash.user.UserEntity;
+import cn.bitflash.trade.UserBrokerageEntity;
 import com.baomidou.mybatisplus.service.IService;
 
+import cn.bitflash.trade.UserBrokerageEntity;
+
 /**
- * 用户Token
+ * 用户
  *
- * @author chenshun
- * @email sunlightcs@gmail.com
- * @date 2017-03-23 15:22:07
+ * @author wangjun
  */
-public interface TokenService extends IService<TokenEntity> {
-
-    TokenEntity queryByToken(String mobile);
-
-    /**
-     * 生成token
-     *
-     * @param userId 用户ID
-     * @return 返回token信息
-     */
-    TokenEntity createToken(UserEntity user);
-
-    /**
-     * 设置token过期
-     *
-     * @param userId 用户ID
-     */
-    void expireToken(String uid);
+public interface UserBrokerageService extends IService<UserBrokerageEntity> {
 
 }

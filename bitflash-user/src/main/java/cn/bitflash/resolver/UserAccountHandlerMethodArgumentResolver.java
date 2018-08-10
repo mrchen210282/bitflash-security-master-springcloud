@@ -17,9 +17,9 @@
 package cn.bitflash.resolver;
 
 import cn.bitflash.annotation.UserAccount;
+import cn.bitflash.feign.TradeFeign;
 import cn.bitflash.interceptor.AuthorizationInterceptor;
-import cn.bitflash.service.UserAccountService;
-import cn.bitflash.user.UserAccountEntity;
+import cn.bitflash.trade.UserAccountEntity;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
@@ -38,7 +38,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Component
 public class UserAccountHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
     @Autowired
-    private UserAccountService userAccountService;
+    private TradeFeign userAccountService;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {

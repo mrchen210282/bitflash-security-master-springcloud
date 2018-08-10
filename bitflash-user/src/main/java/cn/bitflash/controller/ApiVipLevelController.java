@@ -2,9 +2,14 @@ package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
+import cn.bitflash.feign.SysFeign;
+import cn.bitflash.feign.TradeFeign;
+import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.*;
+import cn.bitflash.trade.UserAccountEntity;
 import cn.bitflash.user.*;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import common.exception.RRException;
 import common.utils.CodeUtils;
 import common.utils.Common;
@@ -37,19 +42,19 @@ public class ApiVipLevelController {
     private final Logger logger = LoggerFactory.getLogger(ApiVipLevelController.class);
 
     @Autowired
-    private UserAccountService userAccountService;
-
-    @Autowired
     private UserInfoService userInfoService;
-
-    @Autowired
-    private PlatFormConfigService platFormConfigService;
 
     @Autowired
     private UserInvitationCodeService userInvitationCodeService;
 
     @Autowired
     private UserRelationService userRelationService;
+
+    @Autowired
+    private TradeFeign tradeFeign;
+
+    @Autowired
+    private SysFeign sysfeign;
 
     /**
      * @author chen
@@ -61,7 +66,8 @@ public class ApiVipLevelController {
         String uid = user.getUid();
         UserInfoEntity userEntity = userInfoService.selectOne(new EntityWrapper<UserInfoEntity>().eq("uid", uid));
         if (userEntity != null) {
-            UserAccountEntity userAccountEntity = userAccountService.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", uid));
+            Wrapper<UserAccountEntity> userAccountEntityWrapper = new EntityWrapper<UserAccountEntity>().eq("uid", uid);
+            UserAccountEntity userAccountEntity = tradeFeign.selectOne(userAccountEntityWrapper);
             return R.ok().put("vip", userEntity.getIsVip()).put("bit", userAccountEntity.getAvailableAssets());
         } else {
             return R.error("此用户不存在" );
@@ -95,13 +101,13 @@ public class ApiVipLevelController {
             return R.error("非邀请码注册用户" );
         }
         //vip升级数量
-        Double vip_count = Double.valueOf(platFormConfigService.getVal(Common.VIP_CONDITION));
+        Double vip_count = Double.valueOf(sysfeign.getVal(Common.VIP_CONDITION));
         //赠送数量
-        Double giveRatio = Double.valueOf(platFormConfigService.getVal(Common.GIVE_RATIO));
+        Double giveRatio = Double.valueOf(sysfeign.getVal(Common.GIVE_RATIO));
         //vip——count BigDecimal类型
         BigDecimal vip_number = new BigDecimal(vip_count);
         if (userInfo.getIsVip().equals(Common.VIP_LEVEL_0)) {
-            UserAccountEntity userAccount = userAccountService.selectById(uid);
+            UserAccountEntity userAccount = tradeFeign.selectById(uid);
             BigDecimal acacilNum = userAccount.getAvailableAssets();
             // 可用资产>=2w
             if (acacilNum.compareTo(vip_number) == 1 || acacilNum.compareTo(vip_number) == 0) {
@@ -130,7 +136,7 @@ public class ApiVipLevelController {
                 //2.1.4
                 userAccount.setFrozenAssets(userAccount.getFrozenAssets().add(vip_number.add(new BigDecimal(vip_count * giveRatio))));
                 userAccount.setTotelAssets(userAccount.getPurchase().add(userAccount.getGiveAmount()));
-                userAccountService.updateById(userAccount);
+                tradeFeign.updateById(userAccount);
                 //更新会员等级
                 userInfo.setIsVip(Common.VIP_LEVEL_2);
                 userInfo.setVipCreateTime(new Date());

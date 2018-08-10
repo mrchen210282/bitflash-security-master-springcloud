@@ -52,7 +52,7 @@ public class DecodeTokenHandlerMethodArgumentResolver implements HandlerMethodAr
         String token = redisUtils.get(RedisKey.LOGIN_ + mobile);
 
         TokenEntity tokenEntity = loginFeign.getTokenByToken(token);
-
+        return null;
     }
 
 

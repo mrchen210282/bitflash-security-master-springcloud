@@ -1,9 +1,13 @@
 package cn.bitflash.controller;
 
 import cn.bitflash.annotation.*;
+import cn.bitflash.feign.LoginFeign;
 import cn.bitflash.feign.SysFeign;
 import cn.bitflash.feign.TradeFeign;
+import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.*;
+import cn.bitflash.trade.UserAccountBean;
+import cn.bitflash.trade.UserAccountEntity;
 import cn.bitflash.user.*;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.Common;
@@ -26,16 +30,7 @@ import java.util.*;
 public class ApiAccountController {
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private UserRelationService userRelationService;
-
-    @Autowired
-    private UserAccountService userAccountService;
-
-    @Autowired
-    private PlatFormConfigService platFormConfigService;
 
     @Autowired
     private UserInfoService userInfoService;
@@ -44,13 +39,13 @@ public class ApiAccountController {
     private UserPayPwdService userPayPwdService;
 
     @Autowired
-    private UserTradeHistoryService userTradeHistoryService;
-
-    @Autowired
     private TradeFeign tradeFeign;
 
     @Autowired
     private SysFeign sysfeign;
+
+    @Autowired
+    private LoginFeign loginFeign;
 
     @Login
     @GetMapping("userInfo")
@@ -84,7 +79,7 @@ public class ApiAccountController {
             if (StringUtils.isNotBlank(account.getUid())) {
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("uid", account.getUid());
-                UserAccountBean userAccount = userAccountService.selectUserAccount(map);
+                UserAccountBean userAccount = tradeFeign.selectUserAccount(map);
                 if (null != userAccount) {
                     account.setDailyIncome(userAccount.getDailyIncome());
                     
@@ -108,7 +103,7 @@ public class ApiAccountController {
                             map.put("createTime", format.format(calendarDate));
                             map.put("purchaseUid", account.getUid());
                             //查询出昨日购买
-                            Map<String, Object> returnMap = userTradeHistoryService.selectTradeHistoryIncome(map);
+                            Map<String, Object> returnMap = tradeFeign.selectTradeHistoryIncome(map);
                             if (null != returnMap.get("quantity" )) {
                                 yesterDayPurchase = returnMap.get("quantity" );
                             } else {
@@ -117,7 +112,7 @@ public class ApiAccountController {
 
                             map.put("purchaseUid", account.getUid());
                             //查询出总购买
-                            Map<String, Object> purchaseMap = userTradeHistoryService.selectTradeHistoryIncome(map);
+                            Map<String, Object> purchaseMap = tradeFeign.selectTradeHistoryIncome(map);
 
                             if (null != purchaseMap.get("quantity" )) {
                                 totalPurchase = purchaseMap.get("quantity" );
@@ -153,7 +148,7 @@ public class ApiAccountController {
     public R getInvitationcode(@UserInvitationCode UserInvitationCodeEntity userInvitationCode) {
         UserRelationEntity ur = userRelationService.selectOne(new EntityWrapper<UserRelationEntity>().eq("invitation_code", userInvitationCode.getLftCode()));
         Map<String, Object> map = new HashMap<String, Object>();
-        String address = platFormConfigService.getVal(Common.ADDRESS);
+        String address = sysfeign.getVal(Common.ADDRESS);
         map.put("lftCode", userInvitationCode.getLftCode());
         map.put("address", address);
         if (ur != null) {
@@ -202,7 +197,7 @@ public class ApiAccountController {
     public R changePwd(@LoginUser UserEntity user, @RequestParam String oldPwd, @RequestParam String newPwd) {
         if (oldPwd.equals(user.getPassword())) {
             user.setPassword(newPwd);
-            userService.update(user, new EntityWrapper<UserEntity>().eq("uid", user.getUid()));
+            loginFeign.update(user, new EntityWrapper<UserEntity>().eq("uid", user.getUid()));
             return R.ok();
         } else {
             return R.error("原密码不正确" );
@@ -215,11 +210,41 @@ public class ApiAccountController {
         UserEntity userEntity = new UserEntity();
         userEntity.setPassword(newPwd);
 
-        boolean rst = userService.update(userEntity, new EntityWrapper<UserEntity>().eq("mobile", mobile));
+        boolean rst = loginFeign.update(userEntity, new EntityWrapper<UserEntity>().eq("mobile", mobile));
         if (rst) {
             return R.ok();
         } else {
             return R.error("修改失败" );
+        }
+    }
+
+    /**
+     * @param nickname
+     *            昵称
+     */
+    @Login
+    @PostMapping("updateNickName")
+    //@ApiOperation(value = "修改昵称")
+    public R updateNickName(@LoginUser UserEntity user, @RequestParam String nickname) {
+        if (StringUtils.isNotBlank(nickname)) {
+            if (nickname.length() <= 6) {
+                UserInfoEntity userInfoEntity = userInfoService.selectOne(new EntityWrapper<UserInfoEntity>().eq("nickname", nickname));
+
+                if (null != userInfoEntity && "1".equals(userInfoEntity.getNicklock())) {
+                    return R.error("昵称不能修改！");
+                } else {
+                    UserInfoEntity userInfoBean = new UserInfoEntity();
+                    userInfoBean.setNickname(nickname);
+                    userInfoBean.setUid(user.getUid());
+                    userInfoBean.setNicklock("1");
+                    userInfoService.updateById(userInfoBean);
+                    return R.ok();
+                }
+            } else {
+                return R.error("昵称长度不能大于6个字！");
+            }
+        } else {
+            return R.error("昵称不能为空！");
         }
     }
 

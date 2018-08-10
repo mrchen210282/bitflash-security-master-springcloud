@@ -2,11 +2,12 @@ package cn.bitflash.interceptor;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.exception.RRException;
+import cn.bitflash.redisConfig.RedisKey;
 import cn.bitflash.service.TokenService;
 import cn.bitflash.user.TokenEntity;
 import cn.bitflash.utils.AESTokenUtil;
+import cn.bitflash.utils.RedisUtils;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -19,11 +20,14 @@ import javax.servlet.http.HttpServletResponse;
 public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
+    private RedisUtils redisUtils;
+
+    @Autowired
     private TokenService tokenService;
 
-    public static final String TIME="time";
-    public static final String TOKEN="token";
-    public static final String UID="uid";
+    private final String MOBILE = "mobile";
+    private final String UID = "uid";
+
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -37,31 +41,36 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
         if (annotation == null) {
             return true;
         }
-        System.out.println("----------------------------------------------------------------------");
-        String secretTime = request.getHeader(TIME );
-        String secretToken = request.getHeader(TOKEN);
-        //如果header中不存在token，则从参数中获取token
-        if (StringUtils.isBlank(secretTime)) {
-            secretTime = request.getParameter(TIME );
+        String mobile = request.getHeader(MOBILE);
+        if (mobile.length() == 0 || mobile == null) {
+            mobile = request.getParameter(MOBILE);
         }
-        if (StringUtils.isBlank(secretToken)) {
-            secretToken = request.getParameter(TOKEN );
+        String secretUid = request.getParameter(UID);
+        if (secretUid.length() == 0 || secretUid == null) {
+            secretUid = request.getParameter(UID);
         }
-        //token为空
-        if (StringUtils.isBlank(secretTime) || StringUtils.isBlank(secretToken)) {
+        if (mobile == null || secretUid == null) {
             throw new RRException("参数不能为空");
+        }
+        String token = redisUtils.get(RedisKey.LOGIN_ + mobile);
 
+        TokenEntity tokenEntity = tokenService.selectOne(new EntityWrapper<TokenEntity>().eq("token",token));
+
+        if (tokenEntity == null) {
+            throw new RRException("token信息错误");
         }
-        String uid=request.getParameter(UID);
-        String realToken=AESTokenUtil.getToken(secretTime,secretToken);
-        uid=AESTokenUtil.getData(realToken,uid);
-        TokenEntity tokenEntity=tokenService.selectOne(new EntityWrapper<TokenEntity>().eq("token",realToken));
-        if(tokenEntity==null){
-            throw new RRException("token信息错误" );
+
+        if (tokenEntity.getExpireTime().getTime() < System.currentTimeMillis()) {
+            throw new RRException("toke过期，请重新登录！");
         }
-        if(!tokenEntity.getUid().equals(uid)){
+
+        String uid = AESTokenUtil.getData(token, secretUid);
+        if (!tokenEntity.getUid().equals(uid)) {
             throw new RRException("token信息与用户信息不符");
         }
+
+        //设置userId到request里，后续根据userId，获取用户信息
+        request.setAttribute(UID, tokenEntity.getUid());
         return true;
 
     }

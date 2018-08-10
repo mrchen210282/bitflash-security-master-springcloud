@@ -8,7 +8,7 @@ import java.util.Map;
 @FeignClient(value = "bitflash-sys")
 public interface SysFeign {
 
-    @PostMapping("/api/user-app/logout")
-    public String getValue(String address);
+    @PostMapping("")
+    public String getVal(String params);
 
 }

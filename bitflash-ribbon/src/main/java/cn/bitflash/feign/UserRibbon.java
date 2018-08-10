@@ -1,16 +1,18 @@
 package cn.bitflash.feign;
 
 
+import cn.bitflash.login.UserEntity;
 import cn.bitflash.prod.DefaultFallBack.UserDefaultFallBackFactory;
-import cn.bitflash.user.UserEntity;
+import cn.bitflash.user.UserInfoEntity;
+import cn.bitflash.user.UserInvitationCodeEntity;
 import cn.bitflash.utils.R;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
-import java.util.Map;
 
 /**
  * name为资源提供者的spring.application.name
@@ -41,6 +43,9 @@ public interface UserRibbon {
     @PostMapping("/api/changePassword2")
     public R changePwd2(@RequestParam String mobile, @RequestParam String newPwd);
 
+    @PostMapping("updateNickName")
+    public R updateNickName(@RequestParam String nickname);
+
 
     /**
      * 用户交易密码
@@ -62,11 +67,13 @@ public interface UserRibbon {
     @PostMapping("/api/vip/updateVipLevel")
     public R updateVipLevel();
 
+
     /**
-     * 用户操作
+     * 公用
      */
-    @GetMapping("/api/user/selectOne")
-    public List<UserEntity> selectOne(@RequestParam Map<String, Object> params);
+    @PostMapping("/user/withinCode/selectone")
+    public UserInvitationCodeEntity selectOne(@RequestBody EntityWrapper entityWrapper);
 
-
+    @PostMapping("/user/withinInfo/insert")
+    public boolean insert(@RequestBody UserInfoEntity userInfoEntity);
 }

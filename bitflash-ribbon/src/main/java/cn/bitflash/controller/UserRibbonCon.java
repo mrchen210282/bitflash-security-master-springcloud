@@ -2,13 +2,13 @@
 package cn.bitflash.controller;
 
 import cn.bitflash.feign.UserRibbon;
-import cn.bitflash.user.UserEntity;
+import cn.bitflash.user.UserInfoEntity;
+import cn.bitflash.user.UserInvitationCodeEntity;
 import cn.bitflash.utils.R;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -17,7 +17,7 @@ public class UserRibbonCon {
     @Autowired
     private UserRibbon userRibbon;
 
-/**
+    /**
      *获取账户信息
      * @return
      */
@@ -55,7 +55,7 @@ public class UserRibbonCon {
 
 
 
-/**
+    /**
      * 用户交易密码
      */
 
@@ -71,7 +71,7 @@ public class UserRibbonCon {
     }
 
 
-/**
+    /**
      * 获取用户vip信息
      */
     @PostMapping("/vip/getVipLevel")
@@ -84,14 +84,19 @@ public class UserRibbonCon {
         return userRibbon.updateVipLevel();
     }
 
-
-/**
-     * 用户操作
+    /**
+     * 公用接口
+     *
      */
 
-    @GetMapping("/api/user/selectOne")
-    public List<UserEntity> selectOne(@RequestParam Map<String, Object> params){
-        return userRibbon.selectOne(params);
+    @PostMapping("/user/withinCode/selectone")
+    public UserInvitationCodeEntity selectOne(@RequestBody EntityWrapper entityWrapper){
+        return  userRibbon.selectOne(entityWrapper);
+    }
+
+    @PostMapping("/user/withinInfo/insert")
+    public boolean insert(@RequestBody UserInfoEntity userInfoEntity){
+        return  userRibbon.insert(userInfoEntity);
     }
 
 }

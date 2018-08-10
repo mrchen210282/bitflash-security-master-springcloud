@@ -3,18 +3,18 @@
 
 <mapper namespace="cn.bitflash.dao.UserAccountDao">
 
-    <update id="updateUserAccountByParam" parameterType="cn.bitflash.user.UserAccountEntity">
+    <update id="updateUserAccountByParam" parameterType="cn.bitflash.trade.UserAccountEntity">
         update user_account set available_assets = #{availableAssets},totel_income = #{totelIncome},regulate_income =
         #{regulateIncome}
         where uid=#{uid}
     </update>
 
-    <select id="selectByMobile" parameterType="java.lang.String" resultType="cn.bitflash.user.UserAccountEntity">
+    <select id="selectByMobile" parameterType="java.lang.String" resultType="cn.bitflash.trade.UserAccountEntity">
         select ua.* from user_account ua right join user_info ui on ua.uid = ui.uid where ui.mobile=#{mobile}
 
     </select>
 
-    <select id="selectUserAccount" resultType="cn.bitflash.user.UserAccountBean">
+    <select id="selectUserAccount" resultType="cn.bitflash.trade.UserAccountBean">
         select ua.*,ui.nicklock from user_account ua right join user_info ui on ua.uid = ui.uid where ui.uid=#{uid}
 
     </select>

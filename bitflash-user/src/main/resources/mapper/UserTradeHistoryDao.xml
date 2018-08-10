@@ -14,7 +14,7 @@
     <!-- </where> -->
     <!-- </select> -->
 
-    <update id="updateUserTradeHistory" parameterType="cn.bitflash.user.UserTradeHistoryEntity">
+    <update id="updateUserTradeHistory" parameterType="cn.bitflash.trade.UserTradeHistoryEntity">
         update
         user_trade_history set sell_uid = #{sellUid},sell_quantity = #{sellQuantity},price=#{price},state =
         #{state},create_time=#{createTime} where user_trade_id =
@@ -22,7 +22,7 @@
     </update>
 
 
-    <select id="selectTradeHistory" resultType="cn.bitflash.user.UserTradeHistoryBean">
+    <select id="selectTradeHistory" resultType="cn.bitflash.trade.UserTradeHistoryBean">
         select id,user_trade_id,purchase_uid,sell_uid,a.create_time,b.realname
         as purchaseName,b.mobile as purchaseMobile,b.nickname,b.nicklock,b.mobile,
         a.sell_quantity AS sellQuantity,

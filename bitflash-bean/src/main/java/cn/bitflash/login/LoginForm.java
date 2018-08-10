@@ -14,51 +14,32 @@
  * the License.
  */
 
-package cn.bitflash.user;
+package cn.bitflash.login;
 
-
-import com.alibaba.fastjson.annotation.JSONField;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.enums.IdType;
-
-import java.io.Serializable;
+import javax.validation.constraints.NotBlank;
 
 /**
- * 用户
+ * 登录表单
  *
- * @author eric
+ * @author Mark sunlightcs@gmail.com
+ * @since 3.1.0 2018-01-25
  */
-@TableName("tb_user" )
-public class UserEntity implements Serializable {
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * 用户ID
-     */
-    private String uid;
-    /**
-     * 手机号
-     */
-    @TableId(type = IdType.INPUT)
+public class LoginForm {
+    @NotBlank(message = "手机号不能为空" )
     private String mobile;
-    /**
-     * 密码
-     */
-    @JSONField(serialize = false)
+
+    @NotBlank(message = "密码不能为空" )
     private String password;
 
-    /**
-     * uuid 32位的钱包账号
-     */
-    private String uuid;
+    @NotBlank(message = "个推appid" )
+    private String cid;
 
-    public String getUid() {
-        return uid;
+    public String getCid() {
+        return cid;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setCid(String cid) {
+        this.cid = cid;
     }
 
     public String getMobile() {
@@ -76,14 +57,4 @@ public class UserEntity implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-
 }

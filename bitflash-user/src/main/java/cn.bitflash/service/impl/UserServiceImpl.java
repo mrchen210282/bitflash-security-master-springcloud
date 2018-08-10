@@ -21,7 +21,7 @@ import cn.bitflash.exception.RRException;
 import cn.bitflash.service.TokenService;
 import cn.bitflash.service.UserGTCidService;
 import cn.bitflash.service.UserService;
-import cn.bitflash.user.LoginForm;
+import cn.bitflash.login.LoginForm;
 import cn.bitflash.user.TokenEntity;
 import cn.bitflash.user.UserEntity;
 import cn.bitflash.user.UserGTCidEntity;

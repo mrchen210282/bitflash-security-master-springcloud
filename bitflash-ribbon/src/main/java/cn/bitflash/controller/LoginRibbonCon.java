@@ -1,7 +1,7 @@
 package cn.bitflash.controller;
 
 import cn.bitflash.feign.LoginRibbon;
-import cn.bitflash.user.LoginForm;
+import cn.bitflash.login.LoginForm;
 import cn.bitflash.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

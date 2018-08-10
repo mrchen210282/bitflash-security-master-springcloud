@@ -16,11 +16,10 @@
 
 package cn.bitflash.service;
 
-import cn.bitflash.user.LoginForm;
+import cn.bitflash.login.LoginForm;
 import cn.bitflash.user.UserEntity;
 import com.baomidou.mybatisplus.service.IService;
 
-import java.io.Serializable;
 import java.util.Map;
 
 /**

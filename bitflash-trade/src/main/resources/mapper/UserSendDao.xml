@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.bitflash.dao.UserSendDao">
+<!--     <resultMap id="buyMessage" type="cn.bitflash.entity.UserEntity"> -->
+<!--         <result property="uid" column="uid"/> -->
+<!--         <result property="mobile" column="mobile"/> -->
+<!--         <result property="password" column="password"/> -->
+<!--         <result property="uuid" column="uuid"/> -->
+<!--     </resultMap> -->
+
+    <select id="selectaccount" resultType="cn.bitflash.trade.UserSendEntity">
+        select us.send_uid , us.sendee_uid ,us.quantity, us.send_time, tu.uuid
+        from user_send us
+        left join tb_user tu
+        on us.sendee_uid = tu.uid
+        where us.send_uid = #{send_uid}
+    </select>
+
+    <select id="selectaccept" resultType="cn.bitflash.trade.UserSendEntity">
+        select us.send_uid , us.sendee_uid ,us.quantity, us.send_time, tu.uuid
+        from user_send us
+        left join tb_user tu
+        on us.send_uid = tu.uid
+        where us.sendee_uid = #{send_uid}
+    </select>
+</mapper>

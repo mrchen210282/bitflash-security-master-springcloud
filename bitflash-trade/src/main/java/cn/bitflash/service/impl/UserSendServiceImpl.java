@@ -18,8 +18,9 @@ package cn.bitflash.service.impl;
 
 
 import cn.bitflash.dao.UserSendDao;
-import cn.bitflash.entity.UserSendEntity;
+import cn.bitflash.trade.UserSendEntity;
 import cn.bitflash.service.UserSendService;
+import cn.bitflash.trade.UserSendEntity;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 

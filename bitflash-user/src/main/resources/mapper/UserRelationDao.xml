@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.bitflash.dao.UserRelationDao">
+    <update id="insertTreeNode" statementType="CALLABLE">
+        <![CDATA[
+ 		call insertTreeNode(#{f_uid,jdbcType=VARCHAR,mode=IN},#{c_uid,jdbcType=VARCHAR,mode=IN},#{invitation,jdbcType=VARCHAR,mode=IN})
+ 		 ]]>
+    </update>
+
+    <select id="selectTreeNodes" parameterType="java.lang.String"
+            statementType="CALLABLE" useCache="false"
+            resultType="cn.bitflash.user.UserRelationJoinAccountEntity">
+        <![CDATA[
+		call selectTreeNodes(#{f_uid,jdbcType=VARCHAR,mode=IN})
+		 ]]>
+    </select>
+    <update id="updateTreeNodes">
+        UPDATE user_relation SET ${column} = ${column} + 2 WHERE ${column} >= #{leftCode}
+    </update>
+
+    <select id="selectChildNode" resultType="cn.bitflash.user.UserRelationJoinAccountEntity">
+        SELECT
+        ur.uid,
+        ui.realname,
+        ur.invitation_code,
+        ur.lft,
+        ur.rgt,
+        ua.purchase,
+        ua.give_amount,
+        ua.totel_assets,
+        ua.frozen_assets,
+        ua.daily_release,
+        ua.regulate_release,
+        ua.totel_release,
+        ua.available_assets,
+        ua.regulate_income,
+        ua.totel_income,
+        ua.daily_income,
+        ua.lft_achievement,
+        ua.rgt_achievements
+        FROM
+        user_relation ur
+        LEFT JOIN
+        user_account ua
+        on
+        ur.uid = ua.uid
+        where
+        ur.rgt=#{rgt}
+        or
+        ur.lft=#{lft}
+    </select>
+
+    <select id="selectLayer" resultType="java.lang.Integer">
+        select count(*) FROM user_relation WHERE <![CDATA[ lft<= #{rgt}]]> AND <![CDATA[ rgt>=(#{rgt}+1)]]>
+    </select>
+
+
+</mapper>

@@ -2,21 +2,21 @@ package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
-import cn.bitflash.common.utils.R;
-import cn.bitflash.entity.*;
-import cn.bitflash.service.*;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import cn.bitflash.service.UserAccountService;
+import cn.bitflash.service.UserBrokerageService;
+import cn.bitflash.service.UserSendService;
+import cn.bitflash.trade.UserBrokerageEntity;
+import cn.bitflash.trade.UserSendEntity;
+import cn.bitflash.user.UserAccountEntity;
+import cn.bitflash.user.UserEntity;
+import common.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.util.Date;
+
 import java.util.List;
 
 /**
@@ -29,8 +29,11 @@ public class ApiUserSendController {
     @Autowired
     private UserSendService userSendService;
 
-    @Autowired
+    /*
+@Autowired
     private UserService userService;
+     */
+
 
     @Autowired
     private UserBrokerageService userBrokerageService;
@@ -47,6 +50,9 @@ public class ApiUserSendController {
      */
     @PostMapping("userSend" )
     public R userSend(@RequestParam String quantity, @RequestParam String uuid, @LoginUser UserEntity user) {
+
+        /**
+         *
 
 
         //交易状态：
@@ -152,6 +158,8 @@ public class ApiUserSendController {
         }
 
         return R.ok().put("code", code);
+         */
+        return R.ok().put("code", "");
     }
 
     /**
@@ -161,7 +169,6 @@ public class ApiUserSendController {
      */
     @Login
     @PostMapping("record" )
-    @ApiOperation("发送历史记录" )
     public R record(@LoginUser UserEntity user, @RequestParam int state) {
 
         //state = 1 :发送
@@ -176,5 +183,6 @@ public class ApiUserSendController {
         }
         return null;
     }
+
 
 }

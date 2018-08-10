@@ -2,6 +2,8 @@ package cn.bitflash.controller;
 
 import cn.bitflash.annotation.*;
 import cn.bitflash.service.*;
+import cn.bitflash.trade.UserAccountBean;
+import cn.bitflash.trade.UserAccountEntity;
 import cn.bitflash.user.*;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;

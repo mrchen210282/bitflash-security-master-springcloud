@@ -8,7 +8,7 @@ import java.util.Map;
 
 import cn.bitflash.FeignController.TradeFeign;
 import cn.bitflash.trade.*;
-import cn.bitflash.user.UserAccountEntity;
+import cn.bitflash.trade.UserAccountEntity;
 import cn.bitflash.user.UserEntity;
 import cn.bitflash.user.UserPayPwdEntity;
 import cn.bitflash.utils.Common;

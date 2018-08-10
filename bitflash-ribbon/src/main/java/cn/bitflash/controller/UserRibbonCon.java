@@ -1,7 +1,7 @@
 package cn.bitflash.controller;
 
-import cn.bitflash.feign.UserRibbon;
-import cn.bitflash.user.UserEntity;
+import cn.bitflash.feignInterface.UserRibbon;
+import cn.bitflash.login.UserEntity;
 import cn.bitflash.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class UserRibbonCon {
 
     @Autowired

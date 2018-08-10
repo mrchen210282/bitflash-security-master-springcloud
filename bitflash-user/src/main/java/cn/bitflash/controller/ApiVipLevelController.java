@@ -4,6 +4,7 @@ import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.exception.RRException;
 import cn.bitflash.service.*;
+import cn.bitflash.trade.UserAccountEntity;
 import cn.bitflash.user.*;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;

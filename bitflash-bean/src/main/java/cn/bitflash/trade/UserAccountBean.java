@@ -9,12 +9,12 @@
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- *  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
  */
 
-package cn.bitflash.user;
+package cn.bitflash.trade;
 
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
@@ -30,8 +30,8 @@ import java.util.Date;
  *
  * @author eric
  */
-@TableName("user_account" )
-public class UserAccountEntity implements Serializable {
+@TableName("user_account")
+public class UserAccountBean implements Serializable {
 
     /**
      *
@@ -104,6 +104,19 @@ public class UserAccountEntity implements Serializable {
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
     private Date createTime;
+
+    /**
+     * 是否已修改过昵称
+     */
+    private String nicklock;
+
+    public String getNicklock() {
+        return nicklock;
+    }
+
+    public void setNicklock(String nicklock) {
+        this.nicklock = nicklock;
+    }
 
     public String getUid() {
         return uid;

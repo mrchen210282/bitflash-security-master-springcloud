@@ -1,6 +1,6 @@
-package cn.bitflash.feign;
+package cn.bitflash.feignInterface;
 
-import cn.bitflash.DefaultFallBack.DefaultFallBackFactory;
+import cn.bitflash.feignInterface.impl.TradeHistoryFallback;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * wangjun
  */
-@FeignClient(value="bitflash-tradeHistory",fallbackFactory = DefaultFallBackFactory.class)
+@FeignClient(value="bitflash-tradeHistory",fallbackFactory = TradeHistoryFallback.class)
 public interface TradeHistoryRibbon {
 
     @PostMapping("/api/tradeHistory/selectTradeHistoryIncome")

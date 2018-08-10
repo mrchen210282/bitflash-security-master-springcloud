@@ -1,6 +1,7 @@
 package cn.bitflash.feignInterface;
 
 
+import cn.bitflash.feignInterface.impl.LoginFeignFallback;
 import cn.bitflash.login.RegisterForm;
 import cn.bitflash.utils.R;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -12,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  *
  */
-@FeignClient("bitflash-login")
+@FeignClient(value = "bitflash-login",fallbackFactory = LoginFeignFallback.class)
 public interface BitflashLoginFeign {
 
     @PostMapping("/api/reg/register")

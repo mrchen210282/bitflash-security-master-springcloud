@@ -17,9 +17,10 @@
 package cn.bitflash.resolver;
 
 import cn.bitflash.annotation.LoginUser;
+import cn.bitflash.feign.LoginFeign;
 import cn.bitflash.interceptor.AuthorizationInterceptor;
-import cn.bitflash.service.UserService;
-import cn.bitflash.user.UserEntity;
+import cn.bitflash.login.UserEntity;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -37,7 +38,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Component
 public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
     @Autowired
-    private UserService userService;
+    private LoginFeign userService;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -55,7 +56,7 @@ public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgu
         }
 
         // 获取用户信息
-        UserEntity user = userService.selectById((String) object);
+        UserEntity user = userService.selectOneByUser(new EntityWrapper<UserEntity>().eq("mobile",(String) object));
         return user;
     }
 }

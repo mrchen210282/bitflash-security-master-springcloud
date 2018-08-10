@@ -19,8 +19,9 @@ package cn.bitflash.interceptor;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.exception.RRException;
-import cn.bitflash.service.TokenService;
-import cn.bitflash.user.TokenEntity;
+import cn.bitflash.feign.LoginFeign;
+import cn.bitflash.login.TokenEntity;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.MD5Util;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
     @Autowired
-    private TokenService tokenService;
+    private LoginFeign tokenService;
 
     public static final String USER_KEY = "userId";
 
@@ -74,7 +75,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         }
 
         //查询token信息
-        TokenEntity tokenEntity = tokenService.queryByToken(mobile);
+        TokenEntity tokenEntity = tokenService.selectOne(new EntityWrapper<TokenEntity>().eq("mobile",mobile));
         if (tokenEntity == null) {
             throw new RRException("请重新登录获取token" );
         }

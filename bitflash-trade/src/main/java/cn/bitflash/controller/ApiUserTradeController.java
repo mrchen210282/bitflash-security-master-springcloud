@@ -49,12 +49,7 @@ public class ApiUserTradeController {
 
     private final Logger logger = LoggerFactory.getLogger(ApiUserTradeController.class);
 
-    @Autowired
-    private TradeFeign tradeFeign;
-
-    @Autowired
     private UserAccountService userAccountService;
-
     @Autowired
     private UserTradeHistoryService userTradeHistoryService;
 

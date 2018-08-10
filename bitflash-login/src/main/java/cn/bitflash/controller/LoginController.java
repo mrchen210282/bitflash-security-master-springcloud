@@ -1,10 +1,10 @@
 package cn.bitflash.controller;
 
+import cn.bitflash.annotation.Login;
 import cn.bitflash.service.TokenService;
 import cn.bitflash.service.UserService;
 import cn.bitflash.login.LoginForm;
 import cn.bitflash.utils.R;
-import cn.bitflash.annotation.Login;
 import common.validator.ValidatorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

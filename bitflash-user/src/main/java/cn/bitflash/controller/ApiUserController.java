@@ -1,27 +1,34 @@
 package cn.bitflash.controller;
 
-import cn.bitflash.service.UserService;
-import cn.bitflash.user.UserEntity;
+import cn.bitflash.service.UserInfoService;
+import cn.bitflash.service.UserInvitationCodeService;
+import cn.bitflash.user.UserInfoEntity;
+import cn.bitflash.user.UserInvitationCodeEntity;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author chen
  */
 @RestController
-@RequestMapping("/api/user" )
+@RequestMapping("/api" )
 //@Api(tags = "用户操作" )
 public class ApiUserController {
 
-    @Autowired
-    private UserService userService;
+     @Autowired
+    private UserInfoService userInfoService;
+@Autowired    private UserInvitationCodeService userInvitationCodeService;
 
-    @PostMapping("/selectOne")
-    public List<UserEntity> selectOne(@RequestParam Map<String, Object> params){
-        List<UserEntity> userList =  userService.selectByMap(params);
-        return userList;
+   @PostMapping("/user/withinCode/selectone")
+    public UserInvitationCodeEntity selectOne(@RequestBody EntityWrapper entityWrapper){
+        return  userInvitationCodeService.selectOne(entityWrapper);
+}
+
+    @PostMapping("/user/withinInfo/insert")
+    public boolean insert(@RequestBody UserInfoEntity userInfoEntity){
+        return  userInfoService.insert(userInfoEntity);
     }
+
 }

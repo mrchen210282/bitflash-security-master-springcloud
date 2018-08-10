@@ -2,8 +2,8 @@ package cn.bitflash.interceptor;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.exception.RRException;
-import cn.bitflash.service.TokenService;
-import cn.bitflash.user.TokenEntity;
+import cn.bitflash.feign.LoginFeign;
+import cn.bitflash.login.TokenEntity;
 import cn.bitflash.utils.AESTokenUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.apache.commons.lang.StringUtils;
@@ -14,12 +14,14 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
-    private TokenService tokenService;
+    private LoginFeign tokenService;
 
     public static final String TIME="time";
     public static final String TOKEN="token";
@@ -55,6 +57,9 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
         String uid=request.getParameter(UID);
         String realToken=AESTokenUtil.getToken(secretTime,secretToken);
         uid=AESTokenUtil.getData(realToken,uid);
+
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("token",realToken);
         TokenEntity tokenEntity=tokenService.selectOne(new EntityWrapper<TokenEntity>().eq("token",realToken));
         if(tokenEntity==null){
             throw new RRException("token信息错误" );

@@ -27,17 +27,14 @@ public class ApiUserSendController {
     @Autowired
     private UserSendService userSendService;
 
-    /*
-@Autowired
-    private UserService userService;
-     */
+
 
 
     @Autowired
     private UserBrokerageService userBrokerageService;
 
-    @Autowired
-    private UserAccountService userAccountService;
+    //@Autowired
+    //private UserAccountService userAccountService;
 
     /**
      * @param quantity 发送

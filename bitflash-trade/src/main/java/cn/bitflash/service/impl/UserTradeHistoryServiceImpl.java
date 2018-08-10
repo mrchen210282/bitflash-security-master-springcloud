@@ -3,13 +3,15 @@ package cn.bitflash.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import cn.bitflash.trade.UserTradeHistoryBean;
+import cn.bitflash.trade.UserTradeHistoryEntity;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 
 import cn.bitflash.dao.UserTradeHistoryDao;
-import cn.bitflash.entity.UserTradeHistoryBean;
-import cn.bitflash.entity.UserTradeHistoryEntity;
+import cn.bitflash.trade.UserTradeHistoryBean;
+import cn.bitflash.trade.UserTradeHistoryEntity;
 import cn.bitflash.service.UserTradeHistoryService;
 
 /**

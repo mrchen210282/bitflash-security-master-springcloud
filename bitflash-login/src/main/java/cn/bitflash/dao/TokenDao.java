@@ -16,7 +16,7 @@
 
 package cn.bitflash.dao;
 
-import cn.bitflash.user.TokenEntity;
+import cn.bitflash.login.TokenEntity;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 
 /**

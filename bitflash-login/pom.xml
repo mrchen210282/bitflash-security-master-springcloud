@@ -41,6 +41,15 @@
             <artifactId>mybatisplus-spring-boot-starter</artifactId>
             <version>${mybatisplus.spring.boot.version}</version>
         </dependency>
+        <!--spring cloud finchley.release版的 feign-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

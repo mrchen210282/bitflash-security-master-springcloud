@@ -1,12 +1,18 @@
 package cn.bitflash.controller;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.bitflash.FeignController.TradeFeign;
+import cn.bitflash.trade.*;
+import cn.bitflash.trade.UserAccountEntity;
+import cn.bitflash.user.UserEntity;
+import cn.bitflash.user.UserPayPwdEntity;
+import cn.bitflash.utils.Common;
+import common.utils.R;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,28 +29,14 @@ import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.annotation.PayPassword;
 import cn.bitflash.annotation.UserAccount;
-import cn.bitflash.common.Common;
-import cn.bitflash.common.utils.R;
-import cn.bitflash.entity.UserAccountEntity;
-import cn.bitflash.entity.UserBrokerageEntity;
-import cn.bitflash.entity.UserEntity;
-import cn.bitflash.entity.UserPayPwdEntity;
-import cn.bitflash.entity.UserPayUrlEntity;
-import cn.bitflash.entity.UserTradeBean;
-import cn.bitflash.entity.UserTradeEntity;
-import cn.bitflash.entity.UserTradeHistoryBean;
-import cn.bitflash.entity.UserTradeHistoryEntity;
-import cn.bitflash.entity.UserTradeLockEntity;
-import cn.bitflash.service.PlatFormConfigService;
+
 import cn.bitflash.service.UserAccountService;
 import cn.bitflash.service.UserBrokerageService;
 import cn.bitflash.service.UserPayUrlService;
 import cn.bitflash.service.UserTradeHistoryService;
 import cn.bitflash.service.UserTradeLockService;
 import cn.bitflash.service.UserTradeService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import springfox.documentation.annotations.ApiIgnore;
+
 
 /**
  * @author wangjun
@@ -57,9 +49,7 @@ public class ApiUserTradeController {
 
     private final Logger logger = LoggerFactory.getLogger(ApiUserTradeController.class);
 
-    //@Autowired
-    //private UserAccountService userAccountService;
-
+    private UserAccountService userAccountService;
     @Autowired
     private UserTradeHistoryService userTradeHistoryService;
 
@@ -72,8 +62,8 @@ public class ApiUserTradeController {
     @Autowired
     private UserBrokerageService userBrokerageService;
 
-    @Autowired
-    private PlatFormConfigService platFormConfigService;
+//    @Autowired
+//    private PlatFormConfigService platFormConfigService;
 
     @Autowired
     private UserPayUrlService userPayUrlService;
@@ -83,10 +73,14 @@ public class ApiUserTradeController {
      * @param pageNum     第几页
      * @return
      */
-    @Login
     @PostMapping("tradeList")
-    @ApiOperation(value = "交易首页")
-    public R tradeList(@ApiIgnore @UserAccount UserAccountEntity userAccount, @RequestParam String pageNum, @LoginUser UserEntity user) {
+    public R tradeList(@UserAccount UserAccountEntity userAccount, @RequestParam String pageNum, @LoginUser UserEntity user) {
+
+        Map<String,Object> aa = new HashMap<String,Object>();
+        aa.put("uid","3333");
+        List<UserEntity> list = tradeFeign.selectOne(aa);
+
+
         int pageTotal = 6;
         Map<String, Object> param = new HashMap<String, Object>();
         if (StringUtils.isNotBlank(user.getMobile())) {
@@ -105,30 +99,43 @@ public class ApiUserTradeController {
         } else {
             return R.error("无此用户！");
         }
-
         return R.ok().put("userAccount", param);
     }
 
+
+    @PostMapping("tradeListTest")
+    public R tradeList() {
+
+        System.out.print("999999999999999999");
+        Map<String,Object> aa = new HashMap<String,Object>();
+        aa.put("uid","9AA233965DC14499AADC890081268732");
+        List<UserEntity> list = tradeFeign.selectOne(aa);
+        System.out.print(list.size());
+
+        return R.ok().put("userAccount", "");
+    }
+
+
     @Login
     @PostMapping("responseTrade")
-    @ApiOperation(value = "跳转添加记录", response = UserAccount.class)
     public R responseTrade(@UserAccount UserAccountEntity userAccount) {
 
         Map<String, Object> param = new HashMap<String, Object>();
         param.put("uid", userAccount.getUid());
 
-        UserAccountEntity userAccountEntity = userAccountService.selectById(userAccount.getUid());
+        List<UserAccountEntity> userAccountEntity = userAccountService.selectByMap(param);
+
         Map<String, Object> returnMap = null;
         if (null != userAccountEntity) {
+
             returnMap = userTradeService.selectTrade(param);
-            returnMap.put("availableAssets", userAccount.getAvailableAssets());
+            returnMap.put("availableAssets", userAccountEntity.get(0).getAvailableAssets());
         }
         return R.ok().put("userAccount", returnMap);
     }
 
     @Login
     @PostMapping("forwardPay")
-    @ApiOperation(value = "跳转到付款页")
     public R forwardPay(@RequestParam String id) {
         if (StringUtils.isNotBlank(id)) {
             Map<String, Object> map = new HashMap<String, Object>();
@@ -157,7 +164,6 @@ public class ApiUserTradeController {
 
     @Login
     @PostMapping("saveTrade")
-    @ApiOperation(value = "添加卖出记录", response = UserAccount.class)
     @Transactional
     public R saveTrade(@UserAccount UserAccountEntity userAccount, @RequestParam String quantity, @RequestParam String price) {
 
@@ -240,8 +246,7 @@ public class ApiUserTradeController {
 
     @Login
     @PostMapping("listTrade")
-    @ApiOperation(value = "查询卖出购买记录", response = UserAccount.class)
-    public R listTrade(@ApiIgnore @LoginUser UserEntity user, @RequestParam String state) {
+    public R listTrade(@LoginUser UserEntity user, @RequestParam String state) {
         Map<String, Object> param = new HashMap<String, Object>();
         List<UserTradeBean> list = null;
         if (StringUtils.isNotBlank(state)) {
@@ -258,7 +263,6 @@ public class ApiUserTradeController {
 
     @Login
     @PostMapping("cancelTrade")
-    @ApiOperation(value = "撤消交易")
     @Transactional
     public R cancelTrade(@RequestParam String id) {
         if (StringUtils.isNotBlank(id)) {
@@ -299,7 +303,6 @@ public class ApiUserTradeController {
      */
     @Login
     @PostMapping("cancelOrder")
-    @ApiOperation(value = "取消订单")
     @Transactional
     public R cancelOrder(@RequestParam String id) {
         if (StringUtils.isNotBlank(id)) {
@@ -324,9 +327,8 @@ public class ApiUserTradeController {
      */
     @Login
     @PostMapping("purchase")
-    @ApiOperation(value = "购买")
     @Transactional
-    public R purchase(@ApiIgnore @LoginUser UserEntity user, @RequestParam String id, @RequestParam String mobile, @RequestParam String payPwd, @PayPassword UserPayPwdEntity userPayPwd) {
+    public R purchase(@LoginUser UserEntity user, @RequestParam String id, @RequestParam String mobile, @RequestParam String payPwd, @PayPassword UserPayPwdEntity userPayPwd) {
         if (userPayPwd.getPayPassword().equals(payPwd)) {
             if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(mobile)) {
 
@@ -408,7 +410,6 @@ public class ApiUserTradeController {
      */
     @Login
     @PostMapping("viewDetail")
-    @ApiOperation(value = "查看订单明细")
     public R viewDetail(@RequestParam String id) {
         if (StringUtils.isNotBlank(id)) {
             Map<String, Object> param = new HashMap<String, Object>();
@@ -442,7 +443,6 @@ public class ApiUserTradeController {
      */
     @Login
     @PostMapping("payTrade")
-    @ApiOperation(value = "我已付款")
     @Transactional
     public R payTrade(@RequestParam String id, @UserAccount UserAccountEntity userAccount) {
         if (StringUtils.isNotBlank(id)) {
@@ -480,10 +480,9 @@ public class ApiUserTradeController {
     /**
      * @param id 订单id
      * @author chen
-     */
+
     @Login
     @PostMapping("provingState")
-    @ApiOperation("验证订单是否被锁定")
     public R provingState(@RequestParam String id, @LoginUser UserEntity user) {
         String uid = user.getUid();
         switch (this.provingTime(id, uid)) {
@@ -501,14 +500,13 @@ public class ApiUserTradeController {
                 return R.error("系统异常");
         }
     }
-
+     */
     /**
      * @param id 订单id
      * @author chen
-     */
+
     @Login
     @PostMapping("addLock")
-    @ApiOperation("锁定订单")
     public R addLock(@RequestParam String id, @LoginUser UserEntity user) throws ParseException {
         String uid = user.getUid();
         Integer lock = userTradeLockService.selectByDay(user.getUid());
@@ -531,14 +529,14 @@ public class ApiUserTradeController {
         userTradeService.updateById(userTradeEntity);
         return R.ok().put("code", 200);
     }
-
+     */
     /**
      * 判断时间是否超时
      *
      * @param id  账单id
      * @param uid 操作人uid
      * @author chen 1.没数据锁定 2.操作人自己锁定 3.其他人锁定 4.锁定时间超时 5撤销的订单
-     */
+
     public int provingTime(String id, String uid) {
         UserTradeEntity userTradeEntity = userTradeService.selectById(id);
         if (userTradeEntity.getState().equals(Common.STATE_CANCEL)) {
@@ -568,13 +566,12 @@ public class ApiUserTradeController {
         }
         return 1;
     }
-
+     */
     /**
      * @author chen
-     */
+
     @Login
     @PostMapping("updateTradeState")
-    @ApiOperation("更新交易订单状态")
     public R updateTradeState(@LoginUser UserEntity user) {
         List<Map<String, Object>> mapList = userTradeService.getHistoryBystate5();
         for (Map<String, Object> map : mapList) {
@@ -591,10 +588,9 @@ public class ApiUserTradeController {
         }
         return R.ok();
     }
-
+     */
     @Login
     @PostMapping("buyMessage")
-    @ApiOperation("查询买家信息")
     public R buyMessage(@RequestParam String id) {
         return R.ok().put("buyMessage", userTradeService.buyMessage(id));
     }

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/user-app")
+@RequestMapping("/api/login")
 public class LoginController {
 
     @Autowired

@@ -124,6 +124,16 @@
             <artifactId>gexin-rp-sdk-template</artifactId>
             <version>4.0.0.16</version>
         </dependency>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-core</artifactId>
+            <version>3.2.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-dysmsapi</artifactId>
+            <version>1.1.0</version>
+        </dependency>
     </dependencies>
 
     <!-- 阿里云maven仓库 -->

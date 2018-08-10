@@ -17,17 +17,14 @@ import org.springframework.web.bind.annotation.*;
 //@Api(tags = "用户操作" )
 public class ApiUserController {
 
-    @Autowired
-    private UserInvitationCodeService userInvitationCodeService;
-
-    @Autowired
+     @Autowired
     private UserInfoService userInfoService;
+@Autowired    private UserInvitationCodeService userInvitationCodeService;
 
-
-    @PostMapping("/user/withinCode/selectone")
+   @PostMapping("/user/withinCode/selectone")
     public UserInvitationCodeEntity selectOne(@RequestBody EntityWrapper entityWrapper){
         return  userInvitationCodeService.selectOne(entityWrapper);
-    }
+}
 
     @PostMapping("/user/withinInfo/insert")
     public boolean insert(@RequestBody UserInfoEntity userInfoEntity){

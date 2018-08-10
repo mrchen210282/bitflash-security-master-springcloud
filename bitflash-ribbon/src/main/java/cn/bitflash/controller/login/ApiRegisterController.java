@@ -18,6 +18,6 @@ public class ApiRegisterController {
 
     @PostMapping("register")
     public R register(@RequestBody RegisterForm form, HttpServletResponse response) {
-
+        return R.ok();
     }
 }

@@ -6,11 +6,11 @@ import cn.bitflash.feign.SysFeign;
 import cn.bitflash.feign.TradeFeign;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.*;
+import cn.bitflash.system.UserInfoConfigEntity;
 import cn.bitflash.trade.UserAccountEntity;
 import cn.bitflash.user.*;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import common.exception.RRException;
 import common.utils.CodeUtils;
 import common.utils.Common;
@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
@@ -51,109 +52,127 @@ public class ApiVipLevelController {
     private UserRelationService userRelationService;
 
     @Autowired
+    private UserInfoConfigService userInfoConfigService;
+
+    @Autowired
     private TradeFeign tradeFeign;
 
     @Autowired
     private SysFeign sysfeign;
 
     /**
-     * 获取vip等级信息
+     * @author chen
      */
     @Login
-    @PostMapping("getVipLevel" )
+    @PostMapping("getVipLevel")
+    //@ApiOperation("获取用户vip信息")
     public R getVipLevel(@LoginUser UserEntity user) {
         String uid = user.getUid();
         UserInfoEntity userEntity = userInfoService.selectOne(new EntityWrapper<UserInfoEntity>().eq("uid", uid));
         if (userEntity != null) {
-            Wrapper<UserAccountEntity> userAccountEntityWrapper = new EntityWrapper<UserAccountEntity>().eq("uid", uid);
-            UserAccountEntity userAccountEntity = tradeFeign.selectOne(userAccountEntityWrapper);
-            return R.ok().put("vip", userEntity.getIsVip()).put("bit", userAccountEntity.getAvailableAssets());
-        } else {
-            return R.error("此用户不存在" );
+            String vipLevel = userEntity.getIsVip();
+            UserAccountEntity userAccountEntity = tradeFeign.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", uid));
+            Double num = userAccountEntity.getAvailableAssets().doubleValue();
 
+            List<UserInfoConfigEntity> vipList=userInfoConfigService.selectPage(new Page<UserInfoConfigEntity>(0,6)).getRecords();
+            if(vipLevel.equals(Common.VIP_LEVEL_0)){
+                Map<String, Object> vipMap = this.vipLevel(num,vipList);
+                vipList.remove(0);
+                return R.ok().put("vip", vipLevel).put("bit", num).put("level", vipMap).put("vip_conditions", vipList);
+            }
+            vipList.remove(0);
+            return R.ok().put("vip", vipLevel).put("bit", num).put("vip_conditions", vipList);
+        } else {
+            return R.error("此用户不存在");
         }
     }
 
     /**
-     * 提升vip等级
+     * @author chen
      */
-    @Login
+    //@Login @LoginUser UserEntity user
     @Transactional
-    @PostMapping("updateVipLevel" )
-    public R updateVipLevel(@LoginUser UserEntity user) {
+    @PostMapping("updateVipLevel")
+    //@ApiOperation("提升vip等级")
+    public R updateVipLevel(@RequestParam String uid, @RequestParam("vipLevel") Integer vipLevel) {
         /**
          *  1.查询是否是vip
-         *		只有vip等级为0的用户才能升级操作
+         *		只有vip等级为0的用户才能有机会赠送贝壳
          *  2.查询可用资产(availableAssets)是否够用
-         *      2.1 金额够升级vip2
-         *          2.1.1 可用资产(可用资产=调节释放+调节收益)-=20000
+         *      2.1 金额够升级
+         *          2.1.1 可用资产(可用资产=调节释放+调节收益)
          *          2.1.2 购买数量+=20000
          *          2.1.3 赠送数量+=20000*0.05
          *          2.1.4 冻结数量+=20000+赠送数量
          *      2.2 return 金额不足
          */
-        String uid = user.getUid();
+        //String uid = user.getUid();
         UserInfoEntity userInfo = userInfoService.selectById(uid);
         String invitationCode = userInfo.getInvitationCode();
         if (StringUtils.isBlank(invitationCode)) {
-            return R.error("非邀请码注册用户" );
+            return R.error("非邀请码注册用户");
         }
-        //vip升级数量
-        Double vip_count = Double.valueOf(sysfeign.getVal(Common.VIP_CONDITION));
+        if (!userInfo.getIsVip().equals(Common.VIP_LEVEL_0)) {
+            return R.error("后续升级VIP操作请联系后台管理");
+        }
+        //vip升级消息
+        UserInfoConfigEntity vip=userInfoConfigService.selectById(vipLevel);
+        //升级vip所需的贝壳数量
+        int vip_count = vip.getMin();
         //赠送数量
-        Double giveRatio = Double.valueOf(sysfeign.getVal(Common.GIVE_RATIO));
-        //vip——count BigDecimal类型
-        BigDecimal vip_number = new BigDecimal(vip_count);
+        Double giveRatio = 0.0;
         if (userInfo.getIsVip().equals(Common.VIP_LEVEL_0)) {
-            UserAccountEntity userAccount = tradeFeign.selectById(uid);
-            BigDecimal acacilNum = userAccount.getAvailableAssets();
-            // 可用资产>=2w
-            if (acacilNum.compareTo(vip_number) == 1 || acacilNum.compareTo(vip_number) == 0) {
-                /**
-                 * 计算升级VIP之后的数据
-                 * 2.1金额够升级vip2
-                 * 2.1.1 可用资产(可用资产=调节释放+调节收益)-=20000
-                 * 2.1.2 购买数量+=20000
-                 * 2.1.3 赠送数量+=20000*0.5
-                 * 2.1.4 冻结数量+=20000+赠送数量
-                 */
-                BigDecimal zero = new BigDecimal(0.00);
-                double result = userAccount.getRegulateRelease().doubleValue() - vip_count;
-                if (result <= 0) {
-                    userAccount.setRegulateRelease(zero);
-                    userAccount.setRegulateIncome(new BigDecimal(result + userAccount.getRegulateIncome().doubleValue()));
-                } else {
-                    userAccount.setRegulateRelease(new BigDecimal(result));
-                }
-                //2.1.1
-                userAccount.setAvailableAssets(userAccount.getRegulateRelease().add(userAccount.getRegulateIncome()));
-                //2.1.2
-                userAccount.setPurchase(userAccount.getPurchase().add(vip_number));
-                //2.1.3
-                userAccount.setGiveAmount(userAccount.getGiveAmount().add(new BigDecimal(vip_count * giveRatio)));
-                //2.1.4
-                userAccount.setFrozenAssets(userAccount.getFrozenAssets().add(vip_number.add(new BigDecimal(vip_count * giveRatio))));
-                userAccount.setTotelAssets(userAccount.getPurchase().add(userAccount.getGiveAmount()));
-                tradeFeign.updateById(userAccount);
-                //更新会员等级
-                userInfo.setIsVip(Common.VIP_LEVEL_2);
-                userInfo.setVipCreateTime(new Date());
-                userInfoService.updateById(userInfo);
-                UserInvitationCodeEntity userInvit = new UserInvitationCodeEntity();
-                userInvit.setUid(uid);
-                userInvit.setLftCode(CodeUtils.genInvitationCode());
-                userInvit.setRgtCode(CodeUtils.genInvitationCode());
-                //生成会员的邀请码
-                userInvitationCodeService.insert(userInvit);
-                //插入体系内
-                this.insertTradeCodes(invitationCode, uid);
-                logger.info("升级vip的用户uid/手机号为：" + user.getUid() + "--" + user.getMobile());
-                return R.ok();
-            } else {
-                return R.error("资金不足" );
-            }
+            giveRatio = vip.getMin() * vip.getGiveRate();
         }
-        return R.error("已经是VIP用户，无法再次提升，敬请关注后续动态" );
+        //BigDecimal类型的vip升级数量
+        BigDecimal vip_number = new BigDecimal(vip_count);
+        UserAccountEntity userAccount = tradeFeign.selectById(uid);
+        BigDecimal acacilNum = userAccount.getAvailableAssets();
+        // 可用资产>=所需升级的vip数量
+        if (acacilNum.compareTo(vip_number) == 1 || acacilNum.compareTo(vip_number) == 0) {
+            /**
+             * 计算升级VIP之后的数据
+             * 2.1金额够升级vip2
+             * 2.1.1 可用资产(可用资产=调节释放+调节收益)-=20000
+             * 2.1.2 购买数量+=20000
+             * 2.1.3 赠送数量+=20000*0.5
+             * 2.1.4 冻结数量+=20000+赠送数量
+             */
+            BigDecimal zero = new BigDecimal(0.00);
+            double result = userAccount.getRegulateRelease().doubleValue() - vip_count;
+            if (result <= 0) {
+                userAccount.setRegulateRelease(zero);
+                userAccount.setRegulateIncome(new BigDecimal(result + userAccount.getRegulateIncome().doubleValue()));
+            } else {
+                userAccount.setRegulateRelease(new BigDecimal(result));
+            }
+            //2.1.1
+            userAccount.setAvailableAssets(userAccount.getRegulateRelease().add(userAccount.getRegulateIncome()));
+            //2.1.2
+            userAccount.setPurchase(userAccount.getPurchase().add(vip_number));
+            //2.1.3
+            userAccount.setGiveAmount(userAccount.getGiveAmount().add(new BigDecimal(giveRatio)));
+            //2.1.4
+            userAccount.setFrozenAssets(userAccount.getFrozenAssets().add(vip_number.add(new BigDecimal(giveRatio))));
+            userAccount.setTotelAssets(userAccount.getPurchase().add(userAccount.getGiveAmount()));
+            tradeFeign.updateById(userAccount);
+            //更新会员等级
+            userInfo.setIsVip(vip.getId().toString());
+            userInfo.setVipCreateTime(new Date());
+            userInfoService.updateById(userInfo);
+            UserInvitationCodeEntity userInvit = new UserInvitationCodeEntity();
+            userInvit.setUid(uid);
+            userInvit.setLftCode(CodeUtils.genInvitationCode());
+            userInvit.setRgtCode(CodeUtils.genInvitationCode());
+            //生成会员的邀请码
+            userInvitationCodeService.insert(userInvit);
+            //插入体系内
+            this.insertTradeCodes(invitationCode, uid);
+            //logger.info("升级vip的用户uid/手机号为：" + user.getUid() + "--" + user.getMobile());
+            return R.ok();
+        } else {
+            return R.error("资金不足");
+        }
     }
 
 
@@ -199,7 +218,8 @@ public class ApiVipLevelController {
             }
         } else if (invitationCode.equals(pCode.getRgtCode()) && child_user.size() == 0 && f_user.size() > 0) {
             if (f_user.size() == 1) {
-            	throw new RRException("只能先插入左区！");
+                //return R.error("只能先插入左区" );
+                throw new RRException("只能先插入左区！");
             } else if (f_user.size() == 2) {
                 userRelationService.insertTreeNode(pCode.getUid(), uid, invitationCode);
             } else if (f_user.size() > 2) {
@@ -240,30 +260,54 @@ public class ApiVipLevelController {
                 this.getChildNode(p3_user, map);
             }
         }
-        last_node = map.get("key" );
+        last_node = map.get("key");
         return last_node.getUid();
-        /*if (p1_user.size() > 1) {
-            //左区比右区收益高/相等 添加到左区
-            UserRelationJoinAccountEntity p2_user;
-            if (p1_user.get(0).getLftAchievement().compareTo(p1_user.get(0).getRgtAchievement()) >= 0) {
-                //左节点
-                p2_user = p1_user.stream().filter((u) -> u.getLft() == p1_user.get(0).getLft() + 1).findFirst().get();
-            }
-            //右区收益高
-            else {
-                //右节点
-                p2_user = p1_user.stream().filter((u) -> u.getLft() == p1_user.get(1).getRgt() + 1).findFirst().get();
-            }
-            List<UserRelationJoinAccountEntity> p3_user = p1_user.stream().filter((u) -> (
-                    u.getLft() >= p2_user.getLft()) && u.getRgt() <= p2_user.getRgt()).collect(Collectors.toList());
-            if (p3_user.size() == 1) {
-                map.put("key", p3_user.get(0));
-            } else {
-                this.getChildNode(p3_user, map);
-            }
-        }*/
-
-
     }
 
+    public Map<String, Object> vipLevel(Double num,List<UserInfoConfigEntity> list) {
+        Map<String, Object> vipMap = new HashMap<>();
+        if (num < list.get(1).getMin()) {
+            vipMap.put("vip1", 0);
+            vipMap.put("vip2", 0);
+            vipMap.put("vip3", 0);
+            vipMap.put("vip4", 0);
+            vipMap.put("vip5", 0);
+        }
+        else if (num >= list.get(1).getMin() && num < list.get(2).getMin()) {
+            vipMap.put("vip1", 1);
+            vipMap.put("vip2", 0);
+            vipMap.put("vip3", 0);
+            vipMap.put("vip4", 0);
+            vipMap.put("vip5", 0);
+        }
+        else if (num >= list.get(2).getMin() && num < list.get(3).getMin()) {
+            vipMap.put("vip1", 1);
+            vipMap.put("vip2", 1);
+            vipMap.put("vip3", 0);
+            vipMap.put("vip4", 0);
+            vipMap.put("vip5", 0);
+        }
+        else if (num >= list.get(3).getMin() && num < list.get(4).getMin()) {
+            vipMap.put("vip1", 1);
+            vipMap.put("vip2", 1);
+            vipMap.put("vip3", 1);
+            vipMap.put("vip4", 0);
+            vipMap.put("vip5", 0);
+        }
+        else if (num >= list.get(4).getMin() && num < list.get(5).getMin()) {
+            vipMap.put("vip1", 1);
+            vipMap.put("vip2", 1);
+            vipMap.put("vip3", 1);
+            vipMap.put("vip4", 1);
+            vipMap.put("vip5", 0);
+        }
+        else if (num >= list.get(5).getMin()) {
+            vipMap.put("vip1", 1);
+            vipMap.put("vip2", 1);
+            vipMap.put("vip3", 1);
+            vipMap.put("vip4", 1);
+            vipMap.put("vip5", 1);
+        }
+        return vipMap;
+    }
 }

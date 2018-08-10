@@ -26,31 +26,31 @@ public class TradeFallback implements FallbackFactory<TradeFeign> {
 
             @Override
             public UserAccountBean selectUserAccount(Map<String, Object> param) {
-                log.error("获取地址失败-----:"+throwable.getMessage());
+                log.error("获取用户账号失败-----:"+throwable.getMessage());
                 return new UserAccountBean();
             }
 
             @Override
             public UserAccountEntity selectOne(Wrapper<UserAccountEntity> param) {
-                log.error("获取地址失败-----:"+throwable.getMessage());
+                log.error("获取账号失败-----:"+throwable.getMessage());
                 return new UserAccountEntity();
             }
 
             @Override
             public UserAccountEntity selectById(String uid) {
-                log.error("获取地址失败-----:"+throwable.getMessage());
+                log.error("获取账号失败-----:"+throwable.getMessage());
                 return new UserAccountEntity();
             }
 
             @Override
             public List<Map<String, Object>> selectTradeUrl(Map<String, Object> param) {
-                log.error("获取地址失败-----:"+throwable.getMessage());
+                log.error("获取交易地址失败-----:"+throwable.getMessage());
                 return null;
             }
 
             @Override
             public boolean updateById(UserAccountEntity userAccountEntity) {
-                log.error("获取地址失败-----:"+throwable.getMessage());
+                log.error("修改账号失败-----:"+throwable.getMessage());
                 return false;
             }
         };

@@ -2,9 +2,9 @@ package cn.bitflash.interceptor;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.exception.RRException;
+import cn.bitflash.login.TokenEntity;
 import cn.bitflash.redisConfig.RedisKey;
 import cn.bitflash.service.TokenService;
-import cn.bitflash.user.TokenEntity;
 import cn.bitflash.utils.AESTokenUtil;
 import cn.bitflash.utils.RedisUtils;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;

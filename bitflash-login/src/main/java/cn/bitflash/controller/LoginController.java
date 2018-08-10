@@ -33,7 +33,7 @@ public class LoginController {
 
     @Login
     @PostMapping("logout" )
-    public R logout(@RequestBody @RequestAttribute("userId" ) String uid) {
+    public R logout(@RequestBody @RequestAttribute("uid" ) String uid) {
         tokenService.expireToken(uid);
         return R.ok();
     }

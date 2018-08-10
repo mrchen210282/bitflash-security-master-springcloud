@@ -2,12 +2,17 @@ package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
+import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserAccountService;
 import cn.bitflash.service.UserBrokerageService;
 import cn.bitflash.service.UserSendService;
+import cn.bitflash.trade.UserAccountEntity;
+import cn.bitflash.trade.UserBrokerageEntity;
 import cn.bitflash.trade.UserSendEntity;
-import cn.bitflash.user.UserEntity;
-import common.utils.R;
+
+import cn.bitflash.utils.R;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,14 +35,14 @@ public class ApiUserSendController {
     @Autowired
     private UserSendService userSendService;
 
-
-
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private UserBrokerageService userBrokerageService;
 
-    //@Autowired
-    //private UserAccountService userAccountService;
+    @Autowired
+    private UserAccountService userAccountService;
 
     /**
      * @param quantity 发送
@@ -46,17 +54,11 @@ public class ApiUserSendController {
     @PostMapping("userSend" )
     public R userSend(@RequestParam String quantity, @RequestParam String uuid, @LoginUser UserEntity user) {
 
-        /**
-         *
-
-
         //交易状态：
         //‘1’用户不存在；‘0’操作成功；‘-1’余额不足无法扣款
         int code = 3;
         //业务状态
         boolean relation = false;
-
-
         //获取Sendee_uid，如果用户不存在返回‘用户不存在’错误。
         UserEntity Sendee = userService.selectOne(new EntityWrapper<UserEntity>().eq("uuid", uuid));
         String Sendee_uid = "";
@@ -130,7 +132,6 @@ public class ApiUserSendController {
             relation = false;
         }
 
-
         //添加数据user_send,添加赠送记录
         if (relation) {
             UserSendEntity us = new UserSendEntity();
@@ -142,7 +143,6 @@ public class ApiUserSendController {
             userSendService.insert(us);
         }
 
-
         //如果双方交易完成
         if (relation) {
             BigDecimal get_brokerages = user_brokerage.add(userbroker.getSellBrokerage());
@@ -151,10 +151,7 @@ public class ApiUserSendController {
             userBrokerageService.update(userbroker, new EntityWrapper<UserBrokerageEntity>().eq("id", 1));
             code = 0;
         }
-
         return R.ok().put("code", code);
-         */
-        return R.ok().put("code", "");
     }
 
     /**
@@ -178,6 +175,4 @@ public class ApiUserSendController {
         }
         return null;
     }
-
-
 }

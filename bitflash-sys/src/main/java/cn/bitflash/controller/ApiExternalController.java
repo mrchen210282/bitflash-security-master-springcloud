@@ -89,10 +89,8 @@ public class ApiExternalController {
      * @throws UnsupportedEncodingException
      */
     @ResponseBody
-    // @OtherLogin
     @GetMapping("changeBKCNum")
     public R changeBKCNum(HttpServletRequest request) throws UnsupportedEncodingException {
-        // String uid = token.getUid();
         logger.info("---------------changeBKCNum----------------");
         String uid = request.getParameter("uid");
         String flag = request.getParameter("flag");

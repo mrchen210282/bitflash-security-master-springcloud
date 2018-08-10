@@ -21,7 +21,7 @@ import java.util.Map;
 public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
-    private LoginFeign tokenService;
+    private LoginFeign loginFeign;
 
     public static final String TIME="time";
     public static final String TOKEN="token";
@@ -60,13 +60,15 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
 
         Map<String,Object> map = new HashMap<String,Object>();
         map.put("token",realToken);
-        TokenEntity tokenEntity=tokenService.selectOne(new EntityWrapper<TokenEntity>().eq("token",realToken));
+        TokenEntity tokenEntity=loginFeign.selectOne(new EntityWrapper<TokenEntity>().eq("token",realToken));
         if(tokenEntity==null){
             throw new RRException("token信息错误" );
         }
         if(!tokenEntity.getUid().equals(uid)){
             throw new RRException("token信息与用户信息不符");
         }
+        //设置userId到request里，后续根据userId，获取用户信息
+        request.setAttribute(UID, tokenEntity.getUid());
         return true;
 
     }

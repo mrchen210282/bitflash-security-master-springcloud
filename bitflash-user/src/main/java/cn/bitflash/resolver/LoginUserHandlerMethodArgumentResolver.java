@@ -18,7 +18,7 @@ package cn.bitflash.resolver;
 
 import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.feign.LoginFeign;
-import cn.bitflash.interceptor.AuthorizationInterceptor;
+import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.login.UserEntity;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Component
 public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
     @Autowired
-    private LoginFeign userService;
+    private LoginFeign loginFeign;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -50,13 +50,13 @@ public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgu
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer container, NativeWebRequest request,
                                   WebDataBinderFactory factory) throws Exception {
         // 获取用户ID
-        Object object = request.getAttribute(AuthorizationInterceptor.USER_KEY, RequestAttributes.SCOPE_REQUEST);
+        Object object = request.getAttribute(ApiLoginInterceptor.UID, RequestAttributes.SCOPE_REQUEST);
         if (object == null) {
             return null;
         }
 
         // 获取用户信息
-        UserEntity user = userService.selectOneByUser(new EntityWrapper<UserEntity>().eq("mobile",(String) object));
+        UserEntity user = loginFeign.selectOneByUser(new EntityWrapper<UserEntity>().eq("mobile",(String) object));
         return user;
     }
 }

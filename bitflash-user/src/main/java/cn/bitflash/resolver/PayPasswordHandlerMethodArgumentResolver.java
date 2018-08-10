@@ -1,7 +1,7 @@
 package cn.bitflash.resolver;
 
 import cn.bitflash.annotation.PayPassword;
-import cn.bitflash.interceptor.AuthorizationInterceptor;
+import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.service.UserPayPwdService;
 import cn.bitflash.user.UserPayPwdEntity;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -28,7 +28,7 @@ public class PayPasswordHandlerMethodArgumentResolver implements HandlerMethodAr
     @Override
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest request, WebDataBinderFactory webDataBinderFactory) throws Exception {
         // 获取用户ID
-        Object object = request.getAttribute(AuthorizationInterceptor.USER_KEY, RequestAttributes.SCOPE_REQUEST);
+        Object object = request.getAttribute(ApiLoginInterceptor.UID, RequestAttributes.SCOPE_REQUEST);
         UserPayPwdEntity payPwd = userPayPwdService.selectOne(new EntityWrapper<UserPayPwdEntity>().eq("uid", object.toString()));
 
         return payPwd == null ? null : payPwd;

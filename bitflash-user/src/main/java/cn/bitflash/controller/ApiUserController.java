@@ -13,22 +13,23 @@ import org.springframework.web.bind.annotation.*;
  * @author chen
  */
 @RestController
-@RequestMapping("/api" )
+@RequestMapping("/api")
 //@Api(tags = "用户操作" )
 public class ApiUserController {
 
-     @Autowired
+    @Autowired
     private UserInfoService userInfoService;
-@Autowired    private UserInvitationCodeService userInvitationCodeService;
+    @Autowired
+    private UserInvitationCodeService userInvitationCodeService;
 
-   @PostMapping("/user/withinCode/selectone")
-    public UserInvitationCodeEntity selectOne(@RequestBody EntityWrapper entityWrapper){
-        return  userInvitationCodeService.selectOne(entityWrapper);
-}
+    @PostMapping("/user/withinCode/selectone")
+    public UserInvitationCodeEntity selectOne(@RequestBody EntityWrapper entityWrapper) {
+        return userInvitationCodeService.selectOne(entityWrapper);
+    }
 
     @PostMapping("/user/withinInfo/insert")
-    public boolean insert(@RequestBody UserInfoEntity userInfoEntity){
-        return  userInfoService.insert(userInfoEntity);
+    public boolean insert(@RequestBody UserInfoEntity userInfoEntity) {
+        return userInfoService.insert(userInfoEntity);
     }
 
 }

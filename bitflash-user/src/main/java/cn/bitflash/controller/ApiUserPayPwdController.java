@@ -17,23 +17,23 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Date;
 
 /**
+ * 用户交易密码
  * @author chen
  */
 @RestController
-@RequestMapping("/api/payPwd" )
-//@Api(tags = "用户交易密码" )
+@RequestMapping("/api/payPwd")
 public class ApiUserPayPwdController {
 
     @Autowired
     private UserPayPwdService userPayPwdService;
 
     /**
+     * 添加交易密码
      * @param payPassword 交易密码
      * @author chen
      */
     @Login
     @PostMapping("addPayPwd" )
-   // @ApiOperation("添加交易密码" )
     public R addPayPassword(@RequestParam String payPassword, @LoginUser UserEntity user) {
         String uid = user.getUid();
         UserPayPwdEntity userPayPwdEntity = userPayPwdService.selectOne(new EntityWrapper<UserPayPwdEntity>().eq("uid", uid));
@@ -54,13 +54,13 @@ public class ApiUserPayPwdController {
     }
 
     /**
+     * 更新交易密码
      * @param oldPwd 旧密码
      * @param newPwd 新密码
      * @author chen
      */
     @Login
     @PostMapping("updatePayPwd" )
-    //@ApiOperation("更新交易密码" )
     public R updatePayPwd(@PayPassword UserPayPwdEntity payPwd, @RequestParam String oldPwd, @RequestParam String newPwd) {
         if (payPwd != null) {
             if (oldPwd.equals(payPwd.getPayPassword())) {

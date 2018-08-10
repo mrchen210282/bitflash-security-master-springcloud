@@ -17,7 +17,7 @@
 package cn.bitflash.resolver;
 
 import cn.bitflash.annotation.UserRelation;
-import cn.bitflash.interceptor.AuthorizationInterceptor;
+import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.service.UserRelationService;
 import cn.bitflash.user.UserRelationJoinAccountEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class UserRelationHandlerMethodArgumentResolver implements HandlerMethodA
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer container, NativeWebRequest request,
                                   WebDataBinderFactory factory) throws Exception {
         // 获取用户ID
-        Object object = request.getAttribute(AuthorizationInterceptor.USER_KEY, RequestAttributes.SCOPE_REQUEST);
+        Object object = request.getAttribute(ApiLoginInterceptor.UID, RequestAttributes.SCOPE_REQUEST);
         if (object == null) {
             return null;
         }

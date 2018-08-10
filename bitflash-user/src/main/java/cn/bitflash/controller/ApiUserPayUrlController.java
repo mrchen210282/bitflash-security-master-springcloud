@@ -34,12 +34,13 @@ public class ApiUserPayUrlController {
     private UserPayUrlService userPayUrlService;
 
     @Autowired
-    private TradeFeign userTradeService;
+    private TradeFeign tradeFeign;
 
     @Autowired
     private UserInfoService userInfoService;
 
     /**
+     * 上传的图片
      * @param img     上传的图片
      * @param imgType 图片类型(微信:1,支付宝:2,身份证正面：3，身份证反面：4)
      * @param
@@ -47,15 +48,9 @@ public class ApiUserPayUrlController {
      */
     @Login
     @PostMapping("upload" )
-    //@ApiOperation(value = "上传图片" )
     public R upload(@RequestParam String img, @RequestParam String imgType, @LoginUser UserEntity user) {
 
         String imgUrl = "";
-        // bufferedReader = new BufferedReader(new
-        // FileReader("/property/config.properties"));
-        // prop.load(bufferedReader);
-        // String path = prop.getProperty("imgurl");
-        //String path = "D:\\upload\\img\\";
         String path = "/home/statics/qrcode/";
 
         String md5 = MD5Util.stringToMD5(user.getMobile() + System.currentTimeMillis());
@@ -113,13 +108,17 @@ public class ApiUserPayUrlController {
         return R.ok();
     }
 
+    /**
+     * 取得上传的图片
+     * @param user
+     * @return
+     */
     @Login
     @PostMapping("userInfoImg" )
-    //@ApiOperation(value = "取得上传的图片" )
     public R userInfoImg(@LoginUser UserEntity user) {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("mobile", user.getMobile());
-        List<Map<String, Object>> list = userTradeService.selectTradeUrl(map);
+        List<Map<String, Object>> list = tradeFeign.selectTradeUrl(map);
         Map<String, Object> returnMap1 = null;
         if (null != list && list.size() > 0) {
             returnMap1 = list.get(0);
@@ -144,7 +143,6 @@ public class ApiUserPayUrlController {
      */
     @Login
     @PostMapping("uploadImg" )
-    //@ApiOperation("上传审核身份证信息" )
     public R uploadImgMessage(@RequestParam String img, @RequestParam String imgType,
                               @LoginUser UserEntity user) {
         UserPayUrlEntity userPay = userPayUrlService.selectOne(new EntityWrapper<UserPayUrlEntity>().eq("uid", user.getUid())
@@ -168,7 +166,7 @@ public class ApiUserPayUrlController {
             out.flush();
             out.close();
         } catch (Exception e) {
-            //return R.error();
+            e.printStackTrace();
         }
         //为空代表第一次上传图片插入操作
         if (userPay == null) {
@@ -191,12 +189,12 @@ public class ApiUserPayUrlController {
     }
 
     /**
+     * 上传支付宝/微信图片
      * @param imgType 图片类型
      * @author chen
      */
     @Login
     @PostMapping("getPictureUrl" )
-    //@ApiOperation("支付宝/微信图片" )
     public R getSFZAdress(@LoginUser UserEntity userEntity, @RequestParam String imgType) {
         List<UserPayUrlEntity> userPay;
         if (imgType.equals("1" )) {
@@ -217,8 +215,6 @@ public class ApiUserPayUrlController {
             return R.ok(map);
 
         }
-
-
         return R.error("身份证接口暂未开放" );
     }
 

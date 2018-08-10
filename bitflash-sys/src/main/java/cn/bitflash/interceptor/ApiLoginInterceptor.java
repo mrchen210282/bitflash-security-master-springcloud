@@ -68,6 +68,8 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
         if (!tokenEntity.getUid().equals(uid)) {
             throw new RRException("token信息与用户信息不符");
         }
+        //设置userId到request里，后续根据userId，获取用户信息
+        request.setAttribute(UID, tokenEntity.getUid());
         return true;
 
     }

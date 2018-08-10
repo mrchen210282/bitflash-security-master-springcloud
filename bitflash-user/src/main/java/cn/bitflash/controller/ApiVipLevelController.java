@@ -57,11 +57,10 @@ public class ApiVipLevelController {
     private SysFeign sysfeign;
 
     /**
-     * @author chen
+     * 获取vip等级信息
      */
     @Login
     @PostMapping("getVipLevel" )
-    //@ApiOperation("获取用户vip信息" )
     public R getVipLevel(@LoginUser UserEntity user) {
         String uid = user.getUid();
         UserInfoEntity userEntity = userInfoService.selectOne(new EntityWrapper<UserInfoEntity>().eq("uid", uid));
@@ -75,20 +74,12 @@ public class ApiVipLevelController {
         }
     }
 
-    @PostMapping("uuu" )
-    public R uuu(){
-        Double vip_count = Double.valueOf(sysfeign.getVal(Common.VIP_CONDITION));
-        System.out.println(vip_count);
-        return null;
-    }
-
     /**
-     * @author chen
+     * 提升vip等级
      */
     @Login
     @Transactional
     @PostMapping("updateVipLevel" )
-    //@ApiOperation("提升vip等级" )
     public R updateVipLevel(@LoginUser UserEntity user) {
         /**
          *  1.查询是否是vip
@@ -208,7 +199,6 @@ public class ApiVipLevelController {
             }
         } else if (invitationCode.equals(pCode.getRgtCode()) && child_user.size() == 0 && f_user.size() > 0) {
             if (f_user.size() == 1) {
-                //return R.error("只能先插入左区" );
             	throw new RRException("只能先插入左区！");
             } else if (f_user.size() == 2) {
                 userRelationService.insertTreeNode(pCode.getUid(), uid, invitationCode);

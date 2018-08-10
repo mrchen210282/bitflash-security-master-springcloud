@@ -49,28 +49,25 @@ public class ApiAccountController {
 
     @Login
     @GetMapping("userInfo")
-    //@ApiOperation(value = "获取用户信息", response = UserEntity.class)
     public R userInfo(@LoginUser UserEntity user) {
         return R.ok().put("user", user);
     }
 
     @PostMapping("userCheck")
     public R userCheck(Map<String,Object> param) {
-
         Map<String, Object> returnMap = tradeFeign.selectTradeHistoryIncome(param);
-        //String address = sysfeign.getValue(Common.ADDRESS);
         return R.ok();
     }
 
 
     /**
-     * 1.为判断成功 -1 为判断失败
-     *
-     * @author chen
+     * 登录后获取用户信息
+     * @param account
+     * @param user
+     * @return
      */
     @Login
     @GetMapping("accountInfo" )
-    //@ApiOperation(value = "获取用户账户信息", response = UserAccountEntity.class)
     public R accountInfo(@UserAccount UserAccountEntity account, @LoginUser UserEntity user) {
         String uid = account.getUid();
         UserInfoEntity userInfoEntity = null;
@@ -142,9 +139,13 @@ public class ApiAccountController {
         }
     }
 
+    /**
+     * 获取推广码
+     * @param userInvitationCode
+     * @return
+     */
     @Login
     @PostMapping("getInvitationCode" )
-    //@ApiOperation(value = "获取推广码", response = UserInvitationCodeEntity.class)
     public R getInvitationcode(@UserInvitationCode UserInvitationCodeEntity userInvitationCode) {
         UserRelationEntity ur = userRelationService.selectOne(new EntityWrapper<UserRelationEntity>().eq("invitation_code", userInvitationCode.getLftCode()));
         Map<String, Object> map = new HashMap<String, Object>();
@@ -161,9 +162,14 @@ public class ApiAccountController {
 
     }
 
+    /**
+     * 获取用户体系
+     * @param ura
+     * @param userEntity
+     * @return
+     */
     @Login
     @PostMapping("getRelation" )
-    //@ApiOperation(value = "获取用户体系", response = List.class)
     public R getRelation(@UserRelation List<UserRelationJoinAccountEntity> ura, @LoginUser UserEntity userEntity) {
         Map<String, Object> map = new HashMap<String, Object>();
         if (ura != null) {
@@ -191,9 +197,15 @@ public class ApiAccountController {
         return R.ok().put("myRelation", map);
     }
 
+    /**
+     * 修改密码
+     * @param user
+     * @param oldPwd
+     * @param newPwd
+     * @return
+     */
     @Login
     @PostMapping("changePassword" )
-    //@ApiOperation(value = "修改密码", response = UserEntity.class)
     public R changePwd(@LoginUser UserEntity user, @RequestParam String oldPwd, @RequestParam String newPwd) {
         if (oldPwd.equals(user.getPassword())) {
             user.setPassword(newPwd);
@@ -204,8 +216,13 @@ public class ApiAccountController {
         }
     }
 
+    /**
+     * 修改密码
+     * @param mobile
+     * @param newPwd
+     * @return
+     */
     @PostMapping("changePassword2" )
-   // @ApiOperation(value = "修改密码" )
     public R changePwd2(@RequestParam String mobile, @RequestParam String newPwd) {
         UserEntity userEntity = new UserEntity();
         userEntity.setPassword(newPwd);
@@ -219,12 +236,13 @@ public class ApiAccountController {
     }
 
     /**
+     * 修改昵称
+     * @param user
      * @param nickname
-     *            昵称
+     * @return
      */
     @Login
     @PostMapping("updateNickName")
-    //@ApiOperation(value = "修改昵称")
     public R updateNickName(@LoginUser UserEntity user, @RequestParam String nickname) {
         if (StringUtils.isNotBlank(nickname)) {
             if (nickname.length() <= 6) {

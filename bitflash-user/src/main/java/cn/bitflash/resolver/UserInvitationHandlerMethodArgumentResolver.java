@@ -17,7 +17,7 @@
 package cn.bitflash.resolver;
 
 import cn.bitflash.annotation.UserInvitationCode;
-import cn.bitflash.interceptor.AuthorizationInterceptor;
+import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.service.UserInvitationCodeService;
 import cn.bitflash.user.UserInvitationCodeEntity;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -50,7 +50,7 @@ public class UserInvitationHandlerMethodArgumentResolver implements HandlerMetho
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer container, NativeWebRequest request,
                                   WebDataBinderFactory factory) throws Exception {
         // 获取用户ID
-        Object object = request.getAttribute(AuthorizationInterceptor.USER_KEY, RequestAttributes.SCOPE_REQUEST);
+        Object object = request.getAttribute(ApiLoginInterceptor.UID, RequestAttributes.SCOPE_REQUEST);
         if (object == null) {
             return null;
         }

@@ -3,7 +3,6 @@ package cn.bitflash.DefaultFallBack;
 
 
 import cn.bitflash.prod.feign.LoginRibbon;
-import cn.bitflash.user.LoginForm;
 import cn.bitflash.feign.LoginRibbon;
 
 import cn.bitflash.utils.R;

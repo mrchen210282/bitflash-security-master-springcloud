@@ -14,7 +14,7 @@
  * the License.
  */
 
-package cn.bitflash.user;
+package cn.bitflash.login;
 
 import javax.validation.constraints.NotBlank;
 

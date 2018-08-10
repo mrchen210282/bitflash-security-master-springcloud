@@ -2,13 +2,13 @@ package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
-import cn.bitflash.exception.RRException;
 import cn.bitflash.service.*;
 import cn.bitflash.user.*;
-import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import common.exception.RRException;
 import common.utils.CodeUtils;
 import common.utils.Common;
+import common.utils.R;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

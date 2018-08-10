@@ -1,4 +1,4 @@
-/*
+
 package cn.bitflash.controller;
 
 import cn.bitflash.feign.UserRibbon;
@@ -16,11 +16,11 @@ public class UserRibbonCon {
 
     @Autowired
     private UserRibbon userRibbon;
-    */
+
 /**
      *获取账户信息
      * @return
-     *//*
+     */
 
 
     @GetMapping("/userInfo")
@@ -54,10 +54,10 @@ public class UserRibbonCon {
     }
 
 
-    */
+
 /**
      * 用户交易密码
-     *//*
+     */
 
 
     @PostMapping("/payPwd/addPayPwd")
@@ -71,11 +71,9 @@ public class UserRibbonCon {
     }
 
 
-    */
 /**
      * 获取用户vip信息
-     *//*
-
+     */
     @PostMapping("/vip/getVipLevel")
     public R getVipLevel(){
         return userRibbon.getVipLevel();
@@ -86,10 +84,10 @@ public class UserRibbonCon {
         return userRibbon.updateVipLevel();
     }
 
-    */
+
 /**
      * 用户操作
-     *//*
+     */
 
     @GetMapping("/api/user/selectOne")
     public List<UserEntity> selectOne(@RequestParam Map<String, Object> params){
@@ -97,4 +95,4 @@ public class UserRibbonCon {
     }
 
 }
-*/
+

@@ -1,11 +1,13 @@
 package cn.bitflash.controller;
 
 import cn.bitflash.annotation.*;
+import cn.bitflash.feign.SysFeign;
+import cn.bitflash.feign.TradeFeign;
 import cn.bitflash.service.*;
 import cn.bitflash.user.*;
-import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.Common;
+import common.utils.R;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -44,12 +46,27 @@ public class ApiAccountController {
     @Autowired
     private UserTradeHistoryService userTradeHistoryService;
 
+    @Autowired
+    private TradeFeign tradeFeign;
+
+    @Autowired
+    private SysFeign sysfeign;
+
     @Login
     @GetMapping("userInfo")
     //@ApiOperation(value = "获取用户信息", response = UserEntity.class)
     public R userInfo(@LoginUser UserEntity user) {
         return R.ok().put("user", user);
     }
+
+    @PostMapping("userCheck")
+    public R userCheck(Map<String,Object> param) {
+
+        Map<String, Object> returnMap = tradeFeign.selectTradeHistoryIncome(param);
+        //String address = sysfeign.getValue(Common.ADDRESS);
+        return R.ok();
+    }
+
 
     /**
      * 1.为判断成功 -1 为判断失败

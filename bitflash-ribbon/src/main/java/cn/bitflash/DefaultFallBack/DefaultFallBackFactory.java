@@ -1,7 +1,7 @@
 package cn.bitflash.DefaultFallBack;
 
 import cn.bitflash.feign.LoginRibbon;
-import cn.bitflash.user.LoginForm;
+import cn.bitflash.login.LoginForm;
 import cn.bitflash.utils.R;
 import feign.hystrix.FallbackFactory;
 import org.slf4j.Logger;

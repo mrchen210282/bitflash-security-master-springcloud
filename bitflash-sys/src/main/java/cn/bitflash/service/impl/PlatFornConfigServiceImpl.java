@@ -2,7 +2,7 @@ package cn.bitflash.service.impl;
 
 import cn.bitflash.dao.PlatFormConfigDao;
 import cn.bitflash.service.PlatFormConfigService;
-import cn.bitflash.sys.PlatformConfigEntity;
+import cn.bitflash.system.PlatformConfigEntity;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 

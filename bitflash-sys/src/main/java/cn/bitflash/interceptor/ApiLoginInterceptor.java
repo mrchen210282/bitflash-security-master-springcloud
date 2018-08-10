@@ -2,12 +2,12 @@ package cn.bitflash.interceptor;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.exception.RRException;
-import cn.bitflash.feignInterface.LoginFeign;
+import cn.bitflash.feignInterface.UserLoginFeign;
+import cn.bitflash.login.TokenEntity;
 import cn.bitflash.redisConfig.RedisKey;
-import cn.bitflash.service.TokenService;
-import cn.bitflash.user.TokenEntity;
 import cn.bitflash.utils.AESTokenUtil;
 import cn.bitflash.utils.RedisUtils;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -23,7 +23,7 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
     private RedisUtils redisUtils;
 
     @Autowired
-    private LoginFeign loginFeign;
+    private UserLoginFeign userLoginFeign;
 
     private final String MOBILE = "mobile";
     private final String UID = "uid";
@@ -54,7 +54,7 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
         }
         String token = redisUtils.get(RedisKey.LOGIN_ + mobile);
 
-        TokenEntity tokenEntity = loginFeign.getTokenByToken(token);
+        TokenEntity tokenEntity = userLoginFeign.selectOneByToken(new EntityWrapper<TokenEntity>().eq("token",token));
 
         if (tokenEntity == null) {
             throw new RRException("token信息错误");

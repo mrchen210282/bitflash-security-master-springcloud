@@ -2,10 +2,11 @@ package cn.bitflash.resolver;
 
 import cn.bitflash.annotation.DecodeToken;
 import cn.bitflash.exception.RRException;
-import cn.bitflash.feignInterface.LoginFeign;
+import cn.bitflash.feignInterface.UserLoginFeign;
+import cn.bitflash.login.TokenEntity;
 import cn.bitflash.redisConfig.RedisKey;
-import cn.bitflash.user.TokenEntity;
 import cn.bitflash.utils.RedisUtils;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 public class DecodeTokenHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Autowired
-    private LoginFeign loginFeign;
+    private UserLoginFeign userLoginFeign;
 
     @Autowired
     private RedisUtils redisUtils;
@@ -48,7 +49,7 @@ public class DecodeTokenHandlerMethodArgumentResolver implements HandlerMethodAr
         }
         String token = redisUtils.get(RedisKey.LOGIN_ + mobile);
 
-        TokenEntity tokenEntity = loginFeign.getTokenByToken(token);
+        TokenEntity tokenEntity = userLoginFeign.selectOneByToken(new EntityWrapper<TokenEntity>().eq("token",token));
         return null;
     }
 

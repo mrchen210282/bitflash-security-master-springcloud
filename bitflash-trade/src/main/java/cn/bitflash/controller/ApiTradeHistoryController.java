@@ -1,7 +1,6 @@
 package cn.bitflash.controller;
 
 import cn.bitflash.service.UserTradeHistoryService;
-import cn.bitflash.user.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

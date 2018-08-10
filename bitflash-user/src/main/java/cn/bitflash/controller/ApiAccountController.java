@@ -54,15 +54,6 @@ public class ApiAccountController {
         return R.ok().put("user", user);
     }
 
-    @PostMapping("userCheck")
-    public R userCheck(Map<String,Object> param) {
-
-        Map<String, Object> returnMap = tradeFeign.selectTradeHistoryIncome(param);
-        //String address = sysfeign.getValue(Common.ADDRESS);
-        return R.ok();
-    }
-
-
     /**
      * 1.为判断成功 -1 为判断失败
      *

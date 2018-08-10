@@ -75,13 +75,6 @@ public class ApiVipLevelController {
         }
     }
 
-    @PostMapping("uuu" )
-    public R uuu(){
-        Double vip_count = Double.valueOf(sysfeign.getVal(Common.VIP_CONDITION));
-        System.out.println(vip_count);
-        return null;
-    }
-
     /**
      * @author chen
      */

@@ -14,36 +14,16 @@
  * the License.
  */
 
-package cn.bitflash.service;
+package cn.bitflash.dao;
 
-import cn.bitflash.user.TokenEntity;
-import cn.bitflash.user.UserEntity;
-import com.baomidou.mybatisplus.service.IService;
+import cn.bitflash.system.AppStatusEntity;
+import com.baomidou.mybatisplus.mapper.BaseMapper;
 
 /**
- * 用户Token
+ * 获取app状态
  *
- * @author chenshun
- * @email sunlightcs@gmail.com
- * @date 2017-03-23 15:22:07
+ * @author eric
  */
-public interface TokenService extends IService<TokenEntity> {
-
-    TokenEntity queryByToken(String mobile);
-
-    /**
-     * 生成token
-     *
-     * @param userId 用户ID
-     * @return 返回token信息
-     */
-    TokenEntity createToken(UserEntity user);
-
-    /**
-     * 设置token过期
-     *
-     * @param userId 用户ID
-     */
-    void expireToken(String uid);
+public interface AppStatusDao extends BaseMapper<AppStatusEntity> {
 
 }

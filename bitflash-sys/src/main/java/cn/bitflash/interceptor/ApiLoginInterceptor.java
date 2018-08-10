@@ -2,14 +2,12 @@ package cn.bitflash.interceptor;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.exception.RRException;
-import cn.bitflash.feignController.LoginFeign;
+import cn.bitflash.feignInterface.LoginFeign;
 import cn.bitflash.redisConfig.RedisKey;
 import cn.bitflash.service.TokenService;
 import cn.bitflash.user.TokenEntity;
 import cn.bitflash.utils.AESTokenUtil;
 import cn.bitflash.utils.RedisUtils;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -17,7 +15,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
 
 @Component
 public class ApiLoginInterceptor extends HandlerInterceptorAdapter {

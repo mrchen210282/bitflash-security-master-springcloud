@@ -1,6 +1,6 @@
 package cn.bitflash.service;
 
-import cn.bitflash.user.UserGTCidEntity;
+import cn.bitflash.system.AppStatusEntity;
 import com.baomidou.mybatisplus.service.IService;
 
 /**
@@ -8,6 +8,6 @@ import com.baomidou.mybatisplus.service.IService;
  * @date 2018年5月22日 下午5:06:07
  */
 
-public interface UserGTCidService extends IService<UserGTCidEntity> {
+public interface AppStatusService extends IService<AppStatusEntity> {
 
 }

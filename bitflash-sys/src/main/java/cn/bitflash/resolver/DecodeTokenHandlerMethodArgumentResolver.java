@@ -2,14 +2,11 @@ package cn.bitflash.resolver;
 
 import cn.bitflash.annotation.DecodeToken;
 import cn.bitflash.exception.RRException;
-import cn.bitflash.feignController.LoginFeign;
-import cn.bitflash.interceptor.ApiLoginInterceptor;
+import cn.bitflash.feignInterface.LoginFeign;
 import cn.bitflash.redisConfig.RedisKey;
 import cn.bitflash.user.TokenEntity;
-import cn.bitflash.utils.AESTokenUtil;
 import cn.bitflash.utils.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;

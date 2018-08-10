@@ -1,9 +1,9 @@
 package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
+import cn.bitflash.feignInterface.UserLoginFeign;
+import cn.bitflash.login.UserGTCidEntity;
 import cn.bitflash.service.PlatFormConfigService;
-import cn.bitflash.service.UserGTCidService;
-import cn.bitflash.user.UserGTCidEntity;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
 import cn.bitflash.utils.RedisUtils;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApiSendMessageController {
 
     @Autowired
-    private UserGTCidService userGTCidService;
+    private UserLoginFeign userLoginFeign;
 
     @Autowired
     private PlatFormConfigService platFormConfigService;
@@ -39,9 +39,9 @@ public class ApiSendMessageController {
         String idVal = redisUtils.get(Common.ADD_LOCK+id);
         if (StringUtils.isBlank(idVal)) {
             try {
-                UserGTCidEntity gtCidEntity = userGTCidService.selectOne(new EntityWrapper<UserGTCidEntity>().eq("uid", uid));
+                UserGTCidEntity gtCidEntity = userLoginFeign.selectOneByGT(new EntityWrapper<UserGTCidEntity>().eq("uid", uid));
                 String text = platFormConfigService.getVal(Common.MSG_TEXT);
-                R r = GeTuiSendMessage.sendSingleMessage(text, gtCidEntity.getCid());
+                GeTuiSendMessage.sendSingleMessage(text, gtCidEntity.getCid());
                 redisUtils.set(Common.ADD_LOCK+id, id, 60 * 60);
                 return R.ok();
             } catch (NullPointerException e) {

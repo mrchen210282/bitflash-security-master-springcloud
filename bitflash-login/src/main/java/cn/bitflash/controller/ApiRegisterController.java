@@ -1,17 +1,21 @@
 package cn.bitflash.controller;
 
-import cn.bitflash.annotation.Login;
-import cn.bitflash.annotation.LoginUser;
-import cn.bitflash.common.Common;
-import cn.bitflash.common.utils.R;
-import cn.bitflash.common.validator.ValidatorUtils;
-import cn.bitflash.entity.*;
-import cn.bitflash.login.RegisterForm;
-import cn.bitflash.login.UserEntity;
+import cn.bitflash.exception.RRException;
+import cn.bitflash.feignInterface.UserFeign;
+import cn.bitflash.feignInterface.UserTradeFeign;
+import cn.bitflash.login.*;
+import cn.bitflash.service.AuthorityUserService;
 import cn.bitflash.service.TokenService;
+import cn.bitflash.service.UserEmpowerService;
 import cn.bitflash.service.UserService;
+import cn.bitflash.trade.UserAccountEntity;
+import cn.bitflash.user.UserInfoEntity;
+import cn.bitflash.user.UserInvitationCodeEntity;
+import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import common.utils.SmsUtils;
+import common.validator.ValidatorUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -26,7 +30,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/reg")
 public class ApiRegisterController {
 	
 	private Logger logger = LoggerFactory.getLogger(ApiRegisterController.class);
@@ -35,14 +39,11 @@ public class ApiRegisterController {
 	private UserService userService;
 
 	@Autowired
-	private UserInvitationCodeService userInvitationCodeService;
+	private UserFeign userFeign;
 
 	@Autowired
-	private UserAccountService userAccountService;
+	private UserTradeFeign userTradeFeign;
 
-	@Autowired
-	private UserInfoService userInfoService;
-	
 	@Autowired
 	private AuthorityUserService authorityUserService;
 	
@@ -81,7 +82,10 @@ public class ApiRegisterController {
 		UserAccountEntity userAccountEntity = new UserAccountEntity();
 		userAccountEntity.setCreateTime(new Date());
 		userAccountEntity.setUid(uid);
-		userAccountService.insert(userAccountEntity);
+		boolean flag=userTradeFeign.insert(userAccountEntity);
+		if(!flag){
+			throw new RRException("初始化用户失败");
+		}
 		// 初始化user_info表
 		UserInfoEntity userinfo = new UserInfoEntity();
 		userinfo.setUid(uid);
@@ -93,14 +97,14 @@ public class ApiRegisterController {
 		userinfo.setNickname(name);
 		if (StringUtils.isNotBlank(form.getInvitationCode())) {
 			// 校验验证码是否正确
-			UserInvitationCodeEntity userInvitationCodeEntity = userInvitationCodeService.selectOne(new EntityWrapper<UserInvitationCodeEntity>().eq("lft_code", form.getInvitationCode()).or().eq("rgt_code", form.getInvitationCode()));
+			UserInvitationCodeEntity userInvitationCodeEntity = userFeign.selectOne(new EntityWrapper<UserInvitationCodeEntity>().eq("lft_code", form.getInvitationCode()).or().eq("rgt_code", form.getInvitationCode()));
 			if (userInvitationCodeEntity == null) {
 				return R.error("邀请码不正确");
 			}
 			userinfo.setInvitation(true);
 			userinfo.setInvitationCode(form.getInvitationCode());
 		}
-		userInfoService.insert(userinfo);
+		userFeign.insert(userinfo);
 		log.info("手机号：" + form.getMobile() + ",注册成功，途径app，没有推广码");
 		return R.ok("注册成功");
 	}
@@ -110,7 +114,6 @@ public class ApiRegisterController {
 	 */
 	@Transactional
 	@GetMapping("register2")
-	@ApiOperation("注册")
 	public R register2(@RequestParam String mobile, @RequestParam String pwd, @RequestParam(value = "invitationCode", required = false) String invitationCode, HttpServletResponse response) {
 		// ValidatorUtils.validateEntity(form);
 		response.addHeader("Access-Control-Allow-Origin", "*");
@@ -128,7 +131,10 @@ public class ApiRegisterController {
 		UserAccountEntity userAccountEntity = new UserAccountEntity();
 		userAccountEntity.setCreateTime(new Date());
 		userAccountEntity.setUid(uid);
-		userAccountService.insert(userAccountEntity);
+		boolean flag=userTradeFeign.insert(userAccountEntity);
+		if(!flag){
+			throw new RRException("初始化用户失败");
+		}
 		// 初始化user_info表
 		UserInfoEntity userinfo = new UserInfoEntity();
 		userinfo.setUid(uid);
@@ -140,21 +146,20 @@ public class ApiRegisterController {
 		userinfo.setRealname(name);
 		if (StringUtils.isNotBlank(invitationCode)) {
 			// 校验验证码是否正确
-			UserInvitationCodeEntity userInvitationCodeEntity = userInvitationCodeService.selectOne(new EntityWrapper<UserInvitationCodeEntity>().eq("lft_code", invitationCode).or().eq("rgt_code", invitationCode));
+			UserInvitationCodeEntity userInvitationCodeEntity = userFeign.selectOne(new EntityWrapper<UserInvitationCodeEntity>().eq("lft_code", invitationCode).or().eq("rgt_code", invitationCode));
 			if (userInvitationCodeEntity == null) {
 				return R.error("邀请码不正确");
 			}
 			userinfo.setInvitation(true);
 			userinfo.setInvitationCode(invitationCode);
 		}
-		userInfoService.insert(userinfo);
+		userFeign.insert(userinfo);
 		log.info("手机号：" + mobile + ",注册成功，通过注册码注册");
 		return R.ok("注册成功");
 
 	}
 
 	@RequestMapping("getVerifyCode")
-	@ApiOperation("账号(手机号)")
 	public R sent(@RequestParam String mobile, @RequestParam String type, HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		if (StringUtils.isBlank(mobile)) {
@@ -179,41 +184,11 @@ public class ApiRegisterController {
 	}
 
 	/**
-	 * @param nickname
-	 *            昵称
-	 */
-	@Login
-	@PostMapping("updateNickName")
-	@ApiOperation(value = "修改昵称")
-	public R updateNickName(@ApiIgnore @LoginUser UserEntity user, @RequestParam String nickname) {
-		if (StringUtils.isNotBlank(nickname)) {
-			if (nickname.length() <= 6) {
-				UserInfoEntity userInfoEntity = userInfoService.selectOne(new EntityWrapper<UserInfoEntity>().eq("nickname", nickname));
-
-				if (null != userInfoEntity && "1".equals(userInfoEntity.getNicklock())) {
-					return R.error("昵称不能修改！");
-				} else {
-					UserInfoEntity userInfoBean = new UserInfoEntity();
-					userInfoBean.setNickname(nickname);
-					userInfoBean.setUid(user.getUid());
-					userInfoBean.setNicklock("1");
-					userInfoService.updateById(userInfoBean);
-					return R.ok();
-				}
-			} else {
-				return R.error("昵称长度不能大于6个字！");
-			}
-		} else {
-			return R.error("昵称不能为空！");
-		}
-	}
-
-	/**
-	 * @param 授权登录
-	 *            昵称
+	 * 授权登录
+	 * @param request
+	 * @return
 	 */
 	@GetMapping("authorityValidate")
-	@ApiOperation(value = "校验第三方登录")
 	public R authorityValidate(HttpServletRequest request) {
 		logger.info("----校验第三方登录------");
 		String clientid = request.getParameter("clientid");
@@ -242,7 +217,7 @@ public class ApiRegisterController {
 					if(null != authorityUserEntity) {
 						
 						BigDecimal availableAssets = null;
-						UserAccountEntity userAccountEntity = userAccountService.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", authorityUserEntity.getUid()));
+						UserAccountEntity userAccountEntity = userTradeFeign.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", authorityUserEntity.getUid()));
 						if(null != userAccountEntity) {
 							availableAssets = userAccountEntity.getAvailableAssets();
 						} else {

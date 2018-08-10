@@ -1,4 +1,4 @@
-package cn.bitflash.system;
+package cn.bitflash.login;
 
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;

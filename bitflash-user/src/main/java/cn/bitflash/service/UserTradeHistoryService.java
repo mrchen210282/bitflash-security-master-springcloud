@@ -1,5 +1,7 @@
 package cn.bitflash.service;
 
+import cn.bitflash.trade.UserTradeHistoryBean;
+import cn.bitflash.trade.UserTradeHistoryEntity;
 import com.baomidou.mybatisplus.service.IService;
 import org.springframework.stereotype.Service;
 

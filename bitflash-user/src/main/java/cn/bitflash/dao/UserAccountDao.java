@@ -1,5 +1,7 @@
 package cn.bitflash.dao;
 
+import cn.bitflash.user.UserAccountBean;
+import cn.bitflash.user.UserAccountEntity;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.springframework.stereotype.Repository;
 

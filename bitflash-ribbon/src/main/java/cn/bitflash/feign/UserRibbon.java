@@ -1,10 +1,8 @@
-package cn.bitflash.prod.feign;
 package cn.bitflash.feign;
 
 
 import cn.bitflash.prod.DefaultFallBack.UserDefaultFallBackFactory;
 import cn.bitflash.DefaultFallBack.DefaultFallBackFactory;
-import cn.bitflash.DefaultFallBack.UserDefaultFallBackFactory;
 import cn.bitflash.user.UserEntity;
 import cn.bitflash.utils.R;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -20,8 +18,7 @@ import java.util.Map;
  * name为资源提供者的spring.application.name
  * @author eric
  */
-@FeignClient(value="bitflash-user-app",fallbackFactory = UserDefaultFallBackFactory.class)
-@FeignClient(value="bitflash-user-app",fallbackFactory = DefaultFallBackFactory.class)
+@FeignClient(value="bitflash-user",fallbackFactory = DefaultFallBackFactory.class)
 public interface UserRibbon {
     /**
      *获取账户信息
@@ -70,7 +67,7 @@ public interface UserRibbon {
     /**
      * 用户操作
      */
-    @GetMapping("/api/user/selectOne")
+    @PostMapping("/api/user/selectOne")
     public List<UserEntity> selectOne(@RequestParam Map<String, Object> params);
 
 

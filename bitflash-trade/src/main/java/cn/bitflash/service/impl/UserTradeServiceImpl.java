@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 
-import common.utils.Common;
 import cn.bitflash.dao.UserTradeDao;
 import cn.bitflash.trade.UserTradeBean;
 import cn.bitflash.trade.UserTradeEntity;

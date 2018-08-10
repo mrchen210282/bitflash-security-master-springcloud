@@ -14,7 +14,7 @@
  * the License.
  */
 
-package cn.bitflash.trade;
+package cn.bitflash.user;
 
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;

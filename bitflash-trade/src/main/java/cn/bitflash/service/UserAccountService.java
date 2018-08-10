@@ -1,8 +1,8 @@
 package cn.bitflash.service;
 
 
-import cn.bitflash.trade.UserAccountBean;
-import cn.bitflash.trade.UserAccountEntity;
+import cn.bitflash.user.UserAccountBean;
+import cn.bitflash.user.UserAccountEntity;
 import com.baomidou.mybatisplus.service.IService;
 
 import java.util.List;

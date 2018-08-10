@@ -14,16 +14,16 @@
  * the License.
  */
 
-package cn.bitflash.trade;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
+package cn.bitflash.user;
 
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 用户

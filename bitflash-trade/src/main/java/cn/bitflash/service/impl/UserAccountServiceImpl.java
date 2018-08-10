@@ -3,13 +3,13 @@ package cn.bitflash.service.impl;
 import java.util.List;
 import java.util.Map;
 
-import cn.bitflash.trade.UserAccountEntity;
+import cn.bitflash.user.UserAccountBean;
+import cn.bitflash.user.UserAccountEntity;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 
 import cn.bitflash.dao.UserAccountDao;
-import cn.bitflash.trade.UserAccountBean;
 import cn.bitflash.service.UserAccountService;
 
 /**

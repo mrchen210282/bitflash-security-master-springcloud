@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.bitflash.dao.UserTradeDao">
+
+    <resultMap id="buyMessage" type="cn.bitflash.trade.UserTradeBean">
+        <result property="quantity" column="sell_quantity"/>
+        <result property="price" column="price"/>
+        <result property="purchaseName" column="nickname"/>
+        <result property="mobile" column="mobile"/>
+    </resultMap>
+    <insert id="insertUserTrade" keyProperty="id" useGeneratedKeys="true"
+            parameterType="cn.bitflash.trade.UserTradeEntity">
+        insert into user_trade
+        (create_time,price,quantity,state,uid) value
+        (#{createTime},#{price},#{quantity},#{state},#{uid})
+    </insert>
+
+    <select id="searchTrade" resultType="cn.bitflash.trade.UserTradeEntity">
+        select a.id,price,quantity,a.uid,a.create_time,a.state from
+        user_trade
+        a
+        <where>
+            1 = 1
+            <if test='state != null and state != ""'>
+                and a.state = '1'
+            </if>
+        </where>
+        order by price asc
+    </select>
+
+    <select id="selectTrade" resultType="cn.bitflash.trade.UserTradeEntity">
+        select
+        realname,nickname,id,price,quantity,uid,create_time,state,isMySelf from (SELECT
+        b.realname,b.nickname,ut.id,ut.price,ut.quantity,ut.uid,ut.create_time,ut.state,"1"
+        AS isMySelf FROM user_trade ut
+        LEFT JOIN user_info b ON ut.uid = b.uid WHERE 1 = 1
+        AND <![CDATA[ut.state <> '3']]> and <![CDATA[ ut.state <>'4']]>
+        AND ut.uid = #{uid}
+        UNION
+        SELECT
+        ui.realname,ui.nickname,ut.id,ut.price,ut.quantity,ut.uid,ut.create_time,uth.state,"0" AS isMySelf
+        from user_trade_history uth
+        left join user_trade ut on uth.user_trade_id = ut.id
+        left join user_info ui on ut.uid = ui.uid
+        where uth.state = '6'
+        and uth.purchase_uid = #{uid}
+        UNION
+        SELECT
+        b.realname,b.nickname,a.id,a.price,a.quantity,a.uid,a.create_time,a.state,"0" AS isMySelf
+        FROM user_trade a
+        LEFT JOIN user_info b ON a.uid = b.uid
+        WHERE 1 = 1
+        AND <![CDATA[ a.uid <> #{uid} ]]> AND a.state in( '1','5')) t
+        where 1 ORDER BY state desc,isMyself desc,price asc limit
+        #{pageNum},#{pageTotal}
+    </select>
+
+    <select id="selectTradeCount" resultType="java.lang.Integer">
+        select count(*) from
+        (
+        SELECT
+        b.realname,
+        b.nickname,
+        a.id,
+        a.price,
+        a.quantity,
+        a.uid,
+        a.create_time,
+        a.state,
+        "1" AS isMySelf
+        FROM
+        user_trade a
+        LEFT JOIN user_info b ON a.uid =
+        b.uid
+        WHERE
+        1 = 1
+        AND <![CDATA[a.state <> '3']]> and <![CDATA[a.state <>'4']]>
+        AND a.uid = #{uid}
+        UNION
+        SELECT
+        ui.realname,
+        ui.nickname,
+        ut.id,
+        ut.price,
+        ut.quantity,
+        ut.uid,
+        ut.create_time,
+        uth.state,
+        "0" AS isMySelf
+        FROM
+        user_trade_history uth
+        LEFT JOIN user_trade ut ON uth.user_trade_id = ut.id
+        LEFT JOIN user_info ui ON ut.uid = ui.uid
+        WHERE uth.state = '6'
+        AND uth.purchase_uid = #{uid}
+        UNION
+        SELECT
+        b.realname,
+        b.nickname,
+        a.id,
+        a.price,
+        a.quantity,
+        a.uid,
+        a.create_time,
+        a.state,
+        "0" AS isMySelf
+        FROM
+        user_trade a
+        LEFT JOIN user_info b ON
+        a.uid = b.uid
+        WHERE
+        1 = 1
+        AND <![CDATA[ a.uid <> #{uid}]]>
+        AND a.state in( '1','5')
+        ) t where 1 ORDER BY price asc
+    </select>
+
+    <select id="selectTradeUrl" resultType="java.util.Map">
+        select a.id,a.price,a.quantity,b.img_type as imgType,
+        b.img_url as
+        imgUrl,c.realname,c.mobile from user_trade a
+        left join user_pay_url b on a.uid =
+        b.uid
+        left join user_info c on a.uid = c.uid
+        <where>
+            1 = 1
+            <if test="id != null and id != ''">
+                and a.id = #{id}
+            </if>
+            <if test="uid != null and uid != ''">
+                and b.uid = #{uid}
+            </if>
+        </where>
+        order by img_type asc
+    </select>
+
+    <select id="updateTrade">
+        update user_trade set state = ${state} where id =
+        ${id}
+    </select>
+
+    <!-- add by wangjun 2018.6.23 查看订单明细 -->
+    <select id="queryDetail" resultType="cn.bitflash.trade.UserTradeBean">
+        select b.realname,a.id,a.price,a.quantity,a.uid,a.create_time
+        from
+        user_trade a
+        left join user_info b on a.uid = b.uid
+        <where>
+            1 = 1
+            <if test="id != null and id != ''">
+                and a.id = #{id}
+            </if>
+            <if test="state != null and state != ''">
+                and a.state = #{state}
+            </if>
+        </where>
+    </select>
+
+
+    <!-- add by wangjun 2018.6.23 查询交易历史 -->
+    <select id="selectTradeHistory" resultType="cn.bitflash.trade.UserTradeBean">
+        select a.id,a.purchase_uid,a.sell_uid,a.user_trade_id,
+
+        <if test='state == "4"'>
+            a.sell_quantity as quantity,
+        </if>
+        <if test='state == "2"'>
+            a.purchase_quantity as quantity,
+        </if>
+
+        a.price,a.create_time,
+        c.price,
+        <if test='state == "4"'>
+            (select d.nickname from user_info d where a.sell_uid =
+            d.uid) as realname
+        </if>
+        <if test='state == "2"'>
+            (select d.nickname from user_info d where
+            a.purchase_uid = d.uid) as realname
+        </if>
+        from user_trade_history a
+        left join user_account b on a.purchase_uid =
+        b.uid
+        left join user_trade c on a.user_trade_id = c.id
+        <where>
+            1 = 1
+            <if test='state == "4"'>
+                and a.purchase_uid = #{uid} and c.state = #{state}
+            </if>
+            <if test='state == "2"'>
+                and a.sell_uid = #{uid}
+            </if>
+            and <![CDATA[a.state <> '6']]>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="getHistoryBystate5" resultType="java.util.Map">
+        SELECT
+        ul.user_trade_id AS userTradeId,
+        ul.lock_uid AS lockUid,
+        ul.lock_time AS lockTime
+        FROM
+        user_trade_lock ul
+        LEFT JOIN user_trade ut ON (ul.user_trade_id = ut.id)
+        WHERE
+        ut.state = '5'
+
+    </select>
+    <select id="getHistoryBystate5" resultType="java.util.Map">
+        SELECT
+        ul.user_trade_id AS userTradeId,
+        ul.lock_uid AS lockUid,
+        ul.lock_time AS lockTime
+        FROM
+        user_trade_lock ul
+        LEFT JOIN user_trade ut ON (ul.user_trade_id = ut.id)
+        WHERE
+        ut.state = '5'
+
+    </select>
+
+
+    <select id="selectById" resultType="cn.bitflash.trade.UserTradeEntity">
+        select
+        id,uid,state
+        from
+        user_trade
+        where
+        id=#{id}
+    </select>
+
+    <select id="buyMessage" resultMap="buyMessage">
+        SELECT
+        uh.sell_quantity,
+        uh.price,
+        ui.nickname,
+        ui.mobile
+        FROM
+        user_trade_history uh
+        LEFT JOIN user_info ui
+        ON (uh.purchase_uid = ui.uid)
+        WHERE
+        uh.user_trade_id =#{id}
+    </select>
+
+    <select id="getBystate" resultType="cn.bitflash.trade.UserTradeEntity">
+        select id,uid,state from user_trade where state=#{state}
+    </select>
+</mapper>

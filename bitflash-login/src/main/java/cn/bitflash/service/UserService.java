@@ -17,7 +17,7 @@
 package cn.bitflash.service;
 
 import cn.bitflash.login.LoginForm;
-import cn.bitflash.user.UserEntity;
+import cn.bitflash.login.UserEntity;
 import com.baomidou.mybatisplus.service.IService;
 
 import java.util.Map;

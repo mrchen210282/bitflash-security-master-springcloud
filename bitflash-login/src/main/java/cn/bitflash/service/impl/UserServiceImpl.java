@@ -18,13 +18,13 @@ package cn.bitflash.service.impl;
 
 import cn.bitflash.dao.UserDao;
 import cn.bitflash.exception.RRException;
+import cn.bitflash.login.LoginForm;
+import cn.bitflash.login.TokenEntity;
+import cn.bitflash.login.UserEntity;
+import cn.bitflash.login.UserGTCidEntity;
 import cn.bitflash.service.TokenService;
 import cn.bitflash.service.UserGTCidService;
 import cn.bitflash.service.UserService;
-import cn.bitflash.login.LoginForm;
-import cn.bitflash.user.TokenEntity;
-import cn.bitflash.user.UserEntity;
-import cn.bitflash.user.UserGTCidEntity;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import common.validator.Assert;

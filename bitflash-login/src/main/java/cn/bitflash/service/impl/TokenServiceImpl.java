@@ -17,9 +17,9 @@
 package cn.bitflash.service.impl;
 
 import cn.bitflash.dao.TokenDao;
+import cn.bitflash.login.TokenEntity;
+import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.TokenService;
-import cn.bitflash.user.TokenEntity;
-import cn.bitflash.user.UserEntity;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;

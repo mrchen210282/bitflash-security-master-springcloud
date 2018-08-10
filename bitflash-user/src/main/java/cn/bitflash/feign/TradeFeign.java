@@ -13,22 +13,22 @@ import java.util.Map;
 public interface TradeFeign {
 
     @PostMapping("")
-    public Map<String,Object> selectTradeHistoryIncome(Map<String,Object> param);
+    Map<String,Object> selectTradeHistoryIncome(Map<String,Object> param);
 
     @PostMapping("")
-    public UserAccountBean selectUserAccount(Map<String,Object> param);
+    UserAccountBean selectUserAccount(Map<String,Object> param);
 
     @PostMapping("")
-    public UserAccountEntity selectOne(Wrapper<UserAccountEntity> param);
+    UserAccountEntity selectOne(Wrapper<UserAccountEntity> param);
 
     @PostMapping("")
-    public UserAccountEntity selectById(String uid);
+    UserAccountEntity selectById(String uid);
 
     @PostMapping("")
-    public List<Map<String, Object>> selectTradeUrl(Map<String,Object> param);
+    List<Map<String, Object>> selectTradeUrl(Map<String,Object> param);
 
     @PostMapping("")
-    public boolean updateById(UserAccountEntity userAccountEntity);
+    boolean updateById(UserAccountEntity userAccountEntity);
 
 
 }

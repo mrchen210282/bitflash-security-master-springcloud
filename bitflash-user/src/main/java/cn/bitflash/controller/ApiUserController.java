@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api")
-//@Api(tags = "用户操作" )
 public class ApiUserController {
 
     @Autowired

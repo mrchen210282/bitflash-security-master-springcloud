@@ -52,9 +52,13 @@ public class ApiAccountController {
     @Autowired
     private UserTradeHistoryService userTradeHistoryService;
 
+    /**
+     * 获取用户信息
+     * @param user
+     * @return
+     */
     @Login
     @GetMapping("userInfo")
-    @ApiOperation(value = "获取用户信息", response = UserEntity.class)
     public R userInfo(@ApiIgnore @LoginUser UserEntity user) {
         return R.ok().put("user", user);
     }

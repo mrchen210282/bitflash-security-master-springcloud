@@ -2,12 +2,8 @@ package cn.bitflash.feignInterface;
 
 
 import cn.bitflash.feignInterface.impl.UserFeignFallback;
-import cn.bitflash.login.UserEntity;
-import cn.bitflash.trade.UserAccountEntity;
 import cn.bitflash.user.UserInfoEntity;
 import cn.bitflash.user.UserInvitationCodeEntity;
-import cn.bitflash.user.UserPayPwdEntity;
-import cn.bitflash.user.UserRelationJoinAccountEntity;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -15,8 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @FeignClient(value = "birflash-user",fallbackFactory = UserFeignFallback.class)
 public interface BitflashUserFeign {

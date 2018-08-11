@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import cn.bitflash.trade.UserTradeEntity;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -28,22 +29,19 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  *
  * @author wangjun
  */
-public class UserTradeBean implements Serializable {
+public class UserTradeBean extends UserTradeEntity implements Serializable {
 
     private static final long serialVersionUID = -3272015324293238491L;
 
-    /**
-     * id
-     */
-    @TableId
-    private Integer id;
-
-    /**
-     *
-     */
-    private String uid;
 
     private String realname;
+
+    /**
+     * 昵称
+     */
+    private String nickname;
+
+
 
     private String mobile;
 
@@ -52,15 +50,6 @@ public class UserTradeBean implements Serializable {
      */
     private String state;
 
-    /**
-     * 卖出数量
-     */
-    private BigDecimal quantity;
-
-    /**
-     * 卖出价格
-     */
-    private BigDecimal price;
 
     /**
      * 报单总数 （实际报单数+赠送量）
@@ -80,8 +69,13 @@ public class UserTradeBean implements Serializable {
      */
     private String sellName;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8" )
-    private Date createTime;
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
     public String getPurchaseName() {
         return purchaseName;
@@ -131,37 +125,6 @@ public class UserTradeBean implements Serializable {
         this.realname = realname;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
-    public BigDecimal getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(BigDecimal quantity) {
-        this.quantity = quantity;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
 
     public BigDecimal getTotelAssets() {
         return totelAssets;
@@ -171,11 +134,4 @@ public class UserTradeBean implements Serializable {
         this.totelAssets = totelAssets;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
 }

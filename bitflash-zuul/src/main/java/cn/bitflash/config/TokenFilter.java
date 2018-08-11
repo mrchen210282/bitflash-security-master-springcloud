@@ -93,13 +93,14 @@ public class TokenFilter extends ZuulFilter {
          * 判断当前系统时间与请求传递过来的时间，对比
          * 当时间大于10s后返回false
          */
-        Long time = System.currentTimeMillis();
+        /*Long time = System.currentTimeMillis();
         if ((Long.parseLong(secretTime) + DIFFERENCE) < time) {
             this.errorMessage(ctx, "请求时间超时");
             return null;
-        }
-        String token = redisUtils.get(mobile);
-        if (token.length() == 0 || token == null) {
+        }*/
+        System.out.println(RedisKey.LOGIN_ + mobile);
+        String token = redisUtils.get(RedisKey.LOGIN_ + mobile);
+        if (token == null || token.length() == 0) {
             try {
                 token = AESTokenUtil.getToken(secretTime, secretToken);
                 redisUtils.set(RedisKey.LOGIN_ + mobile, token);

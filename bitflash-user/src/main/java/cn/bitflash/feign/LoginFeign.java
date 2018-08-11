@@ -1,5 +1,6 @@
 package cn.bitflash.feign;
 
+import cn.bitflash.feign.impl.loginFallback;
 import cn.bitflash.login.TokenEntity;
 import cn.bitflash.login.UserEntity;
 import com.baomidou.mybatisplus.mapper.Wrapper;
@@ -8,11 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(value = "bitflash-login")
+@FeignClient(value = "bitflash-login",fallbackFactory = loginFallback.class)
 public interface LoginFeign {
 
     @PostMapping("/api/login/withinToken/selectOne")
-    TokenEntity selectOne(@RequestBody Wrapper<TokenEntity> entityWrapper);
+    TokenEntity selectOne(@RequestBody Wrapper<TokenEntity> wrapper);
 
     @PostMapping("/api/login/withinUser/selectOne")
     UserEntity selectOneByUser(@RequestBody Wrapper<UserEntity> entityWrapper);

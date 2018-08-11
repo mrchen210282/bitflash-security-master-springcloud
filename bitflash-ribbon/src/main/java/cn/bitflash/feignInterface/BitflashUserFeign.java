@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(value = "birflash-user",fallbackFactory = UserFeignFallback.class)
+@FeignClient(value = "bitflash-user",fallbackFactory = UserFeignFallback.class)
 public interface BitflashUserFeign {
 
     /**

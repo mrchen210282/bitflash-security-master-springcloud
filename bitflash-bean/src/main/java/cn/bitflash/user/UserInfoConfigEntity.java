@@ -10,20 +10,20 @@ import java.io.Serializable;
 public class UserInfoConfigEntity implements Serializable {
 
     private static final long serialVersionUID = 7629853906064099813L;
-   @TableId(type = IdType.INPUT)
+    @TableId(type = IdType.INPUT)
     private Integer id;
 
-   private Integer min;
+    private Integer min;
 
-   private Integer max;
+    private Integer max;
 
-   private Double profit;
+    private Double profit;
 
-   private String showProfit;
+    private String showProfit;
 
-   private Double giveRate;
+    private Double giveRate;
 
-   private String showGiveRate;
+    private String showGiveRate;
 
     public Integer getId() {
         return id;

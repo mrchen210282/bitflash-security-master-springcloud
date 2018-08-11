@@ -17,6 +17,7 @@
 package cn.bitflash.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -30,6 +31,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * @author Mark sunlightcs@gmail.com
  * @since 3.0.0 2017-07-07
  */
+@EnableCaching
 @Configuration
 public class RedisConfig {
     @Autowired

@@ -1,14 +1,22 @@
 package cn.bitflash.controller;
 
-import cn.bitflash.annotation.*;
+import cn.bitflash.annotation.Login;
+import cn.bitflash.annotation.LoginUser;
+import cn.bitflash.annotation.UserAccount;
+import cn.bitflash.annotation.UserInvitationCode;
 import cn.bitflash.feign.LoginFeign;
 import cn.bitflash.feign.SysFeign;
 import cn.bitflash.feign.TradeFeign;
 import cn.bitflash.login.UserEntity;
-import cn.bitflash.service.*;
+import cn.bitflash.service.UserInfoService;
+import cn.bitflash.service.UserPayPwdService;
+import cn.bitflash.service.UserRelationService;
 import cn.bitflash.trade.UserAccountBean;
 import cn.bitflash.trade.UserAccountEntity;
-import cn.bitflash.user.*;
+import cn.bitflash.user.UserInfoEntity;
+import cn.bitflash.user.UserInvitationCodeEntity;
+import cn.bitflash.user.UserPayPwdEntity;
+import cn.bitflash.user.UserRelationEntity;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.Common;
@@ -17,7 +25,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 获取账户信息
@@ -25,7 +36,7 @@ import java.util.*;
  * @author eric
  */
 @RestController
-@RequestMapping("/api" )
+@RequestMapping("/api")
 //@Api(tags = "获取用户信息接口" )
 public class ApiAccountController {
 
@@ -52,14 +63,16 @@ public class ApiAccountController {
     public R userInfo(@LoginUser UserEntity user) {
         return R.ok().put("user", user);
     }
+
     /**
      * 登录后获取用户信息
+     *
      * @param account
      * @param user
      * @return
      */
     @Login
-    @GetMapping("accountInfo" )
+    @GetMapping("accountInfo")
     public R accountInfo(@UserAccount UserAccountEntity account, @LoginUser UserEntity user) {
         String uid = account.getUid();
         UserInfoEntity userInfoEntity = null;
@@ -71,7 +84,7 @@ public class ApiAccountController {
                 UserAccountBean userAccount = tradeFeign.selectUserAccount(map);
                 if (null != userAccount) {
                     account.setDailyIncome(userAccount.getDailyIncome());
-                    
+
                     //昨日购买
                     Object yesterDayPurchase = null;
                     //总购买
@@ -83,7 +96,7 @@ public class ApiAccountController {
                         if (Common.VIP_LEVEL_0.equals(userInfoBean.getIsVip())) {
                             //计算非会员昨日购买和总购买
                             Date date = new Date();
-                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd" );
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                             Calendar calendar = Calendar.getInstance();
                             calendar.setTime(date);
                             calendar.add(Calendar.DATE, -1);
@@ -93,8 +106,8 @@ public class ApiAccountController {
                             map.put("purchaseUid", account.getUid());
                             //查询出昨日购买
                             Map<String, Object> returnMap = tradeFeign.selectTradeHistoryIncome(map);
-                            if (null != returnMap.get("quantity" )) {
-                                yesterDayPurchase = returnMap.get("quantity" );
+                            if (null != returnMap.get("quantity")) {
+                                yesterDayPurchase = returnMap.get("quantity");
                             } else {
                                 yesterDayPurchase = "0";
                             }
@@ -103,8 +116,8 @@ public class ApiAccountController {
                             //查询出总购买
                             Map<String, Object> purchaseMap = tradeFeign.selectTradeHistoryIncome(map);
 
-                            if (null != purchaseMap.get("quantity" )) {
-                                totalPurchase = purchaseMap.get("quantity" );
+                            if (null != purchaseMap.get("quantity")) {
+                                totalPurchase = purchaseMap.get("quantity");
                             } else {
                                 totalPurchase = "0";
                             }
@@ -121,23 +134,24 @@ public class ApiAccountController {
                             .put("totalIncome", account.getTotelIncome()).put("dailyIncome", account.getDailyIncome())
                             .put("nicklock", userAccount.getNicklock());
                 } else {
-                    return R.error("该用户不存在！" );
+                    return R.error("该用户不存在！");
                 }
             } else {
-                return R.error("该用户不存在！" );
+                return R.error("该用户不存在！");
             }
         } else {
-            return R.error("该用户不存在！" );
+            return R.error("该用户不存在！");
         }
     }
 
     /**
      * 获取推广码
+     *
      * @param userInvitationCode
      * @return
      */
     @Login
-    @PostMapping("getInvitationCode" )
+    @PostMapping("getInvitationCode")
     public R getInvitationcode(@UserInvitationCode UserInvitationCodeEntity userInvitationCode) {
         UserRelationEntity ur = userRelationService.selectOne(new EntityWrapper<UserRelationEntity>().eq("invitation_code", userInvitationCode.getLftCode()));
         Map<String, Object> map = new HashMap<String, Object>();
@@ -147,7 +161,7 @@ public class ApiAccountController {
         if (ur != null) {
             map.put("rgtCode", userInvitationCode.getRgtCode());
         } else {
-            map.put("rgtCode", "请先在左区排点" );
+            map.put("rgtCode", "请先在左区排点");
         }
 
         return R.ok().put("invitationCode", map);
@@ -156,65 +170,60 @@ public class ApiAccountController {
 
     /**
      * 获取用户体系
-     * @param ura
      * @param userEntity
      * @return
      */
     @Login
-    @PostMapping("getRelation" )
-    public R getRelation(@UserRelation List<UserRelationJoinAccountEntity> ura, @LoginUser UserEntity userEntity) {
+    @PostMapping("getRelation")
+    public R getRelation(@UserAccount UserAccountEntity userAccount, @LoginUser UserEntity userEntity) {
         Map<String, Object> map = new HashMap<String, Object>();
-        if (ura != null) {
-            map.put("lft_a", ura.get(0).getLftAchievement());
-            map.put("rgt_a", ura.get(0).getRgtAchievement());
-            if (StringUtils.isNotBlank(ura.get(0).getUid())) {
-                UserInfoEntity userInfoEntity = userInfoService.selectById(userEntity.getUid());
-                if (null != userInfoEntity) {
-                    map.put("username", userInfoEntity.getNickname());
-                }
+        if (userAccount != null) {
+            Double left = userAccount.getLftAchievement().doubleValue();
+            Double right = userAccount.getRgtAchievement().doubleValue();
+            String leftRate = "10%";
+            if (left != 0) {
+                leftRate = (Math.round(left / (left + right))) * 100 + "%";
             }
-            map.put("c_lft_realname", "未排点" );
-            map.put("c_rgt_realname", "未排点" );
-            if (ura.size() > 1) {
-                map.put("c_lft_realname", ura.get(1).getRealname());
-                int cl_rgt = ura.get(1).getRgt();
-                for (UserRelationJoinAccountEntity t : ura) {
-                    if (t.getLft() == (cl_rgt + 1)) {
-                        map.put("c_rgt_realname", t.getRealname());
-                    }
-
-                }
+            String rightRate = "10%";
+            if (right != 0) {
+                rightRate = (Math.round(right / (left + right))) * 100 + "%";
             }
+            map.put("leftRate", leftRate);
+            map.put("rightRate", rightRate);
+            map.put("lft_a", left);
+            map.put("rgt_a", right);
         }
         return R.ok().put("myRelation", map);
     }
 
     /**
      * 修改密码
+     *
      * @param user
      * @param oldPwd
      * @param newPwd
      * @return
      */
     @Login
-    @PostMapping("changePassword" )
+    @PostMapping("changePassword")
     public R changePwd(@LoginUser UserEntity user, @RequestParam String oldPwd, @RequestParam String newPwd) {
         if (oldPwd.equals(user.getPassword())) {
             user.setPassword(newPwd);
             loginFeign.update(user, new EntityWrapper<UserEntity>().eq("uid", user.getUid()));
             return R.ok();
         } else {
-            return R.error("原密码不正确" );
+            return R.error("原密码不正确");
         }
     }
 
     /**
      * 修改密码
+     *
      * @param mobile
      * @param newPwd
      * @return
      */
-    @PostMapping("changePassword2" )
+    @PostMapping("changePassword2")
     public R changePwd2(@RequestParam String mobile, @RequestParam String newPwd) {
         UserEntity userEntity = new UserEntity();
         userEntity.setPassword(newPwd);
@@ -223,12 +232,13 @@ public class ApiAccountController {
         if (rst) {
             return R.ok();
         } else {
-            return R.error("修改失败" );
+            return R.error("修改失败");
         }
     }
 
     /**
      * 修改昵称
+     *
      * @param user
      * @param nickname
      * @return

@@ -5,6 +5,7 @@ import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.TokenService;
 import cn.bitflash.service.UserService;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +20,8 @@ public class ApiWithinLoginController {
     private UserService userService;
 
     @PostMapping("/withinToken/selectOne")
-    public TokenEntity selectOneByToken(@RequestBody  EntityWrapper<TokenEntity> entityWrapper){
-        return this.tokenService.selectOne(entityWrapper);
+    public TokenEntity selectOneByToken(@RequestBody EntityWrapper<TokenEntity> wrapper){
+        return this.tokenService.selectOne(wrapper);
     }
 
     @PostMapping("/withinUser/selectOne")

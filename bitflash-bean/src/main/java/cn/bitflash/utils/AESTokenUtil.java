@@ -40,6 +40,18 @@ public class AESTokenUtil {
         return data;
     }
 
+    public static void main(String[] args) {
+        long time=System.currentTimeMillis();
+        System.out.println(time);
+        String token="19137eaf0b1f4a82b7838ce18377fb17";
+        try {
+            String secret=AESTokenUtil.setToken(String.valueOf(time),token);
+            System.out.println(secret);
+        }catch (Exception e){
+
+        }
+    }
+
     //加密token
     public static String setToken(String time,String str1) throws UnsupportedEncodingException {
         //time为密匙加密，取22位长度

@@ -19,6 +19,9 @@ import java.util.List;
 public class WebMvcConfig implements WebMvcConfigurer {
 
     @Autowired
+    ApiLoginInterceptor apiLoginInterceptor;
+
+    @Autowired
     LoginUserHandlerMethodArgumentResolver loginUserHandlerMethodArgumentResolver;
 
     @Autowired
@@ -30,13 +33,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Autowired
     UserInvitationHandlerMethodArgumentResolver userInvitationHandlerMethodArgumentResolver;
 
-    @Autowired
-    UserRelationHandlerMethodArgumentResolver userRelationHandlerMethodArgumentResolver;
-
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new ApiLoginInterceptor()).addPathPatterns("/api/**" );
+        registry.addInterceptor(apiLoginInterceptor).addPathPatterns("/api/**" );
     }
 
     @Override
@@ -45,7 +44,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         argumentResolvers.add(payPasswordHandlerMethodArgumentResolver);
         argumentResolvers.add(userAccountHandlerMethodArgumentResolver);
         argumentResolvers.add(userInvitationHandlerMethodArgumentResolver);
-        argumentResolvers.add(userRelationHandlerMethodArgumentResolver);
 
     }
 }

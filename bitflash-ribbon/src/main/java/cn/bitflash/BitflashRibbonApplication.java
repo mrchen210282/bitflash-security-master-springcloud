@@ -19,12 +19,6 @@ public class BitflashRibbonApplication {
         SpringApplication.run(BitflashRibbonApplication.class, args);
     }
 
-    @Bean
-    @LoadBalanced
-    public RestTemplate restTemplate(){
-        return new RestTemplate();
-    }
-
 
 
 }

@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  *
  * @author wangjun
  */
-@TableName("user_trade" )
+@TableName("user_trade")
 public class UserTradeEntity implements Serializable {
 
     private static final long serialVersionUID = -3272015324293238491L;
@@ -40,18 +40,7 @@ public class UserTradeEntity implements Serializable {
     @TableId
     private Integer id;
 
-    /**
-     *
-     */
     private String uid;
-
-    private String realname;
-
-    /**
-     * 昵称
-     */
-    private String nickname;
-
 
     /**
      * 卖出(1)、购买(2),撤消(3)
@@ -68,53 +57,9 @@ public class UserTradeEntity implements Serializable {
      */
     private BigDecimal price;
 
-    //是否为自己卖出(1),不是自己则为空
-    private String isMySelf;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8" )
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
-
-    /**
-     * 锁定订单时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8" )
-    private Date lockTime;
-
-    /**
-     * 付款时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8" )
-    private Date payTime;
-
-    /**
-     * 完成订单时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
-    private Date finishTime;
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public String getRealname() {
-        return realname;
-    }
-
-    public void setRealname(String realname) {
-        this.realname = realname;
-    }
-
-    public String getIsMySelf() {
-        return isMySelf;
-    }
-
-    public void setIsMySelf(String isMySelf) {
-        this.isMySelf = isMySelf;
-    }
 
     public String getState() {
         return state;
@@ -164,27 +109,4 @@ public class UserTradeEntity implements Serializable {
         this.createTime = createTime;
     }
 
-    public Date getLockTime() {
-        return lockTime;
-    }
-
-    public void setLockTime(Date lockTime) {
-        this.lockTime = lockTime;
-    }
-
-    public Date getPayTime() {
-        return payTime;
-    }
-
-    public void setPayTime(Date payTime) {
-        this.payTime = payTime;
-    }
-
-    public Date getFinishTime() {
-        return finishTime;
-    }
-
-    public void setFinishTime(Date finishTime) {
-        this.finishTime = finishTime;
-    }
 }

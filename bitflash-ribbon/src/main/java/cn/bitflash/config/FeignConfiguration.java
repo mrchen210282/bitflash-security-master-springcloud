@@ -29,7 +29,7 @@ public class FeignConfiguration {
         return Logger.Level.FULL;
     }
 
-    @Bean
+    /*@Bean
     public RequestInterceptor headerInterceptor() {
         return new RequestInterceptor() {
             @Override
@@ -48,5 +48,5 @@ public class FeignConfiguration {
                 }
             }
         };
-    }
+    }*/
 }

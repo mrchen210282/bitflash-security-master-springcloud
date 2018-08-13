@@ -1,10 +1,9 @@
 package cn.bitflash.FeignController;
 
-import cn.bitflash.user.TokenEntity;
+import cn.bitflash.login.TokenEntity;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
@@ -15,6 +14,6 @@ public interface LoginFeign {
     public Map<String,Object> logout(@RequestBody TokenEntity tokenEntity);
 
     @PostMapping("/api/token")
-    TokenEntity getTokenByToken(@RequestParam("token") String token);
+    TokenEntity getTokenByToken(@RequestBody Map<String,Object> map);
 
 }

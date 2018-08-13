@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 
 @Component
 public class UserLoginFallback implements FallbackFactory<UserLoginFeign> {
@@ -19,15 +21,17 @@ public class UserLoginFallback implements FallbackFactory<UserLoginFeign> {
         return new UserLoginFeign() {
             @Override
             public UserGTCidEntity selectOneByGT(Wrapper<UserGTCidEntity> wrapper) {
-                log.error("查询个推cid出错原因："+throwable.getMessage());
+                log.error("查询个推cid出错原因："+throwable);
                 return new UserGTCidEntity();
             }
 
             @Override
-            public TokenEntity selectOneByToken(Wrapper<TokenEntity> entityWrapper) {
-                log.error("查询token出错原因："+throwable.getMessage());
+            public TokenEntity selectOneByToken(Map<String, Object> map) {
+                log.error("查询token出错原因："+throwable);
                 return new TokenEntity();
             }
+
+
         };
     }
 }

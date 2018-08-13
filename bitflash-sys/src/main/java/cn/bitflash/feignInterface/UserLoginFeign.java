@@ -15,7 +15,7 @@ import java.util.Map;
 public interface UserLoginFeign {
 
     @PostMapping("/api/login/wthinGT/selectOne")
-    UserGTCidEntity selectOneByGT(@RequestBody Wrapper<UserGTCidEntity> wrapper);
+    UserGTCidEntity selectOneByGT(@RequestBody Map<String,Object> map);
 
     @PostMapping("/api/login/withinToken/selectOne")
     TokenEntity selectOneByToken(@RequestBody Map<String,Object> map);

@@ -20,7 +20,7 @@ public class UserLoginFallback implements FallbackFactory<UserLoginFeign> {
     public UserLoginFeign create(Throwable throwable) {
         return new UserLoginFeign() {
             @Override
-            public UserGTCidEntity selectOneByGT(Wrapper<UserGTCidEntity> wrapper) {
+            public UserGTCidEntity selectOneByGT(Map<String, Object> map) {
                 log.error("查询个推cid出错原因："+throwable);
                 return new UserGTCidEntity();
             }

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
@@ -64,7 +65,7 @@ public class TokenFilter extends ZuulFilter {
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx.getRequest();
         String url = request.getRequestURI();
-        if (url.indexOf("bitflash-ribbon/user-app/login") != -1) {
+        if (url.indexOf("bitflash-ribbon/api/login/login") != -1) {
             return false;
         }
         return true;
@@ -89,26 +90,15 @@ public class TokenFilter extends ZuulFilter {
             this.errorMessage(ctx, "token值不能为空");
             return null;
         }
-        /**
-         * 判断当前系统时间与请求传递过来的时间，对比
-         * 当时间大于10s后返回false
-         */
-        /*Long time = System.currentTimeMillis();
-        if ((Long.parseLong(secretTime) + DIFFERENCE) < time) {
-            this.errorMessage(ctx, "请求时间超时");
+        try{
+            HttpSession session=request.getSession();
+            session.setAttribute(RedisKey.MOBILE.toString(),mobile);
+            String token = AESTokenUtil.getToken(secretTime, secretToken);
+            session.setAttribute(RedisKey.TOKEN.toString(),token);
+        }catch (UnsupportedEncodingException e) {
+            this.errorMessage(ctx, "解密异常");
+            e.printStackTrace();
             return null;
-        }*/
-        System.out.println(RedisKey.LOGIN_ + mobile);
-        String token = redisUtils.get(RedisKey.LOGIN_ + mobile);
-        if (token == null || token.length() == 0) {
-            try {
-                token = AESTokenUtil.getToken(secretTime, secretToken);
-                redisUtils.set(RedisKey.LOGIN_ + mobile, token);
-            } catch (UnsupportedEncodingException e) {
-                this.errorMessage(ctx, "解密异常");
-                e.printStackTrace();
-                return null;
-            }
         }
         return null;
     }

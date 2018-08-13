@@ -8,6 +8,7 @@ import cn.bitflash.feign.LoginFeign;
 import cn.bitflash.feign.SysFeign;
 import cn.bitflash.feign.TradeFeign;
 import cn.bitflash.login.UserEntity;
+import cn.bitflash.redisConfig.RedisKey;
 import cn.bitflash.service.UserInfoService;
 import cn.bitflash.service.UserPayPwdService;
 import cn.bitflash.service.UserRelationService;
@@ -24,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -243,10 +245,11 @@ public class ApiAccountController {
      * @param nickname
      * @return
      */
-    @Login
+    @Login //@LoginUser UserEntity user,
     @PostMapping("updateNickName")
-    public R updateNickName(@LoginUser UserEntity user, @RequestParam String nickname) {
-        if (StringUtils.isNotBlank(nickname)) {
+    public R updateNickName(@RequestParam String nickname, HttpServletRequest request) {
+        System.out.println(request.getSession().getAttribute(RedisKey.MOBILE.toString()));
+        /*if (StringUtils.isNotBlank(nickname)) {
             if (nickname.length() <= 6) {
                 UserInfoEntity userInfoEntity = userInfoService.selectOne(new EntityWrapper<UserInfoEntity>().eq("nickname", nickname));
 
@@ -265,7 +268,8 @@ public class ApiAccountController {
             }
         } else {
             return R.error("昵称不能为空！");
-        }
+        }*/
+        return R.error("昵称不能为空！");
     }
 
 }

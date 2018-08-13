@@ -43,7 +43,7 @@ public class AESTokenUtil {
     public static void main(String[] args) {
         long time=System.currentTimeMillis();
         System.out.println(time);
-        String token="19137eaf0b1f4a82b7838ce18377fb17";
+        String token="41b4ecec4cec4d04affc9e949bf37479";
         try {
             String secret=AESTokenUtil.setToken(String.valueOf(time),token);
             System.out.println(secret);

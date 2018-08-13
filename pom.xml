@@ -38,7 +38,6 @@
         <module>bitflash-zuul</module>
         <module>bitflash-login</module>
         <module>bitflash-common</module>
-        <module>bitflash-ribbon</module>
         <module>bitflash-bean</module>
         <module>bitflash-trade</module>
         <module>bitflash-sys</module>

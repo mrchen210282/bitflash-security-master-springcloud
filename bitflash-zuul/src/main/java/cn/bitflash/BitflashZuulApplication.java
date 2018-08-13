@@ -7,10 +7,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.context.annotation.Bean;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 @EnableEurekaClient
 @EnableZuulProxy
 @SpringBootApplication
+@EnableRedisHttpSession
 public class BitflashZuulApplication {
 
     public static void main(String[] args) {
@@ -25,4 +27,6 @@ public class BitflashZuulApplication {
     public IPFilter getIPFilter(){
         return new IPFilter();
     }
+
+
 }

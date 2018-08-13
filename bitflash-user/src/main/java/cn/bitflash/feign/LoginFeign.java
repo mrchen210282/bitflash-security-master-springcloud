@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Map;
+
 @FeignClient(value = "bitflash-login",fallbackFactory = loginFallback.class)
 public interface LoginFeign {
 
     @PostMapping("/api/login/withinToken/selectOne")
-    TokenEntity selectOne(@RequestBody Wrapper<TokenEntity> wrapper);
+    TokenEntity selectOne(@RequestBody Map<String,Object> map);
 
     @PostMapping("/api/login/withinUser/selectOne")
     UserEntity selectOneByUser(@RequestBody Wrapper<UserEntity> entityWrapper);

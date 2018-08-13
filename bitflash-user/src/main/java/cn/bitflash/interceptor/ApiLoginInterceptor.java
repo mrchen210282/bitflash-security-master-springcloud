@@ -5,28 +5,21 @@ import cn.bitflash.exception.RRException;
 import cn.bitflash.feign.LoginFeign;
 import cn.bitflash.login.TokenEntity;
 import cn.bitflash.redisConfig.RedisKey;
-import cn.bitflash.utils.AESTokenUtil;
-import cn.bitflash.utils.RedisUtils;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
     private LoginFeign loginFeign;
-
-    @Autowired
-    private RedisUtils redisUtils;
 
     public static final String UID="uid";
     public static final String MOBILE="mobile";
@@ -43,19 +36,19 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
         if (annotation == null) {
             return true;
         }
-        String mobile = request.getHeader(MOBILE);
+        String mobile = (String) request.getSession().getAttribute(RedisKey.MOBILE.toString());
+        String token = (String) request.getSession().getAttribute(RedisKey.TOKEN.toString());
         if (StringUtils.isBlank(mobile)) {
             mobile = request.getParameter(MOBILE);
         }
-        /*//token为空
+        //token为空
         if (StringUtils.isBlank(mobile)) {
             throw new RRException("参数不能为空");
         }
-        String token = redisUtils.get(RedisKey.LOGIN_ + mobile);
         if(token==null){
             throw new RRException("访问地址失败，请正确访问" );
-        }*/
-        TokenEntity tokenEntity=loginFeign.selectOne(new EntityWrapper<TokenEntity>().eq("token","123456"));
+        }
+        TokenEntity tokenEntity=loginFeign.selectOne(new ModelMap("token",token));
         String userMobile=tokenEntity.getMobile();
         if(tokenEntity==null){
             throw new RRException("token信息错误" );

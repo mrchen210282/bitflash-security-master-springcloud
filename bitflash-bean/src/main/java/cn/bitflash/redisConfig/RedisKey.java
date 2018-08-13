@@ -1,8 +1,8 @@
 package cn.bitflash.redisConfig;
 
 /**
- * rediskey枚举类
+ * Session rediskey枚举类
  */
 public enum  RedisKey {
-    LOGIN_
+    MOBILE,TOKEN
 }

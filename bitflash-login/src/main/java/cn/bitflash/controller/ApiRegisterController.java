@@ -97,7 +97,7 @@ public class ApiRegisterController {
 		userinfo.setNickname(name);
 		if (StringUtils.isNotBlank(form.getInvitationCode())) {
 			// 校验验证码是否正确
-			UserInvitationCodeEntity userInvitationCodeEntity = userFeign.selectOne(new EntityWrapper<UserInvitationCodeEntity>().eq("lft_code", form.getInvitationCode()).or().eq("rgt_code", form.getInvitationCode()));
+			UserInvitationCodeEntity userInvitationCodeEntity = userFeign.selectOne(form.getInvitationCode());
 			if (userInvitationCodeEntity == null) {
 				return R.error("邀请码不正确");
 			}
@@ -146,7 +146,7 @@ public class ApiRegisterController {
 		userinfo.setRealname(name);
 		if (StringUtils.isNotBlank(invitationCode)) {
 			// 校验验证码是否正确
-			UserInvitationCodeEntity userInvitationCodeEntity = userFeign.selectOne(new EntityWrapper<UserInvitationCodeEntity>().eq("lft_code", invitationCode).or().eq("rgt_code", invitationCode));
+			UserInvitationCodeEntity userInvitationCodeEntity = userFeign.selectOne(invitationCode);
 			if (userInvitationCodeEntity == null) {
 				return R.error("邀请码不正确");
 			}

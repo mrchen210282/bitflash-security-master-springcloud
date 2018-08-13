@@ -15,23 +15,16 @@ import java.util.Map;
 @FeignClient(value = "bitflash-user",fallbackFactory = UserFallback.class)
 public interface UserFeign {
 
-    @PostMapping("/api/user/selectUserOne")
-    public List<UserEntity> selectUserOne(@RequestParam("params") Map<String, Object> params);
-
-    @PostMapping("/api/user/selectUserById")
-    public UserInfoEntity selectUserById(@RequestParam("uid") String uid);
-
-
-    @PostMapping("/api/user/selectUserInfoOne")
-    public List<UserInfoEntity> selectUserInfoOne(@RequestParam("params") Map<String, Object> params);
-
-    @PostMapping("/api/user/selectUserInfoById")
+    @PostMapping("/api/user/inner/selectUserById")
     public UserInfoEntity selectUserInfoById(@RequestParam("uid") String uid);
 
-    @PostMapping("/api/user/selectRelationOne")
-    public UserRelationEntity selectRelationOne(@RequestParam("params") Map<String, Object> params);
+    @PostMapping("/api/user/inner/selectUserInfoList")
+    public List<UserInfoEntity> selectUserInfoList(@RequestParam("params") Map<String, Object> params);
 
-    @PostMapping("/api/user/selectPayPwdOne")
-    public UserPayPwdEntity selectPayPwdOne(@RequestParam("params") Map<String, Object> params);
+    @PostMapping("/api/user/inner/selectRelation")
+    public UserRelationEntity selectRelation(@RequestParam("params") Map<String, Object> params);
+
+    @PostMapping("/api/user/inner/selectUserPayPwd")
+    public UserPayPwdEntity selectUserPayPwd(@RequestParam("params") Map<String, Object> params);
 
 }

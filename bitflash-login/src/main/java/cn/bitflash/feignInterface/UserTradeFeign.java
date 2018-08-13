@@ -7,6 +7,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.Map;
+
 
 @FeignClient(value="bitflsh-trade",fallbackFactory = UserTradeFallback.class)
 public interface UserTradeFeign {
@@ -15,5 +17,5 @@ public interface UserTradeFeign {
     boolean insert(@RequestBody UserAccountEntity userAccountEntity);
 
     @PostMapping("/api/trade/inner/selectOne")
-    UserAccountEntity selectOne(@RequestBody Wrapper wrapper);
+    UserAccountEntity selectOne(@RequestBody Map<String,Object> map);
 }

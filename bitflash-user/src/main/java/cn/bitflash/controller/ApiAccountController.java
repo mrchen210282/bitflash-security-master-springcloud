@@ -8,7 +8,6 @@ import cn.bitflash.feign.LoginFeign;
 import cn.bitflash.feign.SysFeign;
 import cn.bitflash.feign.TradeFeign;
 import cn.bitflash.login.UserEntity;
-import cn.bitflash.redisConfig.RedisKey;
 import cn.bitflash.service.UserInfoService;
 import cn.bitflash.service.UserPayPwdService;
 import cn.bitflash.service.UserRelationService;
@@ -25,7 +24,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;

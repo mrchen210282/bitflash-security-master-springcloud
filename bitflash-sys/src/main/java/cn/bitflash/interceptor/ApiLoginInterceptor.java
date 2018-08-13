@@ -47,7 +47,7 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
         if (StringUtils.isBlank(mobile) || StringUtils.isBlank(token)) {
             throw new RRException("参数不能为空");
         }
-        TokenEntity tokenEntity = userLoginFeign.selectOneByToken(new ModelMap("token", token));
+        TokenEntity tokenEntity = userLoginFeign.selectToken(new ModelMap("token", token));
         if (tokenEntity == null) {
             throw new RRException("token信息错误");
         }

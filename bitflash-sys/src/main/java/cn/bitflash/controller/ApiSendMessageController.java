@@ -7,7 +7,6 @@ import cn.bitflash.service.PlatFormConfigService;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
 import cn.bitflash.utils.RedisUtils;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.GeTuiSendMessage;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,7 @@ public class ApiSendMessageController {
         String idVal = redisUtils.get(Common.ADD_LOCK+id);
         if (StringUtils.isBlank(idVal)) {
             try {
-                UserGTCidEntity gtCidEntity = userLoginFeign.selectOneByGT(new ModelMap("uid", uid));
+                UserGTCidEntity gtCidEntity = userLoginFeign.selectGT(new ModelMap("uid", uid));
                 String text = platFormConfigService.getVal(Common.MSG_TEXT);
                 GeTuiSendMessage.sendSingleMessage(text, gtCidEntity.getCid());
                 redisUtils.set(Common.ADD_LOCK+id, id, 60 * 60);

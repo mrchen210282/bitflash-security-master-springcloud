@@ -3,8 +3,6 @@ package cn.bitflash.feign.impl;
 import cn.bitflash.feign.LoginFeign;
 import cn.bitflash.login.TokenEntity;
 import cn.bitflash.login.UserEntity;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import feign.hystrix.FallbackFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

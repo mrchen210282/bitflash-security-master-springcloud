@@ -1,16 +1,22 @@
 package cn.bitflash.controller;
 
+import cn.bitflash.annotation.Login;
 import cn.bitflash.service.AppStatusService;
+import cn.bitflash.service.PlatFormConfigService;
+import cn.bitflash.service.PriceLinechartService;
 import cn.bitflash.system.AppStatusEntity;
+import cn.bitflash.system.PriceLinechartEntity;
+import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author soso
@@ -22,6 +28,12 @@ public class ApiSystemController {
 
     @Autowired
     private AppStatusService appStatusService;
+
+    @Autowired
+    private PriceLinechartService priceLinechartService;
+
+    @Autowired
+    private PlatFormConfigService platFormConfigService;
 
     @GetMapping("update" )
     public R update(@RequestParam String appid, @RequestParam String version, @RequestParam String imei) {
@@ -43,6 +55,23 @@ public class ApiSystemController {
             map.put("status", "0" );
         }
         return R.ok().put("data", map);
+    }
+
+    /**
+     * 获取当天起，前7天的价格
+     * @return
+     */
+    @Login
+    @PostMapping("getWeekPriceRate")
+    public R getWeekPriceRate(){
+        Long time = Long.parseLong(platFormConfigService.getVal(Common.SHOW_DATE));
+        Date now =new Date();
+        Date after = new Date(now.getTime()-time);
+        List<PriceLinechartEntity> list=priceLinechartService.selectList(new EntityWrapper<PriceLinechartEntity>().between("rate_time",after,now).orderBy("rate_time"));
+        List<Date> date=list.stream().map(PriceLinechartEntity::getRateTime).collect(Collectors.toList());
+        List<Float> price=list.stream().map(PriceLinechartEntity::getPrice).collect(Collectors.toList());
+
+        return R.ok().put("date",date).put("price",price);
     }
 
 }

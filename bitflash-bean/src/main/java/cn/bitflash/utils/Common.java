@@ -57,12 +57,6 @@ public class Common {
 	// 下载图片服务器地址
 	public final static String PICTURE_URL = "picture_url";
 
-	// 赠送比例系数
-	public final static String GIVE_RATIO = "give_ratio";
-
-	// 升级vip的贝壳数量
-	public final static String VIP_CONDITION = "vip_conditions";
-
 	// redis缓存订单号key
 	public final static String ADD_LOCK = "userTrade_";
 
@@ -74,16 +68,10 @@ public class Common {
 
 	// 发送信息标题内容值
 	public final static String MSG_TEXT = "text_msg";
-	/**
-	 * vip1-5的升级条件
-	 */
-	public final static String VIP1 = "vipLevel1";
-	public final static String VIP2 = "vipLevel2";
-	public final static String VIP3 = "vipLevel3";
-	public final static String VIP4 = "vipLevel4";
-	public final static String VIP5 = "vipLevel5";
 
 	public final static double poundage = 0.025;
+
+	public final static String SHOW_DATE = "show_date";
 
 	public static String returnMD5(List<String> list) {
 		if (list.size() > 0) {

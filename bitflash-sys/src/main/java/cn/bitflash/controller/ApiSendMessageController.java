@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.GeTuiSendMessage;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,7 +40,7 @@ public class ApiSendMessageController {
         String idVal = redisUtils.get(Common.ADD_LOCK+id);
         if (StringUtils.isBlank(idVal)) {
             try {
-                UserGTCidEntity gtCidEntity = userLoginFeign.selectOneByGT(new EntityWrapper<UserGTCidEntity>().eq("uid", uid));
+                UserGTCidEntity gtCidEntity = userLoginFeign.selectOneByGT(new ModelMap("uid", uid));
                 String text = platFormConfigService.getVal(Common.MSG_TEXT);
                 GeTuiSendMessage.sendSingleMessage(text, gtCidEntity.getCid());
                 redisUtils.set(Common.ADD_LOCK+id, id, 60 * 60);

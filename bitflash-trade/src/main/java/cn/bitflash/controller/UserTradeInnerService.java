@@ -10,6 +10,7 @@ import cn.bitflash.trade.UserTradeEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 @RestController
 @RequestMapping("/api/trade/inner")
@@ -24,6 +25,7 @@ public class UserTradeInnerService {
     @Autowired
     UserAccountService userAccountService;
 
+
     @PostMapping("/selectTradeHistoryIncome")
     public Map<String, Object> selectTradeHistoryIncome(Map<String,Object> map){
         Map<String, Object> returnMap =  userTradeHistoryService.selectTradeHistoryIncome(map);
@@ -37,7 +39,10 @@ public class UserTradeInnerService {
 
     @PostMapping("/selectOne")
     public UserAccountEntity selectOne(@RequestBody Map<String,Object> map) {
-
+        List<UserAccountEntity> list = userAccountService.selectByMap(map);
+        if(list.size()>0){
+            return list.get(0);
+        }
         return null;
 
     }
@@ -55,7 +60,10 @@ public class UserTradeInnerService {
         return userTradeEntity;
     }
 
-
+    @PostMapping("/insert")
+    public boolean insert(@RequestBody UserAccountEntity userAccountEntity){
+        return userAccountService.insert(userAccountEntity);
+    }
 
 
 

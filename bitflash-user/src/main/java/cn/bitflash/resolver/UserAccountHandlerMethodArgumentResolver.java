@@ -20,10 +20,10 @@ import cn.bitflash.annotation.UserAccount;
 import cn.bitflash.feign.TradeFeign;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.trade.UserAccountEntity;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.RequestAttributes;
@@ -56,7 +56,7 @@ public class UserAccountHandlerMethodArgumentResolver implements HandlerMethodAr
         }
 
         // 获取用户信息
-        UserAccountEntity user = tradeFeign.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", object.toString()));
+        UserAccountEntity user = tradeFeign.selectOne(new ModelMap(ApiLoginInterceptor.UID, object.toString()));
 
         return user;
     }

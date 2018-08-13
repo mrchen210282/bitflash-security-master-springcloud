@@ -14,13 +14,13 @@ import java.util.Map;
 @FeignClient(value = "bitflash-login",fallbackFactory = loginFallback.class)
 public interface LoginFeign {
 
-    @PostMapping("/api/login/withinToken/selectOne")
+    @PostMapping("/api/login/inner/selectToken")
     TokenEntity selectOne(@RequestBody Map<String,Object> map);
 
-    @PostMapping("/api/login/withinUser/selectOne")
-    UserEntity selectOneByUser(@RequestBody Wrapper<UserEntity> entityWrapper);
+    @PostMapping("/api/login/inner/selectUser")
+    UserEntity selectOneByUser(@RequestBody Map<String,Object> map);
 
-    @PostMapping("/api/login/withinUser/update")
-    boolean update(@RequestBody UserEntity userEntity,@RequestParam("entityWrapper") Wrapper<UserEntity> entityWrapper);
+    @PostMapping("/api/login/inner/updateByUser")
+    boolean update(@RequestBody UserEntity userEntity);
 
 }

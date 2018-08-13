@@ -20,10 +20,10 @@ import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.feign.LoginFeign;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.login.UserEntity;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.RequestAttributes;
@@ -54,9 +54,8 @@ public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgu
         if (object == null) {
             return null;
         }
-
         // 获取用户信息
-        UserEntity user = loginFeign.selectOneByUser(new EntityWrapper<UserEntity>().eq("mobile",(String) object));
+        UserEntity user = loginFeign.selectOneByUser(new ModelMap(ApiLoginInterceptor.UID, object));
         return user;
     }
 }

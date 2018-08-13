@@ -3,6 +3,7 @@ package cn.bitflash.feign.impl;
 import cn.bitflash.feign.UserFeign;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.user.UserInfoEntity;
+import cn.bitflash.user.UserPayPwdEntity;
 import cn.bitflash.user.UserRelationEntity;
 import feign.hystrix.FallbackFactory;
 import org.slf4j.Logger;
@@ -48,6 +49,12 @@ public class UserFallback implements FallbackFactory<UserFeign> {
 
             @PostMapping("/api/user/selectRelationOne")
             public UserRelationEntity selectRelationOne(@RequestParam("params") Map<String, Object> params) {
+                log.error("获取地址失败-----:"+throwable.getMessage());
+                return null;
+            }
+
+            @Override
+            public UserPayPwdEntity selectPayPwdOne(Map<String, Object> params) {
                 log.error("获取地址失败-----:"+throwable.getMessage());
                 return null;
             }

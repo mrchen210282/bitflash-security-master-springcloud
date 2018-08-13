@@ -28,13 +28,13 @@ public class loginFallback implements FallbackFactory<LoginFeign> {
             }
 
             @Override
-            public UserEntity selectOneByUser(Wrapper<UserEntity> entityWrapper) {
+            public UserEntity selectOneByUser(Map<String,Object> map) {
                 log.error("查询用户失败-----:"+throwable.getMessage());
                 return new UserEntity();
             }
 
             @Override
-            public boolean update(UserEntity userEntity, Wrapper<UserEntity> entityWrapper) {
+            public boolean update(UserEntity userEntity) {
                 log.error("更新用户失败-----:"+throwable.getMessage());
                 return false;
             }

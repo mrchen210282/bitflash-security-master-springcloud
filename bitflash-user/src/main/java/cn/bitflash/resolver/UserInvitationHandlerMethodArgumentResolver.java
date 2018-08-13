@@ -57,7 +57,7 @@ public class UserInvitationHandlerMethodArgumentResolver implements HandlerMetho
 
         // 获取用户信息
         UserInvitationCodeEntity userInvitationCode = userInvitationCodeService
-                .selectOne(new EntityWrapper<UserInvitationCodeEntity>().eq("uid", (String) object));
+                .selectOne(new EntityWrapper<UserInvitationCodeEntity>().eq(ApiLoginInterceptor.UID, object));
 
         return userInvitationCode;
     }

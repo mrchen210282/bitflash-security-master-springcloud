@@ -3,7 +3,6 @@ package cn.bitflash.feign.impl;
 import cn.bitflash.feign.TradeFeign;
 import cn.bitflash.trade.UserAccountBean;
 import cn.bitflash.trade.UserAccountEntity;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import feign.hystrix.FallbackFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +32,7 @@ public class TradeFallback implements FallbackFactory<TradeFeign> {
 
 
             @Override
-            public UserAccountEntity selectOne(Wrapper<UserAccountEntity> param) {
+            public UserAccountEntity selectOne(Map<String,Object> map) {
                 log.error("获取账号失败-----:"+throwable.getMessage());
                 return new UserAccountEntity();
             }

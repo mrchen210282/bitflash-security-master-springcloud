@@ -211,7 +211,9 @@ public class ApiAccountController {
     public R changePwd(@LoginUser UserEntity user, @RequestParam String oldPwd, @RequestParam String newPwd) {
         if (oldPwd.equals(user.getPassword())) {
             user.setPassword(newPwd);
-            loginFeign.update(user, new EntityWrapper<UserEntity>().eq("uid", user.getUid()));
+            //Map<String,Object> map = new HashMap<String,Object>();
+            //map.put("uid",user.getUid());
+            loginFeign.update(user);
             return R.ok();
         } else {
             return R.error("原密码不正确");
@@ -230,7 +232,9 @@ public class ApiAccountController {
         UserEntity userEntity = new UserEntity();
         userEntity.setPassword(newPwd);
 
-        boolean rst = loginFeign.update(userEntity, new EntityWrapper<UserEntity>().eq("mobile", mobile));
+        //Map<String,Object> map = new HashMap<String,Object>();
+        //map.put("mobile",mobile);
+        boolean rst = loginFeign.update(userEntity);
         if (rst) {
             return R.ok();
         } else {
@@ -245,11 +249,10 @@ public class ApiAccountController {
      * @param nickname
      * @return
      */
-    @Login //@LoginUser UserEntity user,
+    @Login
     @PostMapping("updateNickName")
-    public R updateNickName(@RequestParam String nickname, HttpServletRequest request) {
-        System.out.println(request.getSession().getAttribute(RedisKey.MOBILE.toString()));
-        /*if (StringUtils.isNotBlank(nickname)) {
+    public R updateNickName(@RequestParam String nickname,@LoginUser UserEntity user) {
+        if (StringUtils.isNotBlank(nickname)) {
             if (nickname.length() <= 6) {
                 UserInfoEntity userInfoEntity = userInfoService.selectOne(new EntityWrapper<UserInfoEntity>().eq("nickname", nickname));
 
@@ -268,8 +271,7 @@ public class ApiAccountController {
             }
         } else {
             return R.error("昵称不能为空！");
-        }*/
-        return R.error("昵称不能为空！");
+        }
     }
 
 }

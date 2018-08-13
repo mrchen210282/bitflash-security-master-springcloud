@@ -18,7 +18,7 @@ public class UserFeignFallback implements FallbackFactory<UserFeign> {
     public UserFeign create(Throwable throwable) {
         return new UserFeign() {
             @Override
-            public UserInvitationCodeEntity selectOne(Wrapper wrapper) {
+            public UserInvitationCodeEntity selectOne(String invitationCode) {
                 log.error("查询邀请码出错原因-----:"+throwable.getMessage());
                 return new UserInvitationCodeEntity();
             }

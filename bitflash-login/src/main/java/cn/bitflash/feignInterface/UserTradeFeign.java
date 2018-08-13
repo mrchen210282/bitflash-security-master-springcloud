@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(value="bitflsh-trade",fallbackFactory = UserTradeFallback.class)
 public interface UserTradeFeign {
 
-    @PostMapping("/api/trade/withinAccount/insert")
+    @PostMapping("/api/trade/inner/insert")
     boolean insert(@RequestBody UserAccountEntity userAccountEntity);
 
-    @PostMapping("/api/trade/withinAccount/selectOne")
+    @PostMapping("/api/trade/inner/selectOne")
     UserAccountEntity selectOne(@RequestBody Wrapper wrapper);
 }

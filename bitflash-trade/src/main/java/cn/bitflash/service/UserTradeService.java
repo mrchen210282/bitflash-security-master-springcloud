@@ -7,7 +7,6 @@ import cn.bitflash.trade.UserTradeEntity;
 import com.baomidou.mybatisplus.service.IService;
 
 import cn.bitflash.trade.UserTradeBean;
-import cn.bitflash.trade.UserTradeEntity;
 
 /**
  * @author wangjun
@@ -47,6 +46,7 @@ public interface UserTradeService extends IService<UserTradeEntity> {
      * @return
      */
     public List<UserTradeBean> selectTradeHistory(Map<String, Object> param);
+
 
     public List<Map<String, Object>> getHistoryBystate5();
 

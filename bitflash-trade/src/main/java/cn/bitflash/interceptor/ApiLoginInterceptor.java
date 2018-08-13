@@ -1,6 +1,5 @@
 package cn.bitflash.interceptor;
 
-import cn.bitflash.FeignController.LoginFeign;
 import cn.bitflash.annotation.Login;
 import cn.bitflash.exception.RRException;
 import cn.bitflash.login.TokenEntity;

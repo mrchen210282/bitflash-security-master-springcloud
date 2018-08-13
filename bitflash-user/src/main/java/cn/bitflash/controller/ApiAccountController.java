@@ -211,9 +211,9 @@ public class ApiAccountController {
     public R changePwd(@LoginUser UserEntity user, @RequestParam String oldPwd, @RequestParam String newPwd) {
         if (oldPwd.equals(user.getPassword())) {
             user.setPassword(newPwd);
-            Map<String,Object> map = new HashMap<String,Object>();
-            map.put("uid",user.getUid());
-            loginFeign.update(user, map);
+            //Map<String,Object> map = new HashMap<String,Object>();
+            //map.put("uid",user.getUid());
+            loginFeign.update(user);
             return R.ok();
         } else {
             return R.error("原密码不正确");
@@ -232,9 +232,9 @@ public class ApiAccountController {
         UserEntity userEntity = new UserEntity();
         userEntity.setPassword(newPwd);
 
-        Map<String,Object> map = new HashMap<String,Object>();
-        map.put("mobile",mobile);
-        boolean rst = loginFeign.update(userEntity, map);
+        //Map<String,Object> map = new HashMap<String,Object>();
+        //map.put("mobile",mobile);
+        boolean rst = loginFeign.update(userEntity);
         if (rst) {
             return R.ok();
         } else {

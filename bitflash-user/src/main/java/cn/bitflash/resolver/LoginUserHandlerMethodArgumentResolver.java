@@ -23,14 +23,12 @@ import cn.bitflash.login.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 有@LoginUser注解的方法参数，注入当前登录用户
@@ -56,12 +54,8 @@ public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgu
         if (object == null) {
             return null;
         }
-
-
         // 获取用户信息
-        Map<String,Object> map = new HashMap<String,Object>();
-        map.put("mobile",(String) object);
-        UserEntity user = loginFeign.selectOneByUser(map);
+        UserEntity user = loginFeign.selectOneByUser(new ModelMap(ApiLoginInterceptor.UID, object));
         return user;
     }
 }

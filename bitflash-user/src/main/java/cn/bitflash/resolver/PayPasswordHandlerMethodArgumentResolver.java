@@ -29,7 +29,7 @@ public class PayPasswordHandlerMethodArgumentResolver implements HandlerMethodAr
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest request, WebDataBinderFactory webDataBinderFactory) throws Exception {
         // 获取用户ID
         Object object = request.getAttribute(ApiLoginInterceptor.UID, RequestAttributes.SCOPE_REQUEST);
-        UserPayPwdEntity payPwd = userPayPwdService.selectOne(new EntityWrapper<UserPayPwdEntity>().eq("uid", object.toString()));
+        UserPayPwdEntity payPwd = userPayPwdService.selectOne(new EntityWrapper<UserPayPwdEntity>().eq(ApiLoginInterceptor.UID, object.toString()));
 
         return payPwd == null ? null : payPwd;
     }

@@ -2,6 +2,7 @@ package cn.bitflash.config;
 
 import cn.bitflash.redisConfig.RedisKey;
 import cn.bitflash.utils.AESTokenUtil;
+import cn.bitflash.utils.R;
 import cn.bitflash.utils.RedisUtils;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
@@ -68,6 +69,9 @@ public class TokenFilter extends ZuulFilter {
         if (url.indexOf("bitflash-login/api/login/login") != -1) {
             return false;
         }
+        if (url.indexOf("bitflash-login/api/reg") != -1) {
+            return false;
+        }
         return true;
     }
 
@@ -90,12 +94,12 @@ public class TokenFilter extends ZuulFilter {
             this.errorMessage(ctx, "token值不能为空");
             return null;
         }
-        try{
-            HttpSession session=request.getSession();
-            session.setAttribute(RedisKey.MOBILE.toString(),mobile);
+        try {
+            HttpSession session = request.getSession();
+            session.setAttribute(RedisKey.MOBILE.toString(), mobile);
             String token = AESTokenUtil.getToken(secretTime, secretToken);
-            session.setAttribute(RedisKey.TOKEN.toString(),token);
-        }catch (UnsupportedEncodingException e) {
+            session.setAttribute(RedisKey.TOKEN.toString(), token);
+        } catch (UnsupportedEncodingException e) {
             this.errorMessage(ctx, "解密异常");
             e.printStackTrace();
             return null;
@@ -110,7 +114,7 @@ public class TokenFilter extends ZuulFilter {
         response.setStatus(401);
         ctx.setSendZuulResponse(false); //不进行路由
         try {
-            response.getWriter().write(mess); //响应体
+            response.getWriter().write(R.error(mess).toString()); //响应体
         } catch (IOException e) {
             logger.error("response io异常");
             e.printStackTrace();

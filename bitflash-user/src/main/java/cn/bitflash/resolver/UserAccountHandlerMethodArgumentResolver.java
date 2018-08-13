@@ -56,7 +56,7 @@ public class UserAccountHandlerMethodArgumentResolver implements HandlerMethodAr
         }
 
         // 获取用户信息
-        UserAccountEntity user = tradeFeign.selectOne(new ModelMap("uid",object.toString()));
+        UserAccountEntity user = tradeFeign.selectOne(new ModelMap(ApiLoginInterceptor.UID, object.toString()));
 
         return user;
     }

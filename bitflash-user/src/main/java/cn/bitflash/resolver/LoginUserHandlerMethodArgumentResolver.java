@@ -55,7 +55,7 @@ public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgu
             return null;
         }
         // 获取用户信息
-        UserEntity user = loginFeign.selectOneByUser(new ModelMap("uid", object));
+        UserEntity user = loginFeign.selectOneByUser(new ModelMap(ApiLoginInterceptor.UID, object));
         return user;
     }
 }

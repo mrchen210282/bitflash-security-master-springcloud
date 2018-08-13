@@ -533,3 +533,4 @@
 2018-08-13 15:37:38,149 [INFO] [Eureka-EvictionTimer] com.netflix.eureka.registry.AbstractInstanceRegistry [AbstractInstanceRegistry.java : 1247] Running the evict task with compensationTime 0ms
 2018-08-13 15:38:38,149 [INFO] [Eureka-EvictionTimer] com.netflix.eureka.registry.AbstractInstanceRegistry [AbstractInstanceRegistry.java : 1247] Running the evict task with compensationTime 0ms
 2018-08-13 15:39:38,150 [INFO] [Eureka-EvictionTimer] com.netflix.eureka.registry.AbstractInstanceRegistry [AbstractInstanceRegistry.java : 1247] Running the evict task with compensationTime 0ms
+2018-08-13 15:40:38,150 [INFO] [Eureka-EvictionTimer] com.netflix.eureka.registry.AbstractInstanceRegistry [AbstractInstanceRegistry.java : 1247] Running the evict task with compensationTime 0ms

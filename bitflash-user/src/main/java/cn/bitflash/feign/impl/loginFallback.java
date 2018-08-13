@@ -34,7 +34,7 @@ public class loginFallback implements FallbackFactory<LoginFeign> {
             }
 
             @Override
-            public boolean update(UserEntity userEntity, Map<String,Object> map) {
+            public boolean update(UserEntity userEntity) {
                 log.error("更新用户失败-----:"+throwable.getMessage());
                 return false;
             }

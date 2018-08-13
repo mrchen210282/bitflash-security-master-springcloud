@@ -1,17 +1,17 @@
 package cn.bitflash.controller;
 
-import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserInfoService;
 import cn.bitflash.service.UserInvitationCodeService;
+import cn.bitflash.service.UserPayPwdService;
 import cn.bitflash.service.UserRelationService;
 import cn.bitflash.user.UserInfoEntity;
 import cn.bitflash.user.UserInvitationCodeEntity;
+import cn.bitflash.user.UserPayPwdEntity;
 import cn.bitflash.user.UserRelationEntity;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 
@@ -28,10 +28,13 @@ public class ApiUserInnerController {
     private UserInvitationCodeService userInvitationCodeService;
     @Autowired
     private UserRelationService userRelationService;
+    @Autowired
+    private UserPayPwdService userPayPwdService;
+
 
     @PostMapping("/selectone")
-    public UserInvitationCodeEntity selectOne(@RequestBody Map<String,Object> map) {
-        return userInvitationCodeService.selectByMap(map).get(0);
+    public UserInvitationCodeEntity selectOne(@RequestParam("invitationCode") String invitationCode) {
+        return userInvitationCodeService.selectOne(new EntityWrapper<UserInvitationCodeEntity>().eq("lft_code",invitationCode).or().eq("rgt_code",invitationCode));
     }
 
     @PostMapping("/insert")
@@ -39,15 +42,19 @@ public class ApiUserInnerController {
         return userInfoService.insert(userInfoEntity);
     }
 
-
     @PostMapping("/selectUserInfoById")
     public UserInfoEntity selectUserInfoById(@RequestParam("uid") String uid){
         return userInfoService.selectById(uid);
     }
 
-    @PostMapping("/selectOneByUserRelation")
-    public UserRelationEntity selectOneByUserRelation(@RequestBody Map<String,Object> map){
+    @PostMapping("/selectUserRelation")
+    public UserRelationEntity selectUserRelation(@RequestBody Map<String,Object> map){
         return userRelationService.selectByMap(map).get(0);
+    }
+
+    @PostMapping("/selectUserPayPwd")
+    public UserPayPwdEntity selectUserPayPwd(@RequestBody Map<String,Object> map){
+        return userPayPwdService.selectByMap(map).get(0);
     }
 
 }

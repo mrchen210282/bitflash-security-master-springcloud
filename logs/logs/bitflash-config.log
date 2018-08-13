@@ -292,3 +292,4 @@
 2018-08-13 15:26:22,340 [INFO] [AsyncResolver-bootstrap-executor-0] c.n.discovery.shared.resolver.aws.ConfigClusterResolver [ConfigClusterResolver.java : 43] Resolving eureka endpoints via configuration
 2018-08-13 15:31:22,361 [INFO] [AsyncResolver-bootstrap-executor-0] c.n.discovery.shared.resolver.aws.ConfigClusterResolver [ConfigClusterResolver.java : 43] Resolving eureka endpoints via configuration
 2018-08-13 15:36:22,382 [INFO] [AsyncResolver-bootstrap-executor-0] c.n.discovery.shared.resolver.aws.ConfigClusterResolver [ConfigClusterResolver.java : 43] Resolving eureka endpoints via configuration
+2018-08-13 15:41:22,402 [INFO] [AsyncResolver-bootstrap-executor-0] c.n.discovery.shared.resolver.aws.ConfigClusterResolver [ConfigClusterResolver.java : 43] Resolving eureka endpoints via configuration

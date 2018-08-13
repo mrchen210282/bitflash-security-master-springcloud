@@ -12,22 +12,22 @@ import java.util.Map;
 @FeignClient(value = "bitflash-trade",fallbackFactory = TradeFallback.class)
 public interface TradeFeign {
 
-    @PostMapping("/api/trade/selectTradeHistoryIncome")
+    @PostMapping("/api/trade/inner/selectTradeHistoryIncome")
     Map<String,Object> selectTradeHistoryIncome(Map<String,Object> param);
 
-    @PostMapping("/api/trade/selectUserAccount")
+    @PostMapping("/api/trade/inner/selectUserAccount")
     UserAccountBean selectUserAccount(Map<String,Object> param);
 
-    @PostMapping("/api/trade/selectOne")
+    @PostMapping("/api/trade/inner/selectOne")
     UserAccountEntity selectOne(Map<String,Object> map);
 
-    @PostMapping("/api/trade/selectById")
+    @PostMapping("/api/trade/inner/selectById")
     UserAccountEntity selectById(String uid);
 
-    @PostMapping("/api/trade/selectTradeUrl")
+    @PostMapping("/api/trade/inner/selectTradeUrl")
     List<Map<String, Object>> selectTradeUrl(Map<String,Object> param);
 
-    @PostMapping("/api/trade/updateById")
+    @PostMapping("/api/trade/inner/updateById")
     boolean updateById(UserAccountEntity userAccountEntity);
 
 

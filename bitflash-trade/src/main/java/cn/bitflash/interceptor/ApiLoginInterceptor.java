@@ -2,6 +2,7 @@ package cn.bitflash.interceptor;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.exception.RRException;
+import cn.bitflash.feign.LoginFeign;
 import cn.bitflash.login.TokenEntity;
 import cn.bitflash.redisConfig.RedisKey;
 import org.apache.commons.lang.StringUtils;

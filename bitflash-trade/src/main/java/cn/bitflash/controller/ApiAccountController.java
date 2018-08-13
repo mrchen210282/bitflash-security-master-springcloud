@@ -1,7 +1,7 @@
 package cn.bitflash.controller;
 
 import cn.bitflash.annotation.*;
-import cn.bitflash.feign.PlatFormConfigFeign;
+import cn.bitflash.feign.SysFeign;
 import cn.bitflash.feign.UserFeign;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserAccountService;
@@ -12,7 +12,6 @@ import cn.bitflash.user.*;
 import cn.bitflash.utils.BigDecimalUtils;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +35,7 @@ public class ApiAccountController {
     private UserFeign userFeign;
 
     @Autowired
-    private PlatFormConfigFeign platFormConfigFeign;
+    private SysFeign SysFeign;
 
     @Autowired
     private UserAccountService userAccountService;
@@ -83,7 +82,8 @@ public class ApiAccountController {
                     Object totalPurchase = null;
                     // 查询是否为VIP
                     //UserInfoEntity userInfoBean = userInfoService.selectById(account.getUid());
-                    UserInfoEntity userInfoBean = userFeign.selectUserById(account.getUid());
+                    UserInfoEntity userInfoBean = userFeign.selectUserInfoById(account.getUid());
+
                     if (null != userInfoBean) {
                         // VIP等级为0，则表示为非会员体系
                         if (Common.VIP_LEVEL_0.equals(userInfoBean.getIsVip())) {
@@ -119,10 +119,10 @@ public class ApiAccountController {
                         }
                     }
                     //userInfoEntity = userInfoService.selectOne(new EntityWrapper<UserInfoEntity>().eq("uid", uid));
-                    userInfoEntity = userFeign.selectUserById(uid);
+                    userInfoEntity = userFeign.selectUserInfoById(uid);
                     //userPayPwdEntity = userPayPwdService.selectOne(new EntityWrapper<UserPayPwdEntity>().eq("uid", uid));
                     map.put("uid", uid);
-                    userPayPwdEntity = userFeign.selectPayPwdOne(map);
+                    userPayPwdEntity = userFeign.selectUserPayPwd(map);
                     return R.ok().put("account", account).put("userInfo", userInfoEntity).put("vip", userInfoEntity.getIsVip()).put("sys", userInfoEntity.getInvitation()).put("sfz", userInfoEntity.getIsAuthentication()).put("payPwd", userPayPwdEntity == null ? -1 : 1).put("uuid", user.getUuid())
                             .put("avaliableAssets", avaliableAssets)
                             .put("yesterDayIncome", yesterDayPurchase).put("totalPurchase", totalPurchase).put("totalIncome", BigDecimalUtils.DecimalFormat(account.getTotelIncome())).put("dailyIncome", BigDecimalUtils.DecimalFormat(account.getDailyIncome()))
@@ -150,10 +150,12 @@ public class ApiAccountController {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("invitation_code", userInvitationCode.getLftCode());
         //UserRelationEntity ur = userRelationService.selectOne(new EntityWrapper<UserRelationEntity>().eq("invitation_code", userInvitationCode.getLftCode()));
-        UserRelationEntity ur = userFeign.selectRelationOne(map);
+        UserRelationEntity ur = userFeign.selectRelation(map);
 
 
-        String address = platFormConfigFeign.getVal(Common.ADDRESS);
+        String address = SysFeign.getVal(Common.ADDRESS);
+
+
         map.put("lftCode", userInvitationCode.getLftCode());
         map.put("address", address);
         if (ur != null) {
@@ -182,7 +184,7 @@ public class ApiAccountController {
             map.put("rgt_a", ura.get(0).getRgtAchievement());
             if (StringUtils.isNotBlank(ura.get(0).getUid())) {
                 //UserInfoEntity userInfoEntity = userInfoService.selectById(userEntity.getUid());
-                UserInfoEntity userInfoEntity = userFeign.selectUserById(userEntity.getUid());
+                UserInfoEntity userInfoEntity = userFeign.selectUserInfoById(userEntity.getUid());
                 if (null != userInfoEntity) {
                     map.put("username", userInfoEntity.getNickname());
                 }

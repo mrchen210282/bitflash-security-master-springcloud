@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
 
+
     @Autowired
     private LoginFeign loginFeign;
 
@@ -47,7 +48,7 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
         if (StringUtils.isBlank(mobile) || StringUtils.isBlank(token)) {
             throw new RRException("参数不能为空");
         }
-        TokenEntity tokenEntity = loginFeign.getTokenByToken(new ModelMap("token", token));
+        TokenEntity tokenEntity = loginFeign.selectOne(new ModelMap("token", token));
         if (tokenEntity == null) {
             throw new RRException("token信息错误");
         }

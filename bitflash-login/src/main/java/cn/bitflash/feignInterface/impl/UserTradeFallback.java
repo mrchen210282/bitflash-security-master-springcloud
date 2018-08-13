@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Component
 public class UserTradeFallback implements FallbackFactory<UserTradeFeign> {
 
@@ -23,7 +25,7 @@ public class UserTradeFallback implements FallbackFactory<UserTradeFeign> {
             }
 
             @Override
-            public UserAccountEntity selectOne(Wrapper wrapper) {
+            public UserAccountEntity selectOne(Map<String, Object> map) {
                 log.error("查询用户数量失败-----:"+throwable.getMessage());
                 return new UserAccountEntity();
             }

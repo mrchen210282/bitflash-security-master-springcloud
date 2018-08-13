@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -55,6 +56,11 @@ public class ApiUserInnerController {
     @PostMapping("/selectUserPayPwd")
     public UserPayPwdEntity selectUserPayPwd(@RequestBody Map<String,Object> map){
         return userPayPwdService.selectByMap(map).get(0);
+    }
+
+    @PostMapping("/selectUserInfoList")
+    public List<UserInfoEntity> selectUserInfoList(@RequestBody Map<String,Object> map){
+        return userInfoService.selectByMap(map);
     }
 
 }

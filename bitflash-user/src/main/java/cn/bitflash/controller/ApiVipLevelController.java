@@ -57,8 +57,8 @@ public class ApiVipLevelController {
     @Autowired
     private TradeFeign tradeFeign;
 
-    @Autowired
-    private SysFeign sysfeign;
+    //@Autowired
+    //private SysFeign sysfeign;
 
     /**
      * @author chen
@@ -71,7 +71,10 @@ public class ApiVipLevelController {
         UserInfoEntity userEntity = userInfoService.selectOne(new EntityWrapper<UserInfoEntity>().eq("uid", uid));
         if (userEntity != null) {
             String vipLevel = userEntity.getIsVip();
-            UserAccountEntity userAccountEntity = tradeFeign.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", uid));
+
+            Map<String,Object> map = new HashMap<String,Object>();
+            map.put("uid",uid);
+            UserAccountEntity userAccountEntity = tradeFeign.selectOne(map);
             Double num = userAccountEntity.getAvailableAssets().doubleValue();
 
             List<UserInfoConfigEntity> vipList=userInfoConfigService.selectPage(new Page<UserInfoConfigEntity>(0,6)).getRecords();

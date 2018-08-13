@@ -30,6 +30,9 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 有@LoginUser注解的方法参数，注入当前登录用户
  *
@@ -55,8 +58,11 @@ public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgu
             return null;
         }
 
+
         // 获取用户信息
-        UserEntity user = loginFeign.selectOneByUser(new EntityWrapper<UserEntity>().eq("mobile",(String) object));
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("mobile",(String) object);
+        UserEntity user = loginFeign.selectOneByUser(map);
         return user;
     }
 }

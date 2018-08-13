@@ -7,10 +7,12 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import feign.hystrix.FallbackFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class TradeFallback implements FallbackFactory<TradeFeign> {
 
     private static final Logger log=LoggerFactory.getLogger(TradeFallback.class);
@@ -31,7 +33,7 @@ public class TradeFallback implements FallbackFactory<TradeFeign> {
             }
 
             @Override
-            public UserAccountEntity selectOne(Wrapper<UserAccountEntity> param) {
+            public UserAccountEntity selectOne(Map<String,Object> map) {
                 log.error("获取账号失败-----:"+throwable.getMessage());
                 return new UserAccountEntity();
             }

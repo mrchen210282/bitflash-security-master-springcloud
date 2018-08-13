@@ -30,6 +30,9 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 有@UserAccount注解的方法参数，注入当前登录用户
  *
@@ -56,7 +59,9 @@ public class UserAccountHandlerMethodArgumentResolver implements HandlerMethodAr
         }
 
         // 获取用户信息
-        UserAccountEntity user = tradeFeign.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", object.toString()));
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("uid",object.toString());
+        UserAccountEntity user = tradeFeign.selectOne(map);
 
         return user;
     }

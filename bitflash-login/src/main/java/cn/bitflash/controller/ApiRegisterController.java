@@ -14,6 +14,7 @@ import cn.bitflash.user.UserInvitationCodeEntity;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.sun.corba.se.spi.ior.ObjectKey;
 import common.utils.SmsUtils;
 import common.validator.ValidatorUtils;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -217,7 +218,9 @@ public class ApiRegisterController {
 					if(null != authorityUserEntity) {
 						
 						BigDecimal availableAssets = null;
-						UserAccountEntity userAccountEntity = userTradeFeign.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", authorityUserEntity.getUid()));
+						Map<String,Object> map = new HashMap<String,Object>();
+						map.put("uid",authorityUserEntity.getUid());
+						UserAccountEntity userAccountEntity = userTradeFeign.selectOne(map);
 						if(null != userAccountEntity) {
 							availableAssets = userAccountEntity.getAvailableAssets();
 						} else {

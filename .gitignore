@@ -12,6 +12,7 @@
 *.class
 *.jar
 *.log
+LOG_PATH_IS_UNDEFINEDLOG_FILE_IS_UNDEFINED
  
 # generated files
 bin/

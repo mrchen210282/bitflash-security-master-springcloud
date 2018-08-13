@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -64,11 +65,13 @@ public class ApiSystemController {
     @Login
     @PostMapping("getWeekPriceRate")
     public R getWeekPriceRate(){
-        Long time = Long.parseLong(platFormConfigService.getVal(Common.SHOW_DATE));
+        String str=platFormConfigService.getVal(Common.SHOW_DATE);
+        Long time = Long.valueOf(str);
         Date now =new Date();
         Date after = new Date(now.getTime()-time);
+        DateTimeFormatter dt=DateTimeFormatter.ofPattern("MM-dd");
         List<PriceLinechartEntity> list=priceLinechartService.selectList(new EntityWrapper<PriceLinechartEntity>().between("rate_time",after,now).orderBy("rate_time"));
-        List<Date> date=list.stream().map(PriceLinechartEntity::getRateTime).collect(Collectors.toList());
+        List<String> date=list.stream().map(u->u.getRateTime().format(dt)).collect(Collectors.toList());
         List<Float> price=list.stream().map(PriceLinechartEntity::getPrice).collect(Collectors.toList());
 
         return R.ok().put("date",date).put("price",price);

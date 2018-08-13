@@ -3,7 +3,6 @@ package cn.bitflash.feign.impl;
 import cn.bitflash.feign.TradeFeign;
 import cn.bitflash.trade.UserAccountBean;
 import cn.bitflash.trade.UserAccountEntity;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import feign.hystrix.FallbackFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

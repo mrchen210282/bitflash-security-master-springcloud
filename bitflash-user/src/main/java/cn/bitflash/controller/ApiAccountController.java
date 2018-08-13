@@ -249,11 +249,10 @@ public class ApiAccountController {
      * @param nickname
      * @return
      */
-    @Login //@LoginUser UserEntity user,
+    @Login
     @PostMapping("updateNickName")
-    public R updateNickName(@RequestParam String nickname, HttpServletRequest request) {
-        System.out.println(request.getSession().getAttribute(RedisKey.MOBILE.toString()));
-        /*if (StringUtils.isNotBlank(nickname)) {
+    public R updateNickName(@RequestParam String nickname,@LoginUser UserEntity user) {
+        if (StringUtils.isNotBlank(nickname)) {
             if (nickname.length() <= 6) {
                 UserInfoEntity userInfoEntity = userInfoService.selectOne(new EntityWrapper<UserInfoEntity>().eq("nickname", nickname));
 
@@ -272,8 +271,7 @@ public class ApiAccountController {
             }
         } else {
             return R.error("昵称不能为空！");
-        }*/
-        return R.error("昵称不能为空！");
+        }
     }
 
 }

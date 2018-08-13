@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -217,7 +218,7 @@ public class ApiRegisterController {
 					if(null != authorityUserEntity) {
 						
 						BigDecimal availableAssets = null;
-						UserAccountEntity userAccountEntity = userTradeFeign.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", authorityUserEntity.getUid()));
+						UserAccountEntity userAccountEntity = userTradeFeign.selectOne(new ModelMap("uid", authorityUserEntity.getUid()));
 						if(null != userAccountEntity) {
 							availableAssets = userAccountEntity.getAvailableAssets();
 						} else {

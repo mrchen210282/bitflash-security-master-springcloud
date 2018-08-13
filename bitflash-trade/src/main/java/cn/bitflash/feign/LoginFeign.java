@@ -2,9 +2,11 @@ package cn.bitflash.feign;
 
 import cn.bitflash.feign.impl.LoginFallback;
 import cn.bitflash.feign.impl.SysFallback;
+import cn.bitflash.login.TokenEntity;
 import cn.bitflash.login.UserEntity;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -15,4 +17,8 @@ public interface LoginFeign {
 
     @PostMapping("/api/user/inner/selectUserOne")
     public List<UserEntity> selectUserOne(@RequestParam("params") Map<String, Object> params);
+
+
+    @PostMapping("/api/login/inner/selectToken")
+    TokenEntity selectOne(@RequestBody Map<String,Object> map);
 }

@@ -24,40 +24,33 @@ public class UserFallback implements FallbackFactory<UserFeign> {
     public UserFeign create(Throwable throwable) {
         return new UserFeign() {
             @Override
-            public List<UserEntity> selectUserOne(Map<String, Object> param) {
-                log.error("获取地址失败-----:"+throwable.getMessage());
-                return null;
-            }
-
-            @Override
-            public UserInfoEntity selectUserById(String uid) {
-                log.error("获取地址失败-----:"+throwable.getMessage());
-                return null;
-            }
-
-            @Override
-            public List<UserInfoEntity> selectUserInfoOne(Map<String, Object> param) {
-                log.error("获取地址失败-----:"+throwable.getMessage());
-                return null;
-            }
-
-            @Override
             public UserInfoEntity selectUserInfoById(String uid) {
                 log.error("获取地址失败-----:"+throwable.getMessage());
                 return null;
             }
 
-            @PostMapping("/api/user/selectRelationOne")
-            public UserRelationEntity selectRelationOne(@RequestParam("params") Map<String, Object> params) {
-                log.error("获取地址失败-----:"+throwable.getMessage());
+            @Override
+            public List<UserInfoEntity> selectUserInfoList(Map<String, Object> params) {
                 return null;
             }
 
             @Override
-            public UserPayPwdEntity selectPayPwdOne(Map<String, Object> params) {
+            public UserRelationEntity selectRelation(Map<String, Object> params) {
+                return null;
+            }
+
+            @Override
+            public UserPayPwdEntity selectUserPayPwd(Map<String, Object> params) {
+                return null;
+            }
+
+            @PostMapping("/api/user/selectRelationOne")
+            public UserRelationEntity selectRelationOne(Map<String, Object> params) {
                 log.error("获取地址失败-----:"+throwable.getMessage());
                 return null;
             }
+
+
         };
     }
 }

@@ -6,7 +6,6 @@ import cn.bitflash.annotation.PayPassword;
 import cn.bitflash.annotation.UserAccount;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.*;
-import cn.bitflash.system.UserTradeConfigEntity;
 import cn.bitflash.trade.*;
 
 import cn.bitflash.trade.UserAccountEntity;

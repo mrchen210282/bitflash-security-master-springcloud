@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
-
 @Component
 public class TradeFallback implements FallbackFactory<TradeFeign> {
 
@@ -30,6 +29,7 @@ public class TradeFallback implements FallbackFactory<TradeFeign> {
                 log.error("获取用户账号失败-----:"+throwable.getMessage());
                 return new UserAccountBean();
             }
+
 
             @Override
             public UserAccountEntity selectOne(Map<String,Object> map) {

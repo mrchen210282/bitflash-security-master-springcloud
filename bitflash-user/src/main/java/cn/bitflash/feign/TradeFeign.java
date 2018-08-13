@@ -5,6 +5,7 @@ import cn.bitflash.trade.UserAccountBean;
 import cn.bitflash.trade.UserAccountEntity;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ public interface TradeFeign {
     @PostMapping("/api/trade/inner/selectTradeHistoryIncome")
     Map<String,Object> selectTradeHistoryIncome(Map<String,Object> param);
 
+
     @PostMapping("/api/trade/inner/selectUserAccount")
     UserAccountBean selectUserAccount(Map<String,Object> param);
 
@@ -22,7 +24,8 @@ public interface TradeFeign {
     UserAccountEntity selectOne(Map<String,Object> map);
 
     @PostMapping("/api/trade/inner/selectById")
-    UserAccountEntity selectById(String uid);
+    UserAccountEntity selectById(@RequestParam("uid") String uid);
+
 
     @PostMapping("/api/trade/inner/selectTradeUrl")
     List<Map<String, Object>> selectTradeUrl(Map<String,Object> param);

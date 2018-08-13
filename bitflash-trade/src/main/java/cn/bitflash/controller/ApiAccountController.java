@@ -1,6 +1,8 @@
 package cn.bitflash.controller;
 
 import cn.bitflash.annotation.*;
+import cn.bitflash.feign.PlatFormConfigFeign;
+import cn.bitflash.feign.UserFeign;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserAccountService;
 import cn.bitflash.service.UserTradeHistoryService;
@@ -28,38 +30,29 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("/api")
-//@Api(tags = "获取用户信息接口" )
 public class ApiAccountController {
 
     @Autowired
-    private UserService userService;
+    private UserFeign userFeign;
 
     @Autowired
-    private UserRelationService userRelationService;
+    private PlatFormConfigFeign platFormConfigFeign;
 
     @Autowired
     private UserAccountService userAccountService;
-
-    @Autowired
-    private PlatFormConfigService platFormConfigService;
-
-    @Autowired
-    private UserInfoService userInfoService;
-
-    @Autowired
-    private UserPayPwdService userPayPwdService;
 
     @Autowired
     private UserTradeHistoryService userTradeHistoryService;
 
     /**
      * 获取用户信息
+     *
      * @param user
      * @return
      */
     @Login
     @GetMapping("userInfo")
-    public R userInfo(@ApiIgnore @LoginUser UserEntity user) {
+    public R userInfo(@LoginUser UserEntity user) {
         return R.ok().put("user", user);
     }
 
@@ -89,7 +82,8 @@ public class ApiAccountController {
                     // 总购买
                     Object totalPurchase = null;
                     // 查询是否为VIP
-                    UserInfoEntity userInfoBean = userInfoService.selectById(account.getUid());
+                    //UserInfoEntity userInfoBean = userInfoService.selectById(account.getUid());
+                    UserInfoEntity userInfoBean = userFeign.selectUserById(account.getUid());
                     if (null != userInfoBean) {
                         // VIP等级为0，则表示为非会员体系
                         if (Common.VIP_LEVEL_0.equals(userInfoBean.getIsVip())) {
@@ -124,8 +118,11 @@ public class ApiAccountController {
                             map.put("createTime", format.format(calendarDate));
                         }
                     }
-                    userInfoEntity = userInfoService.selectOne(new EntityWrapper<UserInfoEntity>().eq("uid", uid));
-                    userPayPwdEntity = userPayPwdService.selectOne(new EntityWrapper<UserPayPwdEntity>().eq("uid", uid));
+                    //userInfoEntity = userInfoService.selectOne(new EntityWrapper<UserInfoEntity>().eq("uid", uid));
+                    userInfoEntity = userFeign.selectUserById(uid);
+                    //userPayPwdEntity = userPayPwdService.selectOne(new EntityWrapper<UserPayPwdEntity>().eq("uid", uid));
+                    map.put("uid", uid);
+                    userPayPwdEntity = userFeign.selectPayPwdOne(map);
                     return R.ok().put("account", account).put("userInfo", userInfoEntity).put("vip", userInfoEntity.getIsVip()).put("sys", userInfoEntity.getInvitation()).put("sfz", userInfoEntity.getIsAuthentication()).put("payPwd", userPayPwdEntity == null ? -1 : 1).put("uuid", user.getUuid())
                             .put("avaliableAssets", avaliableAssets)
                             .put("yesterDayIncome", yesterDayPurchase).put("totalPurchase", totalPurchase).put("totalIncome", BigDecimalUtils.DecimalFormat(account.getTotelIncome())).put("dailyIncome", BigDecimalUtils.DecimalFormat(account.getDailyIncome()))
@@ -150,9 +147,13 @@ public class ApiAccountController {
     @Login
     @PostMapping("getInvitationCode")
     public R getInvitationcode(@UserInvitationCode UserInvitationCodeEntity userInvitationCode) {
-        UserRelationEntity ur = userRelationService.selectOne(new EntityWrapper<UserRelationEntity>().eq("invitation_code", userInvitationCode.getLftCode()));
         Map<String, Object> map = new HashMap<String, Object>();
-        String address = platFormConfigService.getVal(Common.ADDRESS);
+        map.put("invitation_code", userInvitationCode.getLftCode());
+        //UserRelationEntity ur = userRelationService.selectOne(new EntityWrapper<UserRelationEntity>().eq("invitation_code", userInvitationCode.getLftCode()));
+        UserRelationEntity ur = userFeign.selectRelationOne(map);
+
+
+        String address = platFormConfigFeign.getVal(Common.ADDRESS);
         map.put("lftCode", userInvitationCode.getLftCode());
         map.put("address", address);
         if (ur != null) {
@@ -180,7 +181,8 @@ public class ApiAccountController {
             map.put("lft_a", ura.get(0).getLftAchievement());
             map.put("rgt_a", ura.get(0).getRgtAchievement());
             if (StringUtils.isNotBlank(ura.get(0).getUid())) {
-                UserInfoEntity userInfoEntity = userInfoService.selectById(userEntity.getUid());
+                //UserInfoEntity userInfoEntity = userInfoService.selectById(userEntity.getUid());
+                UserInfoEntity userInfoEntity = userFeign.selectUserById(userEntity.getUid());
                 if (null != userInfoEntity) {
                     map.put("username", userInfoEntity.getNickname());
                 }

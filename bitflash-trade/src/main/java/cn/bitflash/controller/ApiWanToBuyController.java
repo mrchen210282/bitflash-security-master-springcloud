@@ -3,16 +3,10 @@ package cn.bitflash.controller;
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.annotation.UserAccount;
-import cn.bitflash.common.utils.R;
-import cn.bitflash.entity.*;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserBuyService;
-import cn.bitflash.service.UserInfoService;
 import cn.bitflash.trade.UserBuyMessageBean;
-import cn.bitflash.user.UserAccountEntity;
 import cn.bitflash.utils.R;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +25,8 @@ public class ApiWanToBuyController {
     @Autowired
     private UserBuyService userBuyService;
 
-    @Autowired
-    private UserInfoService userInfoService;
+//    @Autowired
+    //private UserInfoService userInfoService;
 
     /**
      * 显示求购信息
@@ -41,7 +35,7 @@ public class ApiWanToBuyController {
      * @param userAccount
      * @return
      */
-    @Login
+    /*@Login
     @PostMapping("showBuyMessage" )
     public R showNeedMessage(@LoginUser UserEntity user, @RequestParam String pages, @UserAccount UserAccountEntity userAccount) {
         List<UserBuyMessageBean> ub = userBuyService.getBuyMessage(user.getUid(), Integer.valueOf(pages));
@@ -98,7 +92,7 @@ public class ApiWanToBuyController {
             return R.error(502, "卖出者信息不存在" );
         }
         return R.ok().put("buy", ub).put("user", ui);
-    }
+    }*/
 
 
 }

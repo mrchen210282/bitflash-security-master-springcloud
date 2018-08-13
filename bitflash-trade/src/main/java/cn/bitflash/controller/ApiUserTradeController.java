@@ -59,8 +59,8 @@ public class ApiUserTradeController {
     @Autowired
     private RedisUtils redisUtils;
 
-    @Autowired
-    private UserTradeConfigService userTradeConfigService;
+    //@Autowired
+//    private UserTradeConfigService userTradeConfigService;
 
     /**
      * 交易首页
@@ -68,7 +68,7 @@ public class ApiUserTradeController {
      * @param pageNum     第几页
      * @return
      */
-    @Login
+    /*@Login
     @PostMapping("tradeList")
     public R tradeList(@UserAccount UserAccountEntity userAccount, @RequestParam String pageNum, @LoginUser UserEntity user) {
         int pageTotal = 6;
@@ -93,11 +93,11 @@ public class ApiUserTradeController {
         return R.ok().put("userAccount", param);
     }
 
-    /**
+    *//**
      * 跳转添加记录
      * @param userAccount
      * @return
-     */
+     *//*
     @Login
     @PostMapping("responseTrade")
     public R responseTrade(@UserAccount UserAccountEntity userAccount) {
@@ -114,11 +114,11 @@ public class ApiUserTradeController {
         return R.ok().put("userAccount", returnMap);
     }
 
-    /**
+    *//**
      * 跳转到付款页
      * @param id
      * @return
-     */
+     *//*
     @Login
     @PostMapping("forwardPay")
     public R forwardPay(@RequestParam String id) {
@@ -147,13 +147,13 @@ public class ApiUserTradeController {
         }
     }
 
-    /**
+    *//**
      * 添加卖出记录
      * @param userAccount
      * @param quantity
      * @param price
      * @return
-     */
+     *//*
     @Login
     @PostMapping("saveTrade")
     @Transactional
@@ -243,12 +243,12 @@ public class ApiUserTradeController {
         return R.ok();
     }
 
-    /**
+    *//**
      * 查询卖出购买记录
      * @param user
      * @param state
      * @return
-     */
+     *//*
     @Login
     @PostMapping("listTrade")
     public R listTrade(@LoginUser UserEntity user, @RequestParam String state) {
@@ -266,11 +266,11 @@ public class ApiUserTradeController {
         return R.ok().put("tradeHistoryList", list);
     }
 
-    /**
+    *//**
      * 撤消交易
      * @param id
      * @return
-     */
+     *//*
     @Login
     @PostMapping("cancelTrade")
     @Transactional
@@ -305,12 +305,12 @@ public class ApiUserTradeController {
         return R.ok();
     }
 
-    /**
+    *//**
      * 取消订单后状态变为卖出(1)，并且删除user_trade_lock表中的数据
      *
      * @param id 订单id
      * @return
-     */
+     *//*
     @Login
     @PostMapping("cancelOrder")
     @Transactional
@@ -329,12 +329,12 @@ public class ApiUserTradeController {
         return R.ok();
     }
 
-    /**
+    *//**
      * 购买
      * @param id     订单id
      * @param mobile 购买人手机号
      * @return
-     */
+     *//*
     @Login
     @PostMapping("purchase")
     @Transactional
@@ -414,11 +414,11 @@ public class ApiUserTradeController {
 
     }
 
-    /**
+    *//**
      * 查看订单明细
      * @param id 订单id
      * @return
-     */
+     *//*
     @Login
     @PostMapping("viewDetail")
     public R viewDetail(@RequestParam String id) {
@@ -447,12 +447,12 @@ public class ApiUserTradeController {
         }
     }
 
-    /**
+    *//**
      * 我已付款
      * @param id          订单id
      * @param userAccount
      * @return
-     */
+     *//*
     @Login
     @PostMapping("payTrade")
     @Transactional
@@ -489,11 +489,11 @@ public class ApiUserTradeController {
         }
     }
 
-    /**
+    *//**
      * 验证订单是否被锁定
      * @param id 订单id
      * @author chen
-     */
+     *//*
     @Login
     @PostMapping("provingState")
     public R provingState(@RequestParam String id, @LoginUser UserEntity user) {
@@ -508,11 +508,11 @@ public class ApiUserTradeController {
 
     }
 
-    /**
+    *//**
      * 锁定订单
      * @param id 订单id
      * @author chen
-     */
+     *//*
     @Login
     @PostMapping("addLock")
     public R addLock(@RequestParam String id, @LoginUser UserEntity user) throws ParseException {
@@ -553,10 +553,10 @@ public class ApiUserTradeController {
     }
 
 
-    /**
+    *//**
      * 更新交易订单状态
      * @author chen
-     */
+     *//*
     @Login
     @PostMapping("updateTradeState")
     public R updateTradeState(@LoginUser UserEntity user) {
@@ -573,11 +573,11 @@ public class ApiUserTradeController {
         return R.ok();
     }
 
-    /**
+    *//**
      * 查询买家信息
      * @param id
      * @return
-     */
+     *//*
     @Login
     @PostMapping("buyMessage")
     public R buyMessage(@RequestParam String id) {
@@ -590,5 +590,5 @@ public class ApiUserTradeController {
         System.out.println("加密数据"+token);
         String token2=AESTokenUtil.getToken(time,token);
         System.out.println("解密数据"+token2);
-    }
+    }*/
 }

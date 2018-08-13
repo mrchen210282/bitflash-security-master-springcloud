@@ -1,4 +1,4 @@
-package cn.bitflash.FeignController;
+package cn.bitflash.feign;
 
 import cn.bitflash.login.TokenEntity;
 import org.springframework.cloud.openfeign.FeignClient;

@@ -20,7 +20,6 @@ import cn.bitflash.annotation.UserAccount;
 import cn.bitflash.feign.TradeFeign;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.trade.UserAccountEntity;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;

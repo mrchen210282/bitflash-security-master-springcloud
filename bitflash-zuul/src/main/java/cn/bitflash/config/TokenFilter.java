@@ -65,7 +65,7 @@ public class TokenFilter extends ZuulFilter {
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx.getRequest();
         String url = request.getRequestURI();
-        if (url.indexOf("bitflash-ribbon/api/login/login") != -1) {
+        if (url.indexOf("bitflash-login/api/login/login") != -1) {
             return false;
         }
         return true;

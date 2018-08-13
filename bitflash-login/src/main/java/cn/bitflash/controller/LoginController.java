@@ -1,6 +1,7 @@
 package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
+import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.service.TokenService;
 import cn.bitflash.service.UserService;
 import cn.bitflash.login.LoginForm;
@@ -33,7 +34,7 @@ public class LoginController {
 
     @Login
     @PostMapping("logout" )
-    public R logout(@RequestAttribute("uid" ) String uid) {
+    public R logout(@RequestAttribute(ApiLoginInterceptor.UID) String uid) {
         tokenService.expireToken(uid);
         return R.ok();
     }

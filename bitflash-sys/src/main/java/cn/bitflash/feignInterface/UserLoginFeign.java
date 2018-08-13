@@ -9,14 +9,16 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.Map;
+
 @FeignClient(value="bitflash-login",fallbackFactory =UserLoginFallback.class)
 public interface UserLoginFeign {
 
     @PostMapping("/api/login/wthinGT/selectOne")
-    UserGTCidEntity selectOneByGT(@RequestBody Wrapper<UserGTCidEntity> wrapper);
+    UserGTCidEntity selectOneByGT(@RequestBody Map<String,Object> map);
 
     @PostMapping("/api/login/withinToken/selectOne")
-    TokenEntity selectOneByToken(@RequestBody Wrapper<TokenEntity> entityWrapper);
+    TokenEntity selectOneByToken(@RequestBody Map<String,Object> map);
 
 
 }

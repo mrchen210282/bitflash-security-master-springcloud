@@ -1,7 +1,6 @@
 package cn.bitflash.config;
 
 import cn.bitflash.interceptor.ApiLoginInterceptor;
-import cn.bitflash.resolver.DecodeTokenHandlerMethodArgumentResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -19,16 +18,14 @@ import java.util.List;
 public class WebMvcConfig implements WebMvcConfigurer {
 
     @Autowired
-    private DecodeTokenHandlerMethodArgumentResolver decodeTokenHandlerMethodArgumentResolver;
-
+    ApiLoginInterceptor apiLoginInterceptor;
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new ApiLoginInterceptor()).addPathPatterns("/api/**" );
+        registry.addInterceptor(apiLoginInterceptor).addPathPatterns("/api/**" );
     }
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        argumentResolvers.add(decodeTokenHandlerMethodArgumentResolver);
 
     }
 }

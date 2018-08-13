@@ -22,7 +22,6 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
     private LoginFeign loginFeign;
 
     public static final String UID="uid";
-    public static final String MOBILE="mobile";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -39,21 +38,21 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
         String mobile = (String) request.getSession().getAttribute(RedisKey.MOBILE.toString());
         String token = (String) request.getSession().getAttribute(RedisKey.TOKEN.toString());
         if (StringUtils.isBlank(mobile)) {
-            mobile = request.getParameter(MOBILE);
+            mobile = (String) request.getAttribute(RedisKey.MOBILE.toString());
+        }
+        if (StringUtils.isBlank(token)) {
+            token = (String) request.getAttribute(RedisKey.TOKEN.toString());
         }
         //token为空
-        if (StringUtils.isBlank(mobile)) {
+        if (StringUtils.isBlank(mobile) || StringUtils.isBlank(token)) {
             throw new RRException("参数不能为空");
         }
-        if(token==null){
-            throw new RRException("访问地址失败，请正确访问" );
+        TokenEntity tokenEntity = loginFeign.selectOne(new ModelMap("token", token));
+        if (tokenEntity == null) {
+            throw new RRException("token信息错误");
         }
-        TokenEntity tokenEntity=loginFeign.selectOne(new ModelMap("token",token));
-        String userMobile=tokenEntity.getMobile();
-        if(tokenEntity==null){
-            throw new RRException("token信息错误" );
-        }
-        if(!userMobile.equals(mobile)){
+        String userMobile = tokenEntity.getMobile();
+        if (!userMobile.equals(mobile)) {
             throw new RRException("token信息与用户信息不符");
         }
         //设置userId到request里，后续根据userId，获取用户信息

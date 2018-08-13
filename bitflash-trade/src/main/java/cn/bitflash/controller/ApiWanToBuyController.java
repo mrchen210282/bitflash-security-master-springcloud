@@ -3,9 +3,13 @@ package cn.bitflash.controller;
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.annotation.UserAccount;
+import cn.bitflash.feign.UserFeign;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserBuyService;
+import cn.bitflash.trade.UserAccountEntity;
+import cn.bitflash.trade.UserBuyEntity;
 import cn.bitflash.trade.UserBuyMessageBean;
+import cn.bitflash.user.UserInfoEntity;
 import cn.bitflash.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +29,9 @@ public class ApiWanToBuyController {
     @Autowired
     private UserBuyService userBuyService;
 
-//    @Autowired
-    //private UserInfoService userInfoService;
+    @Autowired
+    private UserFeign userFeign;
+
 
     /**
      * 显示求购信息
@@ -35,7 +40,7 @@ public class ApiWanToBuyController {
      * @param userAccount
      * @return
      */
-    /*@Login
+    @Login
     @PostMapping("showBuyMessage" )
     public R showNeedMessage(@LoginUser UserEntity user, @RequestParam String pages, @UserAccount UserAccountEntity userAccount) {
         List<UserBuyMessageBean> ub = userBuyService.getBuyMessage(user.getUid(), Integer.valueOf(pages));
@@ -47,9 +52,14 @@ public class ApiWanToBuyController {
 
     }
 
+    /**
+     * 添加求购信息
+     * @param userBuyEntity
+     * @param user
+     * @return
+     */
     @Login
     @PostMapping("addBuyMessage" )
-    @ApiOperation("添加求购信息" )
     public R addBuyMessage(@RequestBody UserBuyEntity userBuyEntity, @LoginUser UserEntity user) {
         if (userBuyEntity == null) {
             return R.error(501, "求购信息为空" );
@@ -62,9 +72,14 @@ public class ApiWanToBuyController {
         return R.ok();
     }
 
+    /**
+     * 撤销求购信息
+     * @param id
+     * @param user
+     * @return
+     */
     @Login
     @PostMapping("cancel" )
-    @ApiOperation("撤销求购信息" )
     public R cancelBuyMessage(@RequestParam String id, @LoginUser UserEntity user) {
         UserBuyEntity ub = userBuyService.selectById(id);
         if (ub == null) {
@@ -79,20 +94,26 @@ public class ApiWanToBuyController {
         return R.ok();
     }
 
+    /**
+     * 显示求购者详情
+     * @param id
+     * @return
+     */
     @Login
     @PostMapping("showDetailed" )
-    @ApiOperation("显示求购者详情" )
     public R showDetailed(@RequestParam String id) {
         UserBuyEntity ub = userBuyService.selectById(id);
         if (ub.getUid() == null) {
             return R.error(501, "订单不存在" );
         }
-        UserInfoEntity ui = userInfoService.selectById(ub.getUid());
+        //UserInfoEntity ui = userInfoService.selectById(ub.getUid());
+
+        UserInfoEntity ui = userFeign.selectUserById(ub.getUid());
         if (ui == null) {
             return R.error(502, "卖出者信息不存在" );
         }
         return R.ok().put("buy", ub).put("user", ui);
-    }*/
+    }
 
 
 }

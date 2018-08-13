@@ -60,6 +60,11 @@ public class ApiVipLevelController {
     @Autowired
     private SysFeign sysfeign;
 
+    @PostMapping("aaa")
+    public void getaaa(@RequestParam("uid") String uid){
+        System.out.println(tradeFeign.selectById(uid));
+    }
+
     /**
      * @author chen
      */

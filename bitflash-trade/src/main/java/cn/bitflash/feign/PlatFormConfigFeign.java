@@ -1,14 +1,13 @@
 package cn.bitflash.feign;
 
+import cn.bitflash.feign.impl.PlatFormConfigFeignback;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Map;
-
-@FeignClient(value = "bitflash-sys")
+@FeignClient(value = "bitflash-sys",fallbackFactory = PlatFormConfigFeignback.class)
 public interface PlatFormConfigFeign {
 
-    @PostMapping("")
-    Map<String,Object> getVal(String common);
-
+    @PostMapping("/api/sys/getVal")
+    String getVal(@RequestParam("uid") String uid);
 }

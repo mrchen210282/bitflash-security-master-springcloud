@@ -1,30 +1,32 @@
 package cn.bitflash.controller;
 
-import cn.bitflash.annotation.UserAccount;
+import cn.bitflash.login.UserGTCidEntity;
 import cn.bitflash.service.UserAccountService;
+import cn.bitflash.service.UserTradeHistoryService;
+import cn.bitflash.service.UserTradeService;
 import cn.bitflash.trade.UserAccountBean;
 import cn.bitflash.trade.UserAccountEntity;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import cn.bitflash.trade.UserTradeEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 @RestController
-@RequestMapping("/api/inner/trade")
+@RequestMapping("/api/trade/inner")
 public class UserTradeInnerService {
 
     @Autowired
-    UserTradeInnerService userTradeInnerService;
+    UserTradeService userTradeService;
+
+    @Autowired
+    UserTradeHistoryService userTradeHistoryService;
 
     @Autowired
     UserAccountService userAccountService;
 
     @PostMapping("/selectTradeHistoryIncome")
-    public Map<String,Object> selectTradeHistoryIncome(Map<String,Object> map){
-        Map<String, Object> returnMap =  userTradeInnerService.selectTradeHistoryIncome(map);
+    public Map<String, Object> selectTradeHistoryIncome(Map<String,Object> map){
+        Map<String, Object> returnMap =  userTradeHistoryService.selectTradeHistoryIncome(map);
         return returnMap;
     }
 
@@ -33,17 +35,29 @@ public class UserTradeInnerService {
         return userAccountService.selectUserAccount(map);
     }
 
-
     @PostMapping("/selectOne")
     public UserAccountEntity selectOne(@RequestBody Map<String,Object> map) {
 
         return null;
-        //return this.selectOne(map).get;
+
+    }
+
+
+    @PostMapping("/wthinGT/selectOne")
+    public UserGTCidEntity selectOneByGT(@RequestBody Map<String,Object> map){
+        //return userGTCidService.selectByMap(map).get(0);
+        return null;
     }
 
     @PostMapping("/selectById")
-    public UserAccountEntity selectById(String uid) {
-        return userAccountService.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid",uid));
+    public UserTradeEntity selectById(@RequestParam("uid") String uid){
+        UserTradeEntity userTradeEntity = userTradeService.selectById(uid);
+        return userTradeEntity;
     }
+
+
+
+
+
 
 }

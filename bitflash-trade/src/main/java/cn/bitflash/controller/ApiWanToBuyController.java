@@ -107,6 +107,9 @@ public class ApiWanToBuyController {
             return R.error(501, "订单不存在" );
         }
         UserInfoEntity ui = userFeign.selectUserInfoById(ub.getUid());
+
+
+
         if (ui == null) {
             return R.error(502, "卖出者信息不存在" );
         }

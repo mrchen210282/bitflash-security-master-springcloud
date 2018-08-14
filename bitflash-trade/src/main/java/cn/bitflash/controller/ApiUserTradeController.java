@@ -94,7 +94,7 @@ public class ApiUserTradeController {
     }
 
     /**
-     * 跳转添加记录
+     * 跳转添加卖出记录
      *
      * @param userAccount
      * @return

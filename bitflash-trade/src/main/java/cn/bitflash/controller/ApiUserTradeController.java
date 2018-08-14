@@ -31,6 +31,7 @@ import java.util.Map;
 
 /**
  * 获取用户交易接口
+ *
  * @author wangjun
  * @version 2018年7月4日上午9:44:17
  */
@@ -62,6 +63,7 @@ public class ApiUserTradeController {
 
     /**
      * 交易首页
+     *
      * @param userAccount
      * @param pageNum     第几页
      * @return
@@ -93,6 +95,7 @@ public class ApiUserTradeController {
 
     /**
      * 跳转添加记录
+     *
      * @param userAccount
      * @return
      */
@@ -114,6 +117,7 @@ public class ApiUserTradeController {
 
     /**
      * 跳转到付款页
+     *
      * @param id
      * @return
      */
@@ -147,6 +151,7 @@ public class ApiUserTradeController {
 
     /**
      * 添加卖出记录
+     *
      * @param userAccount
      * @param quantity
      * @param price
@@ -243,6 +248,7 @@ public class ApiUserTradeController {
 
     /**
      * 查询卖出购买记录
+     *
      * @param user
      * @param state
      * @return
@@ -266,6 +272,7 @@ public class ApiUserTradeController {
 
     /**
      * 撤消交易
+     *
      * @param id
      * @return
      */
@@ -329,6 +336,7 @@ public class ApiUserTradeController {
 
     /**
      * 购买
+     *
      * @param id     订单id
      * @param mobile 购买人手机号
      * @return
@@ -414,6 +422,7 @@ public class ApiUserTradeController {
 
     /**
      * 查看订单明细
+     *
      * @param id 订单id
      * @return
      */
@@ -447,6 +456,7 @@ public class ApiUserTradeController {
 
     /**
      * 我已付款
+     *
      * @param id          订单id
      * @param userAccount
      * @return
@@ -489,6 +499,7 @@ public class ApiUserTradeController {
 
     /**
      * 验证订单是否被锁定
+     *
      * @param id 订单id
      * @author chen
      */
@@ -508,6 +519,7 @@ public class ApiUserTradeController {
 
     /**
      * 锁定订单
+     *
      * @param id 订单id
      * @author chen
      */
@@ -553,6 +565,7 @@ public class ApiUserTradeController {
 
     /**
      * 更新交易订单状态
+     *
      * @author chen
      */
     @Login
@@ -573,6 +586,7 @@ public class ApiUserTradeController {
 
     /**
      * 查询买家信息
+     *
      * @param id
      * @return
      */
@@ -583,10 +597,11 @@ public class ApiUserTradeController {
     }
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        String time = String.valueOf(System.currentTimeMillis());
-        String token = AESTokenUtil.setToken(time, "陈承毅");
-        System.out.println("加密数据"+token);
-        String token2=AESTokenUtil.getToken(time,token);
-        System.out.println("解密数据"+token2);
+//        String time = String.valueOf(System.currentTimeMillis());
+//        String token = AESTokenUtil.setToken(time, "陈承毅");
+//        System.out.println("加密数据"+token);
+//        String token2=AESTokenUtil.getToken(time,token);
+//        System.out.println("解密数据"+token2);
+        System.out.println((int) ((Math.random() * 9 + 9) * 100000));
     }
 }

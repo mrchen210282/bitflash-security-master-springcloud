@@ -196,7 +196,7 @@ public class ApiUserTradeController {
                     // 等于1表示total大于percentB,可以交易
                     if (total.compareTo(purchase) == 1 || total.compareTo(purchase) == 0) {
                         // 1.先扣除手续费
-
+                        
 
 
 

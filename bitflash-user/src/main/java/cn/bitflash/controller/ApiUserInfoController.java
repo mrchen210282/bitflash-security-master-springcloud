@@ -45,13 +45,7 @@ public class ApiUserInfoController {
     private UserPayPwdService userPayPwdService;
 
     @Autowired
-    private TradeFeign tradeFeign;
-
-    @Autowired
     private SysFeign sysfeign;
-
-    @Autowired
-    private LoginFeign loginFeign;
 
     /**
      * 用户信息

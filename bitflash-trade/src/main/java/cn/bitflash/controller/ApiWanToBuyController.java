@@ -21,6 +21,9 @@ import java.util.List;
  * 求购
  * @author chenchengyi
  *
+ * 求购状态：
+ *      求购者：‘1’：可撤销； ‘2’：待收款； ‘4’：待确认   ‘6’完成
+ *      卖出者：    -     ； ‘3’：待付款； ‘5’：待收币   ‘6’完成
  */
 @RestController
 @RequestMapping("/api/need" )

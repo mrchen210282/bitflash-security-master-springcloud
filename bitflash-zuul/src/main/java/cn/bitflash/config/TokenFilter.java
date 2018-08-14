@@ -1,6 +1,5 @@
 package cn.bitflash.config;
 
-import cn.bitflash.redisConfig.RedisKey;
 import cn.bitflash.utils.AESTokenUtil;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;

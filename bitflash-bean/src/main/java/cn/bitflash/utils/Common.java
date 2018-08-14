@@ -29,10 +29,10 @@ public class Common {
 	public final static String STATE_FINISH = "7";
 
 	// 最小价格
-	public final static String MIN_PRICE = "0.325";
+	public final static String MIN_PRICE = "0.33";
 
 	// 最小价格
-	public final static Double MULTIPLE = 100d;
+	public final static Double MULTIPLE = 10d;
 
 	// 超时时间(毫秒)
 	public final static String OUT_TIME = "outTime";

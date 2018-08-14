@@ -6,7 +6,7 @@ import cn.bitflash.trade.UserBuyHistoryEntity;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
-@Service("userBuyService" )
+@Service("userBuyHistoryService" )
 public class UserBuyHistoryServiceImpl extends ServiceImpl<UserBuyHistoryDao, UserBuyHistoryEntity> implements UserBuyHistoryService {
 
 

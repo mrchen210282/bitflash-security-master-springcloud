@@ -4,10 +4,7 @@ import cn.bitflash.service.UserInfoService;
 import cn.bitflash.service.UserInvitationCodeService;
 import cn.bitflash.service.UserPayPwdService;
 import cn.bitflash.service.UserRelationService;
-import cn.bitflash.user.UserInfoEntity;
-import cn.bitflash.user.UserInvitationCodeEntity;
-import cn.bitflash.user.UserPayPwdEntity;
-import cn.bitflash.user.UserRelationEntity;
+import cn.bitflash.user.*;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -63,4 +60,13 @@ public class ApiUserInnerController {
         return userInfoService.selectByMap(map);
     }
 
+    @PostMapping("/selectRelation")
+    public UserInvitationCodeEntity selectRelation(@RequestParam("uid") String uid) {
+        return userInvitationCodeService.selectOne(new EntityWrapper<UserInvitationCodeEntity>().eq("uid",uid));
+    }
+
+    @PostMapping("/selectTreeNodes")
+    public List<UserRelationJoinAccountEntity> selectTreeNodes(@RequestParam("uid") String uid) {
+        return userRelationService.selectTreeNodes(uid);
+    }
 }

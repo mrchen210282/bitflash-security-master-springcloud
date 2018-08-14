@@ -34,9 +34,6 @@ public class ApiUserPayUrlController {
     private UserPayUrlService userPayUrlService;
 
     @Autowired
-    private TradeFeign tradeFeign;
-
-    @Autowired
     private UserInfoService userInfoService;
 
     /**

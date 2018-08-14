@@ -4,10 +4,12 @@ import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.annotation.PayPassword;
 import cn.bitflash.annotation.UserAccount;
+import cn.bitflash.feignInterface.UserFeign;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.*;
 import cn.bitflash.trade.*;
 import cn.bitflash.user.UserPayPwdEntity;
+import cn.bitflash.user.UserPayUrlEntity;
 import cn.bitflash.utils.*;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.apache.commons.lang.StringUtils;
@@ -53,7 +55,7 @@ public class ApiUserTradeController {
     private UserBrokerageService userBrokerageService;
 
     @Autowired
-    private UserPayUrlService userPayUrlService;
+    private UserFeign userFeign;
 
     @Autowired
     private RedisUtils redisUtils;
@@ -439,7 +441,7 @@ public class ApiUserTradeController {
             }
             String uid = userTradeHistoryBean.getPurchaseUid();
 
-            List<UserPayUrlEntity> url = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>().eq("uid", uid));
+            List<UserPayUrlEntity> url = userFeign.selectUserPayUrl(uid);
             try {
                 String aliurl = url.stream().filter((u) -> u.getImgType().equals("2")).findFirst().get().getImgUrl();
                 String wxurl = url.stream().filter((u) -> u.getImgType().equals("1")).findFirst().get().getImgUrl();

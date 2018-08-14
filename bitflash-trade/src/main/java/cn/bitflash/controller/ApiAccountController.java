@@ -43,17 +43,6 @@ public class ApiAccountController {
     @Autowired
     private UserTradeHistoryService userTradeHistoryService;
 
-    /**
-     * 获取用户信息
-     *
-     * @param user
-     * @return
-     */
-    @Login
-    @GetMapping("userInfo")
-    public R userInfo(@LoginUser UserEntity user) {
-        return R.ok().put("user", user);
-    }
 
     /**
      * 1.为判断成功 -1 为判断失败
@@ -138,70 +127,4 @@ public class ApiAccountController {
         }
     }
 
-    /**
-     * 获取推广码
-     *
-     * @param userInvitationCode
-     * @return
-     */
-    @Login
-    @PostMapping("getInvitationCode")
-    public R getInvitationcode(@UserInvitationCode UserInvitationCodeEntity userInvitationCode) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("invitation_code", userInvitationCode.getLftCode());
-        //UserRelationEntity ur = userRelationService.selectOne(new EntityWrapper<UserRelationEntity>().eq("invitation_code", userInvitationCode.getLftCode()));
-        UserRelationEntity ur = userFeign.selectRelation(map);
-
-
-        String address = SysFeign.getVal(Common.ADDRESS);
-
-
-        map.put("lftCode", userInvitationCode.getLftCode());
-        map.put("address", address);
-        if (ur != null) {
-            map.put("rgtCode", userInvitationCode.getRgtCode());
-        } else {
-            map.put("rgtCode", "请先在左区排点");
-        }
-
-        return R.ok().put("invitationCode", map);
-
-    }
-
-    /**
-     * 获取用户体系
-     *
-     * @param ura
-     * @param userEntity
-     * @return
-     */
-    @Login
-    @PostMapping("getRelation")
-    public R getRelation(@UserRelation List<UserRelationJoinAccountEntity> ura, @LoginUser UserEntity userEntity) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        if (ura != null) {
-            map.put("lft_a", ura.get(0).getLftAchievement());
-            map.put("rgt_a", ura.get(0).getRgtAchievement());
-            if (StringUtils.isNotBlank(ura.get(0).getUid())) {
-                //UserInfoEntity userInfoEntity = userInfoService.selectById(userEntity.getUid());
-                UserInfoEntity userInfoEntity = userFeign.selectUserInfoById(userEntity.getUid());
-                if (null != userInfoEntity) {
-                    map.put("username", userInfoEntity.getNickname());
-                }
-            }
-            map.put("c_lft_realname", "未排点");
-            map.put("c_rgt_realname", "未排点");
-            if (ura.size() > 1) {
-                map.put("c_lft_realname", ura.get(1).getRealname());
-                int cl_rgt = ura.get(1).getRgt();
-                for (UserRelationJoinAccountEntity t : ura) {
-                    if (t.getLft() == (cl_rgt + 1)) {
-                        map.put("c_rgt_realname", t.getRealname());
-                    }
-
-                }
-            }
-        }
-        return R.ok().put("myRelation", map);
-    }
 }

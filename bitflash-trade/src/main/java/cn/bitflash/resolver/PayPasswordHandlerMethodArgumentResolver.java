@@ -1,7 +1,7 @@
 package cn.bitflash.resolver;
 
 import cn.bitflash.annotation.PayPassword;
-import cn.bitflash.feign.UserFeign;
+import cn.bitflash.feignInterface.UserFeign;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.user.UserPayPwdEntity;
 import org.springframework.beans.factory.annotation.Autowired;

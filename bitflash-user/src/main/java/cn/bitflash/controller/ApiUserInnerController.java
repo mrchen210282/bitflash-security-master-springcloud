@@ -60,8 +60,8 @@ public class ApiUserInnerController {
         return userInfoService.selectByMap(map);
     }
 
-    @PostMapping("/selectRelation")
-    public UserInvitationCodeEntity selectRelation(@RequestParam("uid") String uid) {
+    @PostMapping("/selectUserInvitationCode")
+    public UserInvitationCodeEntity selectUserInvitationCode(@RequestParam("uid") String uid) {
         return userInvitationCodeService.selectOne(new EntityWrapper<UserInvitationCodeEntity>().eq("uid",uid));
     }
 

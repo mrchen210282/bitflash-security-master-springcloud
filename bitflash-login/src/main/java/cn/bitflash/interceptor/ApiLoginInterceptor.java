@@ -48,9 +48,10 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
             throw new RRException("参数不能为空");
         }
         TokenEntity tokenEntity = tokenService.selectOne(new EntityWrapper<TokenEntity>().eq("token", token));
-        if (tokenEntity == null) {
-            throw new RRException("token信息错误");
-        }
+/*
+        if (tokenEntity == null || tokenEntity.getExpireTime().getTime() < System.currentTimeMillis()) {
+            throw new RRException("登录过期，请重新登录" );
+        }*/
         String userMobile = tokenEntity.getMobile();
         if (!userMobile.equals(mobile)) {
             throw new RRException("token信息与用户信息不符");

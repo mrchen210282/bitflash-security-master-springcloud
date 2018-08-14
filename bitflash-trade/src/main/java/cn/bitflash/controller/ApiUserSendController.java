@@ -2,8 +2,8 @@ package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
-import cn.bitflash.feign.LoginFeign;
-import cn.bitflash.feign.UserFeign;
+import cn.bitflash.feignInterface.LoginFeign;
+import cn.bitflash.feignInterface.UserFeign;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserAccountService;
 import cn.bitflash.service.UserBrokerageService;

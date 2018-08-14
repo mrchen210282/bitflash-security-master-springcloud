@@ -2,7 +2,7 @@ package cn.bitflash.interceptor;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.exception.RRException;
-import cn.bitflash.feign.LoginFeign;
+import cn.bitflash.feignInterface.LoginFeign;
 import cn.bitflash.login.TokenEntity;
 import cn.bitflash.redisConfig.RedisKey;
 import org.apache.commons.lang.StringUtils;
@@ -48,9 +48,10 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
             throw new RRException("参数不能为空");
         }
         TokenEntity tokenEntity = loginFeign.selectOne(new ModelMap("token", token));
-        if (tokenEntity == null) {
-            throw new RRException("token信息错误");
-        }
+        /*
+        if (tokenEntity == null || tokenEntity.getExpireTime().getTime() < System.currentTimeMillis()) {
+            throw new RRException("登录过期，请重新登录" );
+        }*/
         String userMobile = tokenEntity.getMobile();
         if (!userMobile.equals(mobile)) {
             throw new RRException("token信息与用户信息不符");

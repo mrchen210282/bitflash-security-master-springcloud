@@ -24,13 +24,13 @@ public class UserTradeInnerService {
     UserAccountService userAccountService;
 
     @PostMapping("/selectTradeHistoryIncome")
-    public Map<String, Object> selectTradeHistoryIncome(Map<String, Object> map) {
+    public Map<String, Object> selectTradeHistoryIncome(@RequestBody Map<String, Object> map) {
         Map<String, Object> returnMap = userTradeHistoryService.selectTradeHistoryIncome(map);
         return returnMap;
     }
 
     @PostMapping("/selectUserAccount")
-    public UserAccountBean selectUserAccount(Map<String, Object> map) {
+    public UserAccountBean selectUserAccount(@RequestBody Map<String, Object> map) {
         return userAccountService.selectUserAccount(map);
     }
 

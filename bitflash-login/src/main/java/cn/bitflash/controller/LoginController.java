@@ -61,4 +61,24 @@ public class LoginController {
         }
     }
 
+    /**
+     * 修改密码
+     *
+     * @param mobile
+     * @param newPwd
+     * @return
+     */
+    @PostMapping("changePassword2")
+    public R changePwd2(@RequestParam String mobile, @RequestParam String newPwd) {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setPassword(newPwd);
+        userEntity.setMobile(mobile);
+        boolean rst = userService.updateById(userEntity);
+        if (rst) {
+            return R.ok();
+        } else {
+            return R.error("修改失败");
+        }
+    }
+
 }

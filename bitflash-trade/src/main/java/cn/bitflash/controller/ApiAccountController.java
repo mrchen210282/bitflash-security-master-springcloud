@@ -1,26 +1,31 @@
 package cn.bitflash.controller;
 
-import cn.bitflash.annotation.*;
-import cn.bitflash.feign.SysFeign;
-import cn.bitflash.feign.UserFeign;
+import cn.bitflash.annotation.Login;
+import cn.bitflash.annotation.LoginUser;
+import cn.bitflash.annotation.UserAccount;
+import cn.bitflash.feignInterface.UserFeign;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserAccountService;
 import cn.bitflash.service.UserTradeHistoryService;
 import cn.bitflash.trade.UserAccountBean;
 import cn.bitflash.trade.UserAccountEntity;
-import cn.bitflash.user.*;
+import cn.bitflash.user.UserInfoEntity;
+import cn.bitflash.user.UserPayPwdEntity;
 import cn.bitflash.utils.BigDecimalUtils;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 获取账户信息
@@ -33,9 +38,6 @@ public class ApiAccountController {
 
     @Autowired
     private UserFeign userFeign;
-
-    @Autowired
-    private SysFeign SysFeign;
 
     @Autowired
     private UserAccountService userAccountService;
@@ -70,7 +72,6 @@ public class ApiAccountController {
                     // 总购买
                     Object totalPurchase = null;
                     // 查询是否为VIP
-                    //UserInfoEntity userInfoBean = userInfoService.selectById(account.getUid());
                     UserInfoEntity userInfoBean = userFeign.selectUserInfoById(account.getUid());
 
                     if (null != userInfoBean) {
@@ -107,11 +108,8 @@ public class ApiAccountController {
                             map.put("createTime", format.format(calendarDate));
                         }
                     }
-                    //userInfoEntity = userInfoService.selectOne(new EntityWrapper<UserInfoEntity>().eq("uid", uid));
                     userInfoEntity = userFeign.selectUserInfoById(uid);
-                    //userPayPwdEntity = userPayPwdService.selectOne(new EntityWrapper<UserPayPwdEntity>().eq("uid", uid));
-                    map.put("uid", uid);
-                    userPayPwdEntity = userFeign.selectUserPayPwd(map);
+                    userPayPwdEntity = userFeign.selectUserPayPwd(new ModelMap("uid", uid));
                     return R.ok().put("account", account).put("userInfo", userInfoEntity).put("vip", userInfoEntity.getIsVip()).put("sys", userInfoEntity.getInvitation()).put("sfz", userInfoEntity.getIsAuthentication()).put("payPwd", userPayPwdEntity == null ? -1 : 1).put("uuid", user.getUuid())
                             .put("avaliableAssets", avaliableAssets)
                             .put("yesterDayIncome", yesterDayPurchase).put("totalPurchase", totalPurchase).put("totalIncome", BigDecimalUtils.DecimalFormat(account.getTotelIncome())).put("dailyIncome", BigDecimalUtils.DecimalFormat(account.getDailyIncome()))

@@ -1,9 +1,6 @@
 package cn.bitflash.controller;
 
-import cn.bitflash.service.UserInfoService;
-import cn.bitflash.service.UserInvitationCodeService;
-import cn.bitflash.service.UserPayPwdService;
-import cn.bitflash.service.UserRelationService;
+import cn.bitflash.service.*;
 import cn.bitflash.user.*;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +19,19 @@ public class ApiUserInnerController {
 
     @Autowired
     private UserInfoService userInfoService;
+
     @Autowired
     private UserInvitationCodeService userInvitationCodeService;
+
     @Autowired
     private UserRelationService userRelationService;
+
     @Autowired
     private UserPayPwdService userPayPwdService;
+
+    @Autowired
+    private UserPayUrlService userPayUrlService;
+
 
 
     @PostMapping("/selectone")
@@ -60,13 +64,18 @@ public class ApiUserInnerController {
         return userInfoService.selectByMap(map);
     }
 
-    @PostMapping("/selectRelation")
-    public UserInvitationCodeEntity selectRelation(@RequestParam("uid") String uid) {
+    @PostMapping("/selectUserInvitationCode")
+    public UserInvitationCodeEntity selectUserInvitationCode(@RequestParam("uid") String uid) {
         return userInvitationCodeService.selectOne(new EntityWrapper<UserInvitationCodeEntity>().eq("uid",uid));
     }
 
     @PostMapping("/selectTreeNodes")
     public List<UserRelationJoinAccountEntity> selectTreeNodes(@RequestParam("uid") String uid) {
         return userRelationService.selectTreeNodes(uid);
+    }
+
+    @PostMapping("/selectUserPayUrl")
+    public List<UserPayUrlEntity> selectUserPayUrl(@RequestParam("uid")String uid){
+        return userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>().eq("uid", uid));
     }
 }

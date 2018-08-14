@@ -2,7 +2,7 @@ package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
-import cn.bitflash.feign.TradeFeign;
+import cn.bitflash.feignInterface.TradeFeign;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserInfoService;
 import cn.bitflash.service.UserPayUrlService;
@@ -32,9 +32,6 @@ public class ApiUserPayUrlController {
 
     @Autowired
     private UserPayUrlService userPayUrlService;
-
-    @Autowired
-    private TradeFeign tradeFeign;
 
     @Autowired
     private UserInfoService userInfoService;
@@ -109,28 +106,22 @@ public class ApiUserPayUrlController {
     }
 
     /**
-     * 取得上传的图片
+     * 取得上传的微信/支付宝图片
      * @param user
      * @return
      */
     @Login
-    @PostMapping("userInfoImg" )
+    @PostMapping("userInfoImg")
     public R userInfoImg(@LoginUser UserEntity user) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("mobile", user.getMobile());
-        List<Map<String, Object>> list = tradeFeign.selectTradeUrl(map);
-        Map<String, Object> returnMap1 = null;
-        if (null != list && list.size() > 0) {
-            returnMap1 = list.get(0);
-            returnMap1.put("wechatUrl", returnMap1.get("imgUrl" ));
-            if (list.size() > 1) {
-                Map<String, Object> returnMap2 = list.get(1);
-                if (null != returnMap2.get("imgUrl" )) {
-                    returnMap1.put("payUrl", returnMap2.get("imgUrl" ));
-                }
-            }
-        }
-        return R.ok().put("payMap", returnMap1);
+        String uid = user.getUid();
+        List<UserPayUrlEntity> list = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>().eq("uid",uid)
+                .eq("img_type",1).or().eq("uid",uid).eq("img_type",2));
+           Map<String,String> map=new HashMap<>();
+           if(list.size()>=1){
+               map.put("wechatUrl",list.get(0).getImgUrl());
+               map.put("payUrl",list.get(1).getImgUrl());
+           }
+        return R.ok().put("payMap", map);
 
     }
 

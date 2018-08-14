@@ -17,7 +17,7 @@
 package cn.bitflash.resolver;
 
 import cn.bitflash.annotation.UserInvitationCode;
-import cn.bitflash.feign.UserFeign;
+import cn.bitflash.feignInterface.UserFeign;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.user.UserInvitationCodeEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +55,7 @@ public class UserInvitationHandlerMethodArgumentResolver implements HandlerMetho
         }
 
         // 获取用户信息
-        UserInvitationCodeEntity userInvitationCodeEntity = userFeign.selectRelation(object.toString());
+        UserInvitationCodeEntity userInvitationCodeEntity = userFeign.selectUserInvitationCode((String)object);
 
         return userInvitationCodeEntity;
     }

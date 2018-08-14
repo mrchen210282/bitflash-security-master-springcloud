@@ -3,7 +3,7 @@ package cn.bitflash.controller;
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.annotation.UserAccount;
-import cn.bitflash.feign.UserFeign;
+import cn.bitflash.feignInterface.UserFeign;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserBuyService;
 import cn.bitflash.trade.UserAccountEntity;
@@ -106,8 +106,6 @@ public class ApiWanToBuyController {
         if (ub.getUid() == null) {
             return R.error(501, "订单不存在" );
         }
-        //UserInfoEntity ui = userInfoService.selectById(ub.getUid());
-
         UserInfoEntity ui = userFeign.selectUserInfoById(ub.getUid());
         if (ui == null) {
             return R.error(502, "卖出者信息不存在" );

@@ -17,7 +17,7 @@
 package cn.bitflash.resolver;
 
 import cn.bitflash.annotation.LoginUser;
-import cn.bitflash.feign.LoginFeign;
+import cn.bitflash.feignInterface.LoginFeign;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.login.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;

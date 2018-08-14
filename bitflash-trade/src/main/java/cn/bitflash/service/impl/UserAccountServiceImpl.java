@@ -25,11 +25,6 @@ public class UserAccountServiceImpl extends ServiceImpl<UserAccountDao, UserAcco
         baseMapper.updateUserAccountByParam(userAccount);
     }
 
-    @Override
-    public List<UserAccountEntity> selectByMobile(String mobile) {
-        return baseMapper.selectByMobile(mobile);
-    }
-
     public UserAccountBean selectUserAccount(Map<String, Object> map) {
         return baseMapper.selectUserAccount(map);
     }

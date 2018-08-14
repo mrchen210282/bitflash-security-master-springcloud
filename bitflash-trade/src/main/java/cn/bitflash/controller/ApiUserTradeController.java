@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -37,6 +38,7 @@ import java.util.Map;
  * @author wangjun
  * @version 2018年7月4日上午9:44:17
  */
+@RestController
 @RequestMapping("/api")
 public class ApiUserTradeController {
 
@@ -71,7 +73,7 @@ public class ApiUserTradeController {
      * @return
      */
     @Login
-    @PostMapping("tradeList")
+    @PostMapping("/tradeList")
     public R tradeList(@UserAccount UserAccountEntity userAccount, @RequestParam String pageNum, @LoginUser UserEntity user) {
         int pageTotal = 6;
         Map<String, Object> param = new HashMap<String, Object>();

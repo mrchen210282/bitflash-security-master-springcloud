@@ -21,4 +21,7 @@ public interface LoginFeign {
 
     @PostMapping("/api/login/inner/selectToken")
     TokenEntity selectOne(@RequestBody Map<String,Object> map);
+
+    @PostMapping("/api/login/inner/selectUser")
+    UserEntity selectOneByUser(@RequestBody Map<String,Object> map);
 }

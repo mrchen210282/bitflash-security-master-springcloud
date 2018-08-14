@@ -7,11 +7,8 @@ import cn.bitflash.annotation.UserAccount;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.*;
 import cn.bitflash.trade.*;
-
-import cn.bitflash.trade.UserAccountEntity;
 import cn.bitflash.user.UserPayPwdEntity;
 import cn.bitflash.utils.*;
-
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

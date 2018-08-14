@@ -2,9 +2,7 @@ package cn.bitflash.feign;
 
 import cn.bitflash.feign.impl.UserFallback;
 import cn.bitflash.login.UserEntity;
-import cn.bitflash.user.UserInfoEntity;
-import cn.bitflash.user.UserPayPwdEntity;
-import cn.bitflash.user.UserRelationEntity;
+import cn.bitflash.user.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,4 +25,9 @@ public interface UserFeign {
     @PostMapping("/api/user/inner/selectUserPayPwd")
     public UserPayPwdEntity selectUserPayPwd(@RequestParam("params") Map<String, Object> params);
 
+    @PostMapping("/api/user/inner/selectRelation")
+    public UserInvitationCodeEntity selectRelation(@RequestParam("uid") String uid);
+
+    @PostMapping("/api/user/inner/selectTreeNodes")
+    public List<UserRelationJoinAccountEntity> selectTreeNodes(@RequestParam("uid") String uid);
 }

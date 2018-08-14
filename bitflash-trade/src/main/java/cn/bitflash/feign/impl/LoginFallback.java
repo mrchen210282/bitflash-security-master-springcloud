@@ -34,6 +34,12 @@ public class LoginFallback implements FallbackFactory<LoginFeign> {
                 log.error("获取用户信息失败-----:"+throwable);
                 return new TokenEntity();
             }
+
+            @Override
+            public UserEntity selectOneByUser(Map<String, Object> map) {
+                log.error("获取用户信息失败-----:"+throwable);
+                return new UserEntity();
+            }
         };
     }
 }

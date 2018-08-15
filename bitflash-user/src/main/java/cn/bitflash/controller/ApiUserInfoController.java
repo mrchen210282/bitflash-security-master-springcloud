@@ -30,7 +30,6 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api")
-//@Api(tags = "获取用户信息接口" )
 public class ApiUserInfoController {
 
     @Autowired
@@ -124,7 +123,13 @@ public class ApiUserInfoController {
     @PostMapping("getUserPower")
     public R getUserPower(@RequestAttribute(ApiLoginInterceptor.UID) String uid){
         UserInfoEntity infoEntity = userInfoService.selectById(uid);
-        
-
+        Map<String,Object> map =new HashMap<>();
+        //是否是vip
+        map.put("isVip",infoEntity.getIsVip());
+        //是否是实名认证的
+        map.put("isAuthentication",infoEntity.getIsAuthentication());
+        //是否是体系内的
+        map.put("isInvitation",infoEntity.getIsInvitation());
+        return R.ok(map);
     }
 }

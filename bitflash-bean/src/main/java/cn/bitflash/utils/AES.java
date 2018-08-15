@@ -56,22 +56,7 @@ public class AES {
     }
 
 
-    /**
-     * AES加密为base 64 code
-     * @param content 待加密的内容
-     * @param encryptKey 加密密钥
-     * @return 加密后的base 64 code
-     * @throws Exception
-     */
-    public static String aesEncrypt(String content, String encryptKey)  {
-        String secret =null;
-        try{
-            secret= base64Encode(aesEncryptToBytes(content, encryptKey));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return secret;
-    }
+
 
     /**
      * AES解密
@@ -107,14 +92,21 @@ public class AES {
         }
         return str;
     }
-
     /**
-     * 测试
+     * AES加密为base 64 code
+     * @param content 待加密的内容
+     * @param encryptKey 加密密钥
+     * @return 加密后的base 64 code
+     * @throws Exception
      */
-    public static void main(String[] args) throws Exception {
-        String encrypt = aesEncrypt("123456", "1534138010999bkc");
-
-        String decrypt = aesDecrypt("11qjhIPQ7h9vYVOc8QZZqMA2174FUkzhmxyJeqQM1XM=", "1534138010999bkc");
-        System.out.println("解密后：" + decrypt);
+    public static String aesEncrypt(String content, String encryptKey)  {
+        String secret =null;
+        try{
+            secret= base64Encode(aesEncryptToBytes(content, encryptKey));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return secret;
     }
+
 }

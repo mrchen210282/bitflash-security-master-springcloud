@@ -15,27 +15,16 @@ public class AESTokenUtil {
         //time为密匙解密，取22位长度
         time = time + "bkc";
         //解密后的token
-        String token = AES.aesDecrypt(time, str1);
+        String token = AES.aesDecrypt(str1, time);
         return token;
     }
 
     //解密数据
     public static String getData(String token, String str1)  {
-        String data = AES.aesDecrypt(token, str1);
+        String data = AES.aesDecrypt(str1, token);
         return data;
     }
 
-    public static void main(String[] args) {
-        long time = System.currentTimeMillis();
-        System.out.println(time);
-        String token = "e9c86c61845e47d5a34a6573a678527f";
-        try {
-            String secret = AESTokenUtil.setToken(String.valueOf(time), token);
-            System.out.println(secret);
-        } catch (Exception e) {
-
-        }
-    }
 
     //加密token
     public static String setToken(String time, String str1) {

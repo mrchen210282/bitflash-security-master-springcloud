@@ -5,6 +5,7 @@ import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.annotation.UserAccount;
 import cn.bitflash.annotation.UserInvitationCode;
 import cn.bitflash.feignInterface.SysFeign;
+import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserInfoService;
 import cn.bitflash.service.UserRelationService;
@@ -17,10 +18,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.Common;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -66,11 +64,11 @@ public class ApiUserInfoController {
             Double right = userAccount.getRgtAchievement().doubleValue();
             String leftRate = "10%";
             if (left != 0) {
-                leftRate = (Math.round(left / (left + right))) * 100 + "%";
+                leftRate = Math.round(left / (left + right) * 100) + "%";
             }
             String rightRate = "10%";
             if (right != 0) {
-                rightRate = (Math.round(right / (left + right))) * 100 + "%";
+                rightRate = Math.round(right / (left + right) * 100) + "%";
             }
             map.put("leftRate", leftRate);
             map.put("rightRate", rightRate);
@@ -122,4 +120,11 @@ public class ApiUserInfoController {
         }
     }
 
+    @Login
+    @PostMapping("getUserPower")
+    public R getUserPower(@RequestAttribute(ApiLoginInterceptor.UID) String uid){
+        UserInfoEntity infoEntity = userInfoService.selectById(uid);
+        
+
+    }
 }

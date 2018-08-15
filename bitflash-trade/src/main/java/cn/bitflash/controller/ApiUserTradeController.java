@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -37,6 +38,7 @@ import java.util.Map;
  * @author wangjun
  * @version 2018年7月4日上午9:44:17
  */
+@RestController
 @RequestMapping("/api")
 public class ApiUserTradeController {
 
@@ -71,11 +73,11 @@ public class ApiUserTradeController {
      * @return
      */
     @Login
-    @PostMapping("tradeList")
-    public R tradeList(@UserAccount UserAccountEntity userAccount, @RequestParam String pageNum, @LoginUser UserEntity user) {
+    @PostMapping("/tradeList")
+    public R tradeList(@UserAccount UserAccountEntity userAccount, @RequestParam String pageNum) {
         int pageTotal = 6;
         Map<String, Object> param = new HashMap<String, Object>();
-        if (StringUtils.isNotBlank(user.getMobile())) {
+        if (StringUtils.isNotBlank(userAccount.getUid())) {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("uid", userAccount.getUid());
             map.put("pageNum", new Integer(pageNum));
@@ -96,7 +98,7 @@ public class ApiUserTradeController {
     }
 
     /**
-     * 跳转添加记录
+     * 跳转添加卖出记录
      *
      * @param userAccount
      * @return
@@ -172,7 +174,7 @@ public class ApiUserTradeController {
             BigDecimal priceB = new BigDecimal(price);
             BigDecimal minPrice = new BigDecimal(Common.MIN_PRICE);
             if (priceB.compareTo(minPrice) <= -1) {
-                return R.error("最低价格为0.325!");
+                return R.error("最低价格为0.33!");
             }
             BigDecimal quantityB = new BigDecimal(quantity);
 
@@ -194,6 +196,10 @@ public class ApiUserTradeController {
                     // 等于1表示total大于percentB,可以交易
                     if (total.compareTo(purchase) == 1 || total.compareTo(purchase) == 0) {
                         // 1.先扣除手续费
+                        
+
+
+
                         // 手续费 = 总可用-百分比
                         UserBrokerageEntity userBrokerageEntity = userBrokerageService.selectById("1");
                         if (null != userBrokerageEntity) {

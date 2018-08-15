@@ -3,7 +3,6 @@ package cn.bitflash.interceptor;
 import cn.bitflash.annotation.Login;
 import cn.bitflash.exception.RRException;
 import cn.bitflash.login.TokenEntity;
-import cn.bitflash.redisConfig.RedisKey;
 import cn.bitflash.service.TokenService;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.apache.commons.lang.StringUtils;
@@ -14,6 +13,9 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static cn.bitflash.utils.Common.MOBILE;
+import static cn.bitflash.utils.Common.TOKEN;
 
 @Component
 public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
@@ -35,19 +37,19 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
         if (annotation == null) {
             return true;
         }
-        String mobile = (String) request.getSession().getAttribute(RedisKey.MOBILE.toString());
-        String token = (String) request.getSession().getAttribute(RedisKey.TOKEN.toString());
+        String mobile = (String) request.getSession().getAttribute(MOBILE);
+        String token = (String) request.getSession().getAttribute(TOKEN);
         if (StringUtils.isBlank(mobile)) {
-            mobile = (String) request.getAttribute(RedisKey.MOBILE.toString());
+            mobile = (String) request.getAttribute(MOBILE);
         }
         if (StringUtils.isBlank(token)) {
-            token = (String) request.getAttribute(RedisKey.TOKEN.toString());
+            token = (String) request.getAttribute(TOKEN);
         }
         //token为空
         if (StringUtils.isBlank(mobile) || StringUtils.isBlank(token)) {
             throw new RRException("参数不能为空");
         }
-        TokenEntity tokenEntity = tokenService.selectOne(new EntityWrapper<TokenEntity>().eq("token", token));
+        TokenEntity tokenEntity = tokenService.selectOne(new EntityWrapper<TokenEntity>().eq(TOKEN, token));
 /*
         if (tokenEntity == null || tokenEntity.getExpireTime().getTime() < System.currentTimeMillis()) {
             throw new RRException("登录过期，请重新登录" );

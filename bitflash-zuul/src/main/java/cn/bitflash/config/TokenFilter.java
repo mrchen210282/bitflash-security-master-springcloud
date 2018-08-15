@@ -1,7 +1,7 @@
 package cn.bitflash.config;
 
-import cn.bitflash.redisConfig.RedisKey;
 import cn.bitflash.utils.AESTokenUtil;
+import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
 import cn.bitflash.utils.RedisUtils;
 import com.netflix.zuul.ZuulFilter;
@@ -96,9 +96,9 @@ public class TokenFilter extends ZuulFilter {
         }
         try {
             HttpSession session = request.getSession();
-            session.setAttribute(RedisKey.MOBILE.toString(), mobile);
+            session.setAttribute(Common.MOBILE, mobile);
             String token = AESTokenUtil.getToken(secretTime, secretToken);
-            session.setAttribute(RedisKey.TOKEN.toString(), token);
+            session.setAttribute(TOKEN, token);
         } catch (UnsupportedEncodingException e) {
             this.errorMessage(ctx, "解密异常");
             e.printStackTrace();

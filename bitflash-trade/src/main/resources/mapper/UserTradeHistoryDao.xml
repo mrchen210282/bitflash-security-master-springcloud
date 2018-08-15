@@ -3,17 +3,6 @@
 
 <mapper namespace="cn.bitflash.dao.UserTradeHistoryDao">
 
-    <!-- <select id="selectTrade" parameterType="java.util.Map" -->
-    <!-- resultType="cn.bitflash.entity.UserTradeEntity"> -->
-    <!-- select id,uid,quantity,price,state,create_time from user_trade_history -->
-    <!-- <where> -->
-    <!-- 1 = 1 -->
-    <!-- <if test="map.state != null and map.state != ''"> -->
-    <!-- and state = ${map.state} -->
-    <!-- </if> -->
-    <!-- </where> -->
-    <!-- </select> -->
-
     <update id="updateUserTradeHistory" parameterType="cn.bitflash.trade.UserTradeHistoryEntity">
         update
         user_trade_history set sell_uid = #{sellUid},sell_quantity = #{sellQuantity},price=#{price},state =

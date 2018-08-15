@@ -4,12 +4,9 @@ import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.annotation.UserAccount;
 import cn.bitflash.annotation.UserInvitationCode;
-import cn.bitflash.feignInterface.LoginFeign;
 import cn.bitflash.feignInterface.SysFeign;
-import cn.bitflash.feignInterface.TradeFeign;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserInfoService;
-import cn.bitflash.service.UserPayPwdService;
 import cn.bitflash.service.UserRelationService;
 import cn.bitflash.trade.UserAccountEntity;
 import cn.bitflash.user.UserInfoEntity;
@@ -20,7 +17,10 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.Common;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,55 +42,24 @@ public class ApiUserInfoController {
     private UserInfoService userInfoService;
 
     @Autowired
-    private UserPayPwdService userPayPwdService;
-
-    @Autowired
     private SysFeign sysfeign;
 
-    /**
-     * 用户信息
-     * @param user
-     * @return
-     */
-    @Login
-    @GetMapping("userInfo")
-    public R userInfo(@LoginUser UserEntity user) {
-        return R.ok().put("user", user);
-    }
-
 
     /**
-     * 获取推广码
+     * 获取用户体系信息
      *
+     * @param userAccount
      * @param userInvitationCode
      * @return
      */
     @Login
-    @PostMapping("getInvitationCode")
-    public R getInvitationcode(@UserInvitationCode UserInvitationCodeEntity userInvitationCode) {
-        UserRelationEntity ur = userRelationService.selectOne(new EntityWrapper<UserRelationEntity>().eq("invitation_code", userInvitationCode.getLftCode()));
-        Map<String, Object> map = new HashMap<String, Object>();
-        String address = sysfeign.getVal(Common.ADDRESS);
-        map.put("lftCode", userInvitationCode.getLftCode());
-        map.put("address", address);
-        if (ur != null) {
-            map.put("rgtCode", userInvitationCode.getRgtCode());
-        } else {
-            map.put("rgtCode", "请先在左区排点");
-        }
-
-        return R.ok().put("invitationCode", map);
-
-    }
-
-    /**
-     * 获取用户体系
-     * @param userEntity
-     * @return
-     */
-    @Login
     @PostMapping("getRelation")
-    public R getRelation(@UserAccount UserAccountEntity userAccount, @LoginUser UserEntity userEntity) {
+    public R getRelation(@UserAccount UserAccountEntity userAccount, @UserInvitationCode UserInvitationCodeEntity userInvitationCode) {
+        UserInfoEntity infoEntity = userInfoService.selectById(userAccount.getUid());
+        if (Integer.valueOf(infoEntity.getIsVip()) < 0) {
+            return R.error("没有加入社区");
+        }
+        //返回map
         Map<String, Object> map = new HashMap<String, Object>();
         if (userAccount != null) {
             Double left = userAccount.getLftAchievement().doubleValue();
@@ -108,6 +77,15 @@ public class ApiUserInfoController {
             map.put("lft_a", left);
             map.put("rgt_a", right);
         }
+        UserRelationEntity ur = userRelationService.selectOne(new EntityWrapper<UserRelationEntity>()
+                .eq("invitation_code", userInvitationCode.getLftCode()));
+        String address = sysfeign.getVal(Common.ADDRESS);
+        map.put("leftAddress", address + userInvitationCode.getLftCode());
+        if (ur != null) {
+            map.put("rightAddress", address + userInvitationCode.getRgtCode());
+        } else {
+            map.put("rightAddress", "");
+        }
         return R.ok().put("myRelation", map);
     }
 
@@ -121,7 +99,7 @@ public class ApiUserInfoController {
      */
     @Login
     @PostMapping("updateNickName")
-    public R updateNickName(@RequestParam String nickname,@LoginUser UserEntity user) {
+    public R updateNickName(@RequestParam String nickname, @LoginUser UserEntity user) {
         if (StringUtils.isNotBlank(nickname)) {
             if (nickname.length() <= 6) {
                 UserInfoEntity userInfoEntity = userInfoService.selectOne(new EntityWrapper<UserInfoEntity>().eq("nickname", nickname));

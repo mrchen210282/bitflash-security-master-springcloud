@@ -25,6 +25,8 @@ import cn.bitflash.login.UserGTCidEntity;
 import cn.bitflash.service.TokenService;
 import cn.bitflash.service.UserGTCidService;
 import cn.bitflash.service.UserService;
+import cn.bitflash.utils.AES;
+import cn.bitflash.utils.AESTokenUtil;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import common.validator.Assert;
@@ -65,8 +67,9 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         TokenEntity tokenEntity = tokenService.createToken(user);
 
         Map<String, Object> map = new HashMap<>(2);
-        map.put("token", tokenEntity.getToken());
-        map.put("expire", tokenEntity.getExpireTime().getTime() - System.currentTimeMillis());
+        Long time = System.currentTimeMillis();
+        map.put("token", AESTokenUtil.setToken(time.toString(),tokenEntity.getToken()));
+        map.put("expire", time);
 
         UserGTCidEntity gt = userGTCidService.selectOne(new EntityWrapper<UserGTCidEntity>().eq("uid", user.getUid()));
 

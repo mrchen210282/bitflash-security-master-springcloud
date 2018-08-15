@@ -53,10 +53,10 @@ public class UserTradeServiceImpl extends ServiceImpl<UserTradeDao, UserTradeEnt
                     }
                     Integer size = new Integer(userTradeList.size());
                     BigDecimal count = new BigDecimal(size);
-                    divide = big.divide(count, 3, BigDecimal.ROUND_HALF_UP);
+                    divide = big.divide(count, 2, BigDecimal.ROUND_HALF_UP);
                     map.put("divide", divide);
                 } else {
-                    // 1.如果没有卖出数量则默认参考价格为0.325
+                    // 1.如果没有卖出数量则默认参考价格为0.33
                     map.put("divide", Common.MIN_PRICE);
                 }
             } catch (Exception e) {

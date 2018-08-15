@@ -1,6 +1,7 @@
 package cn.bitflash.utils;
 
 import java.util.List;
+import java.util.Random;
 
 /**
  * @author wangjun
@@ -29,10 +30,10 @@ public class Common {
 	public final static String STATE_FINISH = "7";
 
 	// 最小价格
-	public final static String MIN_PRICE = "0.325";
+	public final static String MIN_PRICE = "0.33";
 
 	// 最小价格
-	public final static Double MULTIPLE = 100d;
+	public final static Double MULTIPLE = 10d;
 
 	// 超时时间(毫秒)
 	public final static String OUT_TIME = "outTime";
@@ -73,6 +74,21 @@ public class Common {
 		} else {
 			return null;
 		}
+	}
+
+	/**
+	 * 生成8位随机数
+	 * @return
+	 */
+	public static String randomUtil(){
+		Random r = new Random();
+		String code = "";
+		for (int i = 0; i < 8; ++i) {
+			int temp = r.nextInt(52);
+			char x = (char) (temp < 26 ? temp + 97 : (temp % 26) + 65);
+			code += x;
+		}
+		return code;
 	}
 
 }

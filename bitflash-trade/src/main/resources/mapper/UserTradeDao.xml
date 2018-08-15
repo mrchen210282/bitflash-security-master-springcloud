@@ -9,6 +9,7 @@
         <result property="purchaseName" column="nickname"/>
         <result property="mobile" column="mobile"/>
     </resultMap>
+
     <insert id="insertUserTrade" keyProperty="id" useGeneratedKeys="true"
             parameterType="cn.bitflash.trade.UserTradeEntity">
         insert into user_trade
@@ -31,30 +32,39 @@
 
     <select id="selectTrade" resultType="cn.bitflash.trade.UserTradeEntity">
         select
-        realname,nickname,id,price,quantity,uid,create_time,state,isMySelf from (SELECT
-        b.realname,b.nickname,ut.id,ut.price,ut.quantity,ut.uid,ut.create_time,ut.state,"1"
-        AS isMySelf FROM user_trade ut
-        LEFT JOIN user_info b ON ut.uid = b.uid WHERE 1 = 1
+        realname,nickname,id,price,quantity,ut.uid,create_time,state FROM user_trade ut
+        LEFT JOIN user_info ui ON ut.uid = ui.uid WHERE 1 = 1
         AND <![CDATA[ut.state <> '3']]> and <![CDATA[ ut.state <>'4']]>
-        AND ut.uid = #{uid}
-        UNION
-        SELECT
-        ui.realname,ui.nickname,ut.id,ut.price,ut.quantity,ut.uid,ut.create_time,uth.state,"0" AS isMySelf
-        from user_trade_history uth
-        left join user_trade ut on uth.user_trade_id = ut.id
-        left join user_info ui on ut.uid = ui.uid
-        where uth.state = '6'
-        and uth.purchase_uid = #{uid}
-        UNION
-        SELECT
-        b.realname,b.nickname,a.id,a.price,a.quantity,a.uid,a.create_time,a.state,"0" AS isMySelf
-        FROM user_trade a
-        LEFT JOIN user_info b ON a.uid = b.uid
-        WHERE 1 = 1
-        AND <![CDATA[ a.uid <> #{uid} ]]> AND a.state in( '1','5')) t
-        where 1 ORDER BY state desc,isMyself desc,price asc limit
+        AND <![CDATA[ut.uid <> #{uid}]]> ORDER BY state desc,price asc limit
         #{pageNum},#{pageTotal}
     </select>
+
+    <!--<select id="selectTrade" resultType="cn.bitflash.trade.UserTradeEntity">-->
+        <!--select-->
+        <!--realname,nickname,id,price,quantity,uid,create_time,state,isMySelf from (SELECT-->
+        <!--b.realname,b.nickname,ut.id,ut.price,ut.quantity,ut.uid,ut.create_time,ut.state,"1"-->
+        <!--AS isMySelf FROM user_trade ut-->
+        <!--LEFT JOIN user_info b ON ut.uid = b.uid WHERE 1 = 1-->
+        <!--AND <![CDATA[ut.state <> '3']]> and <![CDATA[ ut.state <>'4']]>-->
+        <!--AND ut.uid = #{uid}-->
+        <!--UNION-->
+        <!--SELECT-->
+        <!--ui.realname,ui.nickname,ut.id,ut.price,ut.quantity,ut.uid,ut.create_time,uth.state,"0" AS isMySelf-->
+        <!--from user_trade_history uth-->
+        <!--left join user_trade ut on uth.user_trade_id = ut.id-->
+        <!--left join user_info ui on ut.uid = ui.uid-->
+        <!--where uth.state = '6'-->
+        <!--and uth.purchase_uid = #{uid}-->
+        <!--UNION-->
+        <!--SELECT-->
+        <!--b.realname,b.nickname,a.id,a.price,a.quantity,a.uid,a.create_time,a.state,"0" AS isMySelf-->
+        <!--FROM user_trade a-->
+        <!--LEFT JOIN user_info b ON a.uid = b.uid-->
+        <!--WHERE 1 = 1-->
+        <!--AND <![CDATA[ a.uid <> #{uid} ]]> AND a.state in( '1','5')) t-->
+        <!--where 1 ORDER BY state desc,isMyself desc,price asc limit-->
+        <!--#{pageNum},#{pageTotal}-->
+    <!--</select>-->
 
     <select id="selectTradeCount" resultType="java.lang.Integer">
         select count(*) from
@@ -67,8 +77,7 @@
         a.quantity,
         a.uid,
         a.create_time,
-        a.state,
-        "1" AS isMySelf
+        a.state
         FROM
         user_trade a
         LEFT JOIN user_info b ON a.uid =
@@ -76,43 +85,7 @@
         WHERE
         1 = 1
         AND <![CDATA[a.state <> '3']]> and <![CDATA[a.state <>'4']]>
-        AND a.uid = #{uid}
-        UNION
-        SELECT
-        ui.realname,
-        ui.nickname,
-        ut.id,
-        ut.price,
-        ut.quantity,
-        ut.uid,
-        ut.create_time,
-        uth.state,
-        "0" AS isMySelf
-        FROM
-        user_trade_history uth
-        LEFT JOIN user_trade ut ON uth.user_trade_id = ut.id
-        LEFT JOIN user_info ui ON ut.uid = ui.uid
-        WHERE uth.state = '6'
-        AND uth.purchase_uid = #{uid}
-        UNION
-        SELECT
-        b.realname,
-        b.nickname,
-        a.id,
-        a.price,
-        a.quantity,
-        a.uid,
-        a.create_time,
-        a.state,
-        "0" AS isMySelf
-        FROM
-        user_trade a
-        LEFT JOIN user_info b ON
-        a.uid = b.uid
-        WHERE
-        1 = 1
-        AND <![CDATA[ a.uid <> #{uid}]]>
-        AND a.state in( '1','5')
+        AND  <![CDATA[a.uid <> #{uid}]]>
         ) t where 1 ORDER BY price asc
     </select>
 
@@ -208,18 +181,18 @@
         ut.state = '5'
 
     </select>
-    <select id="getHistoryBystate5" resultType="java.util.Map">
-        SELECT
-        ul.user_trade_id AS userTradeId,
-        ul.lock_uid AS lockUid,
-        ul.lock_time AS lockTime
-        FROM
-        user_trade_lock ul
-        LEFT JOIN user_trade ut ON (ul.user_trade_id = ut.id)
-        WHERE
-        ut.state = '5'
 
-    </select>
+    <!--<select id="getHistoryBystate5" resultType="java.util.Map">-->
+        <!--SELECT-->
+        <!--ul.user_trade_id AS userTradeId,-->
+        <!--ul.lock_uid AS lockUid,-->
+        <!--ul.lock_time AS lockTime-->
+        <!--FROM-->
+        <!--user_trade_lock ul-->
+        <!--LEFT JOIN user_trade ut ON (ul.user_trade_id = ut.id)-->
+        <!--WHERE-->
+        <!--ut.state = '5'-->
+    <!--</select>-->
 
 
     <select id="selectById" resultType="cn.bitflash.trade.UserTradeEntity">

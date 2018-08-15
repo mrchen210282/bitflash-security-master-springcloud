@@ -9,11 +9,6 @@
         where uid=#{uid}
     </update>
 
-    <select id="selectByMobile" parameterType="java.lang.String" resultType="cn.bitflash.trade.UserAccountEntity">
-        select ua.* from user_account ua right join user_info ui on ua.uid = ui.uid where ui.mobile=#{mobile}
-
-    </select>
-
     <select id="selectUserAccount" resultType="cn.bitflash.trade.UserAccountBean">
         select ua.*,ui.nicklock from user_account ua right join user_info ui on ua.uid = ui.uid where ui.uid=#{uid}
 

@@ -9,6 +9,7 @@
         <result property="purchaseName" column="nickname"/>
         <result property="mobile" column="mobile"/>
     </resultMap>
+
     <insert id="insertUserTrade" keyProperty="id" useGeneratedKeys="true"
             parameterType="cn.bitflash.trade.UserTradeEntity">
         insert into user_trade
@@ -180,18 +181,18 @@
         ut.state = '5'
 
     </select>
-    <select id="getHistoryBystate5" resultType="java.util.Map">
-        SELECT
-        ul.user_trade_id AS userTradeId,
-        ul.lock_uid AS lockUid,
-        ul.lock_time AS lockTime
-        FROM
-        user_trade_lock ul
-        LEFT JOIN user_trade ut ON (ul.user_trade_id = ut.id)
-        WHERE
-        ut.state = '5'
 
-    </select>
+    <!--<select id="getHistoryBystate5" resultType="java.util.Map">-->
+        <!--SELECT-->
+        <!--ul.user_trade_id AS userTradeId,-->
+        <!--ul.lock_uid AS lockUid,-->
+        <!--ul.lock_time AS lockTime-->
+        <!--FROM-->
+        <!--user_trade_lock ul-->
+        <!--LEFT JOIN user_trade ut ON (ul.user_trade_id = ut.id)-->
+        <!--WHERE-->
+        <!--ut.state = '5'-->
+    <!--</select>-->
 
 
     <select id="selectById" resultType="cn.bitflash.trade.UserTradeEntity">

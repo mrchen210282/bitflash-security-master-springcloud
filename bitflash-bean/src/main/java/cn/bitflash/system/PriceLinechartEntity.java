@@ -2,6 +2,7 @@ package cn.bitflash.system;
 
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.enums.IdType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
@@ -13,23 +14,17 @@ public class PriceLinechartEntity implements Serializable {
 
     private static final long serialVersionUID = 8348757757253519053L;
 
-    @TableId
-    private int id;
-
     private Float price;
 
     private Float rate;
 
-    @JsonFormat(pattern = "MM-dd")
+    private int cny;
+
+    private float bkc;
+
+    @TableId(type = IdType.INPUT)
     private LocalDateTime rateTime;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public Float getPrice() {
         return price;
@@ -53,5 +48,21 @@ public class PriceLinechartEntity implements Serializable {
 
     public void setRateTime(LocalDateTime rateTime) {
         this.rateTime = rateTime;
+    }
+
+    public int getCny() {
+        return cny;
+    }
+
+    public void setCny(int cny) {
+        this.cny = cny;
+    }
+
+    public float getBkc() {
+        return bkc;
+    }
+
+    public void setBkc(float bkc) {
+        this.bkc = bkc;
     }
 }

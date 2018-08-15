@@ -17,8 +17,6 @@ public interface UserAccountService extends IService<UserAccountEntity> {
 
     public void updateUserAccountByParam(UserAccountEntity userAccountEntity);
 
-    public List<UserAccountEntity> selectByMobile(String mobile);
-
     public UserAccountBean selectUserAccount(Map<String, Object> map);
 
 }

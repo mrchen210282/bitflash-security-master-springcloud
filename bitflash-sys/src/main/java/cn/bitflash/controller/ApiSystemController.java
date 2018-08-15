@@ -9,6 +9,8 @@ import cn.bitflash.system.PriceLinechartEntity;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import common.utils.DateUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,14 +69,15 @@ public class ApiSystemController {
     public R getWeekPriceRate(){
         String str=platFormConfigService.getVal(Common.SHOW_DATE);
         Long time = Long.valueOf(str);
-        Date now =new Date();
-        Date after = new Date(now.getTime()-time);
+        Date now = new DateTime().withTimeAtStartOfDay().toDate();
+        Date after = DateUtils.addDateDays(now,-7);
         DateTimeFormatter dt=DateTimeFormatter.ofPattern("MM-dd");
         List<PriceLinechartEntity> list=priceLinechartService.selectList(new EntityWrapper<PriceLinechartEntity>().between("rate_time",after,now).orderBy("rate_time"));
         List<String> date=list.stream().map(u->u.getRateTime().format(dt)).collect(Collectors.toList());
         List<Float> price=list.stream().map(PriceLinechartEntity::getPrice).collect(Collectors.toList());
-
-        return R.ok().put("date",date).put("price",price);
+        Date yesterday = DateUtils.addDateDays(now,-1);
+        PriceLinechartEntity yestPrice = priceLinechartService.selectById(yesterday);
+        return R.ok().put("date",date).put("price",price).put("yesterday",yestPrice);
     }
 
 }

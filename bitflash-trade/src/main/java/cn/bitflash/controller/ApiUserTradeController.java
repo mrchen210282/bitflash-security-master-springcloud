@@ -73,7 +73,7 @@ public class ApiUserTradeController {
      * @return
      */
     @Login
-    @PostMapping("tradeList")
+    @PostMapping("/tradeList")
     public R tradeList(@UserAccount UserAccountEntity userAccount, @RequestParam String pageNum) {
         int pageTotal = 6;
         Map<String, Object> param = new HashMap<String, Object>();

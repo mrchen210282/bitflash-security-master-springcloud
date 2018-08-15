@@ -1,93 +1,112 @@
 package cn.bitflash.utils;
 
-import cn.bitflash.exception.RRException;
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import java.math.BigInteger;
 
 import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.KeyGenerator;
 import javax.crypto.spec.SecretKeySpec;
 
-import static javax.crypto.Cipher.ENCRYPT_MODE;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 
+import sun.misc.BASE64Decoder;
 
 public class AES {
 
-    /**
-     * 算法名称
-     */
-    public static final String NAME = "AES";
 
     /**
      * 加密模式：CBC；数据块：128；填充：PKCS5Padding
      */
-    public final String MODE = "AES/CBC/PKCS5Padding";
-
-
-    /**
-     * 加密用的 KEY
-     */
-    private String key;
+    private static final String ALGORITHMSTR = "AES/ECB/PKCS5Padding";
 
     /**
-     * 向量，用于增加加密强度
+     * base 64 encode
+     * @param bytes 待编码的byte[]
+     * @return 编码后的base 64 code
      */
-    private String ivParameter;
-
-    /**
-     * @param key         加密用的 KEY
-     * @param ivParameter 偏移量
-     */
-    public AES(String key, String ivParameter) {
-        if (key == null) {
-            throw new RRException("KEY 不存在");
-        }
-        if (ivParameter == null) {
-            throw new RRException("ivParameter 不存在");
-        }
-
-        this.key = key;
-        this.ivParameter = ivParameter;
+    public static String base64Encode(byte[] bytes){
+        return Base64.encodeBase64String(bytes);
     }
 
     /**
-     * 加密
-     *
-     * @param s 要加密的字符串
-     * @return 加密后的字符串
+     * base 64 decode
+     * @param base64Code 待解码的base 64 code
+     * @return 解码后的byte[]
+     * @throws Exception
      */
-    public String encode(String s) {
-        String result;
-        try {
+    public static byte[] base64Decode(String base64Code) throws Exception{
+        return StringUtils.isEmpty(base64Code) ? null : new BASE64Decoder().decodeBuffer(base64Code);
+    }
 
-            Cipher cipher = Cipher.getInstance(MODE);
-            IvParameterSpec iv = new IvParameterSpec(ivParameter.getBytes());
-            cipher.init(ENCRYPT_MODE, new SecretKeySpec(key.getBytes(), NAME), iv);
-            byte[] bytes = cipher.doFinal(s.getBytes("UTF-8"));
-            result = new BASE64Encoder().encode(bytes);
-        } catch (Exception e) {
+
+    /**
+     * AES加密
+     * @param content 待加密的内容
+     * @param encryptKey 加密密钥
+     * @return 加密后的byte[]
+     * @throws Exception
+     */
+    public static byte[] aesEncryptToBytes(String content, String encryptKey) throws Exception {
+        KeyGenerator kgen = KeyGenerator.getInstance("AES");
+        kgen.init(128);
+        Cipher cipher = Cipher.getInstance(ALGORITHMSTR);
+        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(encryptKey.getBytes(), "AES"));
+
+        return cipher.doFinal(content.getBytes("utf-8"));
+    }
+
+
+
+
+    /**
+     * AES解密
+     * @param encryptBytes 待解密的byte[]
+     * @param decryptKey 解密密钥
+     * @return 解密后的String
+     * @throws Exception
+     */
+    public static String aesDecryptByBytes(byte[] encryptBytes, String decryptKey) throws Exception {
+        KeyGenerator kgen = KeyGenerator.getInstance("AES");
+        kgen.init(128);
+
+        Cipher cipher = Cipher.getInstance(ALGORITHMSTR);
+        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(decryptKey.getBytes(), "AES"));
+        byte[] decryptBytes = cipher.doFinal(encryptBytes);
+        return new String(decryptBytes);
+    }
+
+
+    /**
+     * 将base 64 code AES解密
+     * @param encryptStr 待解密的base 64 code
+     * @param decryptKey 解密密钥
+     * @return 解密后的string
+     * @throws Exception
+     */
+    public static String aesDecrypt(String encryptStr, String decryptKey) {
+        String str=null;
+        try{
+            str=StringUtils.isEmpty(encryptStr) ? null : aesDecryptByBytes(base64Decode(encryptStr), decryptKey);
+        }catch (Exception e){
             e.printStackTrace();
-            throw new RRException("加密", e);
         }
-        return result;
+        return str;
+    }
+    /**
+     * AES加密为base 64 code
+     * @param content 待加密的内容
+     * @param encryptKey 加密密钥
+     * @return 加密后的base 64 code
+     * @throws Exception
+     */
+    public static String aesEncrypt(String content, String encryptKey)  {
+        String secret =null;
+        try{
+            secret= base64Encode(aesEncryptToBytes(content, encryptKey));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return secret;
     }
 
-    /**
-     * 解密
-     *
-     * @param s 待解密的字符串
-     * @return 解密后的字符串
-     */
-    public String decode(String s) {
-        try {
-            SecretKeySpec keySpec = new SecretKeySpec(key.getBytes("ASCII"), NAME);
-            Cipher cipher = Cipher.getInstance(MODE);
-            IvParameterSpec iv = new IvParameterSpec(ivParameter.getBytes());
-            cipher.init(Cipher.DECRYPT_MODE, keySpec, iv);
-            return new String(cipher.doFinal(new BASE64Decoder().decodeBuffer(s)), "UTF-8");
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RRException("解密", e);
-        }
-    }
 }

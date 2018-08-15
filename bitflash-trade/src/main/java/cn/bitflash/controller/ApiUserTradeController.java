@@ -27,10 +27,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 获取用户交易接口
@@ -180,6 +177,7 @@ public class ApiUserTradeController {
 
             // 卖出数量
             double quantityD = Double.parseDouble(quantity);
+            //必须为100的整数倍
             if (quantityD % Common.MULTIPLE == 0) {
 
                 UserTradeConfigEntity userTradeConfigEntity = userTradeConfigService.selectOne(new EntityWrapper<UserTradeConfigEntity>().eq("id", "1"));
@@ -195,8 +193,10 @@ public class ApiUserTradeController {
                     BigDecimal purchase = quantityB.add(percentB);
                     // 等于1表示total大于percentB,可以交易
                     if (total.compareTo(purchase) == 1 || total.compareTo(purchase) == 0) {
-                        // 1.先扣除手续费
+                        // 1.先扣除手续费，可用于撤消
                         
+
+
 
 
 
@@ -610,6 +610,7 @@ public class ApiUserTradeController {
 //        System.out.println("加密数据"+token);
 //        String token2=AESTokenUtil.getToken(time,token);
 //        System.out.println("解密数据"+token2);
-        System.out.println((int) ((Math.random() * 9 + 9) * 100000));
+          //System.out.println(randomUtil());
     }
+
 }

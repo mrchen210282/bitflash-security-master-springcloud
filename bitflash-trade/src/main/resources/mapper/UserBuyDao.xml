@@ -5,13 +5,9 @@
 
     <select id="getBuyMessage" resultType="cn.bitflash.trade.UserBuyMessageBean">
         select
-        ub.* ,'1' as isMy,ui.nickname
+        ub.* ,ui.nickname
         from user_buy ub left join user_info ui on(ub.uid=ui.uid)
-        where ub.uid=#{uid} and state ='1'
-        UNION
-        select ub2.* ,'0' as isMy,ui.nickname
-        from user_buy ub2 left join user_info ui on(ub2.uid=ui.uid)
-        where ub2.uid !=#{uid} and state = '1'
+        where ub.uid!=#{uid} and state ='0'
         limit #{pages},6
     </select>
 

@@ -17,10 +17,10 @@ public class UserBuyEntity implements Serializable {
     private String uid;
 
     //求购数量
-    private Double quantity;
+    private float quantity;
 
     //价格
-    private Double price;
+    private float price;
 
     //状态
     private String state;
@@ -51,19 +51,19 @@ public class UserBuyEntity implements Serializable {
         this.uid = uid;
     }
 
-    public Double getQuantity() {
+    public float getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Double quantity) {
+    public void setQuantity(float quantity) {
         this.quantity = quantity;
     }
 
-    public Double getPrice() {
+    public float getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 

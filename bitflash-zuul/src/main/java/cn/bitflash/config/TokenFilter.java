@@ -99,7 +99,7 @@ public class TokenFilter extends ZuulFilter {
             session.setAttribute(Common.MOBILE, mobile);
             String token = AESTokenUtil.getToken(secretTime, secretToken);
             session.setAttribute(TOKEN, token);
-        } catch (UnsupportedEncodingException e) {
+        } catch (Exception e) {
             this.errorMessage(ctx, "解密异常");
             e.printStackTrace();
             return null;

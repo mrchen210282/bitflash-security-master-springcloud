@@ -231,12 +231,12 @@ public class ApiUserPayUrlController {
 
     /**
      * 获取支付信息
-     * @param uid
+     * @param accountId
      * @return
      */
     @Login
-    @PostMapping("getPayUrl")
-    public R getPayUrl(@RequestParam("accountId")String accountId){
+    @PostMapping("getPayMessage")
+    public R getPayMessage(@RequestParam("accountId")String accountId){
         UserTradeEntity tradeEntity = tradeFeign.selectOneTrade(new ModelMap("id",accountId));
         String uid = tradeEntity.getUid();
         List<UserPayUrlEntity> payUrlEntities = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>()
@@ -262,7 +262,14 @@ public class ApiUserPayUrlController {
             }
         });
 
-        return R.ok().put("url",map);
+        return R.ok().put("url",map).put("uid",uid);
+    }
+
+    @Login
+    @PostMapping("getPayUrl")
+    public R getPayUrl(@RequestParam("uid") String uid,@RequestParam("imgType")String imgType){
+        UserPayUrlEntity payUrlEntity = userPayUrlService.selectOne(new EntityWrapper<UserPayUrlEntity>().eq("uid",uid).eq("img_type",imgType));
+        return R.ok(payUrlEntity.getImgUrl());
     }
 
 }

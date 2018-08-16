@@ -3,6 +3,8 @@ package cn.bitflash.controller;
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.annotation.UserAccount;
+import cn.bitflash.feignInterface.LoginFeign;
+import cn.bitflash.feignInterface.SysFeign;
 import cn.bitflash.feignInterface.UserFeign;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserBuyService;
@@ -11,20 +13,17 @@ import cn.bitflash.trade.UserBuyEntity;
 import cn.bitflash.trade.UserBuyMessageBean;
 import cn.bitflash.service.*;
 import cn.bitflash.trade.*;
-import cn.bitflash.user.UserInfoEntity;
 import cn.bitflash.user.UserPayPwdEntity;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import common.utils.GeTuiSendMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 求购
@@ -32,14 +31,15 @@ import java.util.Map;
  *
  * 求购状态：
  *      求购者：‘1’：可撤销； ‘2’：待收款； ‘4’：待确认   ‘6’完成
- *      卖出者：    -     ； ‘3’：待付款； ‘5’：待收币   ‘6’完成
- *      求购者：‘1’：可撤销； ‘2’：待付款； ‘4’：待收币   ‘6’完成
- *      卖出者：    -     ； ‘3’：待收款； ‘5’：待确认   ‘6’完成
+ *      卖出者：    -     ； ‘3’：待付款； ‘5’：待收币   ‘6’完成  ‘9’申诉
  * 订单状态：
- *      已撤销：‘-1’
- *      可撤销：‘0’
- *      交易中：‘1’
- *      完成：‘2’
+ *      已撤销：‘0’
+ *      可撤销：‘1’
+ *      ‘2’：待收款
+ *      ‘3’：待付款
+ *      ‘4’：待确认
+ *      ‘5’：待收币
+ *      ‘6’完成
  */
 @RestController
 @RequestMapping("/api/need" )
@@ -66,9 +66,18 @@ public class ApiWanToBuyController {
     @Autowired
     private UserFeign userFeign;
 
+    @Autowired
+    private LoginFeign loginFeign;
+
+    @Autowired
+    private SysFeign sysFeign;
+
+
+
+    /**-----------------------------------------------显示求购信息列表-----------------------------------------------------*/
 
     /**
-     * 显示求购信息（交易页）
+     * ----------------交易页-----------------
      * @param user
      * @return
      */
@@ -82,67 +91,64 @@ public class ApiWanToBuyController {
         }
         Integer count = userBuyService.getNumToPaging();
         return R.ok().put("count", count).put("list", ub).put("availableAssets", userAccount.getAvailableAssets());
-
     }
 
     /**
-     * 显示求购（订单页)
+     * ---------------订单页----------------
      */
     @Login
-    @PostMapping("showBuyMessageOrder")
+    @PostMapping("showBuyMessageOwn")
     public R showUserBuyMessage(@LoginUser UserEntity user) {
-        List<UserBuyHistoryEntity> userBuyHistoryEntities = userBuyHistoryService.selectList(new EntityWrapper<UserBuyHistoryEntity>().eq("uid", user.getUid()));
+        List<UserBuyBean> userBuyEntities = userBuyService.selectBuyList(user.getUid());
+        List<UserBuyBean> userBuyEntitiesList = new LinkedList<UserBuyBean>();
+        String state = null;
+        for(UserBuyBean userBuyEntity : userBuyEntities){
+            if("1".equals(userBuyEntity.getState()) || "1".equals(userBuyEntity.getSellState())){
+                state = "可撤销";
+            }
+            if("2".equals(userBuyEntity.getState()) || "2".equals(userBuyEntity.getSellState())){
+                state = "待收款";
+            }
+            if("3".equals(userBuyEntity.getState()) || "3".equals(userBuyEntity.getSellState())){
+                state = "待付款";
+            }
+            if("4".equals(userBuyEntity.getState()) || "4".equals(userBuyEntity.getSellState())){
+                state = "待确认";
+            }
+            if("5".equals(userBuyEntity.getState()) || "5".equals(userBuyEntity.getSellState())){
+                state = "待收币";
+            }
+            userBuyEntity.setState(state);
+            userBuyEntitiesList.add(userBuyEntity);
+        }
+
+        return R.ok().put("userBuyEntitiesList",userBuyEntitiesList);
+    }
+
+    /**--------------------------------------------------添加订单---------------------------------------------------------*/
+
+    /**
+     * 添加求购信息
+     *
+     * @param userBuyEntity
+     * @param user
+     * @return
+     */
+    @Login
+    @PostMapping("addBuyMessage")
+    public R addBuyMessage(@RequestBody UserBuyEntity userBuyEntity, @LoginUser UserEntity user) {
+        if (userBuyEntity == null) {
+            return R.error(501, "求购信息为空");
+        }
+        Float num = userBuyEntity.getQuantity();
+        if (num % 100 != 0 || num < 100) {
+            return R.error(502, "求购数量最低为100，且为100的倍数");
+        }
+        userBuyService.addBuyMessage(userBuyEntity, user.getUid());
         return R.ok();
     }
 
-    /**
-     * 显示求购详情页
-     */
-    @Login
-    @PostMapping("showBuyMessagePage")
-    public R showBuyMessagePage(@RequestParam("id") String id) {
-        //订单详情
-        UserBuyEntity userBuy = userBuyService.selectById(Integer.parseInt(id));
-        //判定订单不存在
-        if (userBuy == null) {
-            return R.ok().put("code","订单不存在");
-        }
-        //获取手续费
-        Map<String,Float> map = poundage(id);
-
-        return R.ok().put("userBuy", userBuy).put("poundage",map.get("poundage")*100).put("totalMoney",map.get("totalMoney")).put("totalQuantity",map.get("totalMoney"));
-    }
-
-    /**
-     * 手续费
-     */
-    public Map<String,Float> poundage(String id){
-        UserBuyEntity userBuy = userBuyService.selectById(Integer.parseInt(id));
-        if(userBuy == null){
-            return null;
-        }
-        //手续费
-        DecimalFormat df = new DecimalFormat("#########.##" );
-        Float buyQuantity = Float.parseFloat(df.format(userBuy.getQuantity()));
-        //手续费比率
-        Float poundage = userTradeConfigService.selectOne(new EntityWrapper<UserTradeConfigEntity>().eq("remark", "交易手续费")).getPoundage();
-        //Float poundage = Float.parseFloat(df.format(poundagePer));
-        //手续费数量
-        Float totalPoundage = buyQuantity*poundage;
-        //交易总数量
-        Float totalQuantity = buyQuantity+totalPoundage;
-        //总价格
-        Float totalMoney = buyQuantity*(userBuy.getPrice());
-
-        Map<String,Float> map = new HashMap<String,Float>();
-        map.put("buyQuantity",buyQuantity);
-        map.put("poundage",poundage);
-        map.put("totalPoundage",totalPoundage);
-        map.put("totalQuantity",totalQuantity);
-        map.put("totalMoney",totalMoney);
-
-        return map;
-    }
+    /**-----------------------------------------------------下单---------------------------------------------------------*/
 
     /**
      * 下单
@@ -163,13 +169,6 @@ public class ApiWanToBuyController {
         if (userBuy == null) {
             return R.ok().put("code","2");
         }
-
-        //手续费5%
-        //BigDecimal buyQuantity = new BigDecimal(userBuy.getQuantity());
-        //BigDecimal poundage = new BigDecimal(userTradeConfigService.selectOne(new EntityWrapper<UserTradeConfigEntity>().eq("remark", "交易手续费")).getPoundage());
-        //BigDecimal totalPoundage = buyQuantity.multiply(poundage);
-        //交易总数量
-        //BigDecimal totalQuantity = buyQuantity.add(totalPoundage);
 
         //获取手续费
         Map<String,Float> map = poundage(id);
@@ -192,16 +191,16 @@ public class ApiWanToBuyController {
         tradePoundageService.insert(tradePoundageEntity);
 
         //修改user_buy订单状态
-        userBuy.setState("1");
+        userBuy.setState("2");
         userBuyService.update(userBuy,new EntityWrapper<UserBuyEntity>().eq("id",Integer.parseInt(id)));
 
         //添加订单到user_buy_history
         UserBuyHistoryEntity buyHistory = new UserBuyHistoryEntity();
         buyHistory.setPrice(new BigDecimal(userBuy.getPrice()));
-        buyHistory.setPurchaseState("2");
+        buyHistory.setPurchaseState("3");
         buyHistory.setPurchaseUid(userBuy.getUid());
         buyHistory.setQuantity(new BigDecimal(userBuy.getQuantity()));
-        buyHistory.setSellState("3");
+        buyHistory.setSellState("2");
         buyHistory.setSellUid(user.getUid());
         buyHistory.setUserBuyId(Integer.parseInt(id));
         userBuyHistoryService.insert(buyHistory);
@@ -209,41 +208,128 @@ public class ApiWanToBuyController {
         return R.ok().put("code", code);
     }
 
+    /**-------------------------------------------查看交易页求购详情页-----------------------------------------------------*/
+
     /**
-     * 查看(订单页)
+     * 查看交易详情
      */
     @Login
-    @PostMapping("checkOrder")
-    public R checkOrder(@RequestParam("id") String id, @LoginUser UserEntity user){
-        UserBuyHistoryEntity userBuyHistoryEntity = userBuyHistoryService.selectOne(new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id", id));
-        String uid = userBuyHistoryEntity.getSellUid();
-        //查询卖出者信息
-        UserInfoEntity userInfo = userFeign.selectUserInfoById(uid);
-        return R.ok().put("userBuyHistoryEntity",userBuyHistoryEntity).put("userInfo",userInfo);
+    @PostMapping("showBuyMessagePage")
+    public R showBuyMessagePage(@RequestParam("id") String id) {
+        //订单详情
+        UserBuyEntity userBuy = userBuyService.selectById(Integer.parseInt(id));
+        //判定订单不存在
+        if (userBuy == null) {
+            return R.ok().put("code","订单不存在");
+        }
+        //获取手续费
+        Map<String,Float> map = poundage(id);
+
+        return R.ok().put("userBuy", userBuy).put("poundage",map.get("poundage")*100).put("totalMoney",map.get("totalMoney")).put("totalQuantity",map.get("totalQuantity"));
     }
 
+    /**-------------------------------------------查看订单页求购详情页-----------------------------------------------------*/
 
     /**
-     * 购买者付款成功
+     * 订单页
      */
-    @Login
-    @PostMapping("payMoney")
-    public R payMoney(@RequestParam("id") String id) {
+    @PostMapping("checkOrder")
+    public R checkOrder(@RequestParam("id") String id){
 
-        //设置支付时间
-        UserBuyEntity userBuyEntity = userBuyService.selectById(Integer.parseInt(id));
-        userBuyEntity.setPay_time(new Date());
+        UserBuyHistoryBean userBuyHistoryBean = userBuyHistoryService.selectBuyHistory(id);
 
-        //修改交易状态
-        UserBuyHistoryEntity userBuyHistoryEntity = userBuyHistoryService.selectOne(new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id", id));
-        userBuyHistoryEntity.setSellState("5");
-        userBuyHistoryEntity.setPurchaseState("4");
+        Map<String,Float> map = this.poundage(id);
 
+        return R.ok().put("userBuyHistoryBean",userBuyHistoryBean).put("price",map.get("price")).put("buyQuantity",map.get("buyQuantity")).put("totalMoney",map.get("totalMoney"));
+    }
+
+    /**-------------------------------------------------点击操作----------------------------------------------------------*/
+
+    /** -----------------1-----------------
+     *
+     *  --------------点击撤销--------------
+     */
+    @PostMapping("cancel")
+    public R cancelBuyMessage(@RequestParam String id) {
+        UserBuyEntity ub = userBuyService.selectById(id);
+        if (ub == null) {
+            return R.error(501, "交易不存在");
+        }
+        if (ub.getState().equals("0")) {
+            return R.error(502, "交易已经撤销");
+        }
+        if (ub.getState().equals("1")) {
+            ub.setState("0");
+            ub.setCancelTime(new Date());
+            userBuyService.updateById(ub);
+            return R.ok().put("code","0");
+        }
         return R.ok();
     }
 
-    /**
-     * 卖出者发币
+    /** ---------------2-------------------
+     *
+     *  --------点击已付款(待付款)-----------
+     */
+    @PostMapping("payMoney")
+    public R payMoney(@RequestParam("id") String id) {
+        UserBuyEntity userBuyEntity = userBuyService.selectById(Integer.parseInt(id));
+        if (!userBuyEntity.getState().equals("3")) {
+            return R.ok().put("code","1");
+        }
+
+        //设置支付时间
+        userBuyEntity.setPayTime(new Date());
+        userBuyService.update(userBuyEntity,new EntityWrapper<UserBuyEntity>().eq("id",id));
+
+        //修改user_buy订单状态
+        UserBuyEntity userBuy = userBuyService.selectById(Integer.parseInt(id));
+        userBuy.setState("5");
+        userBuyService.update(userBuy,new EntityWrapper<UserBuyEntity>().eq("id",Integer.parseInt(id)));
+        //修改交易状态
+        UserBuyHistoryEntity userBuyHistoryEntity = userBuyHistoryService.selectOne(new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id", id));
+        userBuyHistoryEntity.setSellState("4");
+        userBuyHistoryEntity.setPurchaseState("5");
+        userBuyHistoryService.update(userBuyHistoryEntity,new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id", id));
+
+        return R.ok().put("code","0");
+    }
+
+    /** ------------------3--------------------
+     *
+     *  -------------点击取消(待付款)------------
+     */
+
+    /** ------------------4--------------------
+     *
+     *  -------------点击催单(待收币)------------
+     */
+    @Login
+    @PostMapping("reminders")
+    public R reminders(@RequestParam("id") String id){
+
+        UserBuyHistoryEntity userBuyHistoryEntity = userBuyHistoryService.selectOne(new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id",id));
+        //获取Cid
+        String cid = loginFeign.selectGT(new ModelMap("uid",userBuyHistoryEntity.getSellUid())).getCid();
+        //获取推送信息
+        String text = userBuyHistoryEntity.getUserBuyId()+sysFeign.getVal("reminders");
+
+        try {
+            GeTuiSendMessage.sendSingleMessage( text, cid);
+        }catch (Exception e){
+            return R.error("推送失败");
+        }
+        return R.ok().put("code","0");
+    }
+
+    /** ------------------5--------------------
+     *
+     *  --------------点击申诉中(待收币)---------
+     */
+
+    /** ------------------6--------------------
+     *
+     *  --------------点击确认(待确认)-----------
      */
     @Login
     @PostMapping("PayCoin")
@@ -256,11 +342,10 @@ public class ApiWanToBuyController {
             return R.ok().put("code", "3");
         }
 
-        //手续费5%
-        UserBuyEntity userBuy = userBuyService.selectById(Integer.parseInt(id));
-        BigDecimal buyQuantity = new BigDecimal(userBuy.getQuantity());
-        BigDecimal poundage = new BigDecimal(userTradeConfigService.selectOne(new EntityWrapper<UserTradeConfigEntity>().eq("remark", "交易手续费")).getPoundage());
-        BigDecimal totalPoundage = buyQuantity.multiply(poundage);
+        //手续费
+        Map<String,Float> map = this.poundage(id);
+        BigDecimal buyQuantity = new BigDecimal(map.get("buyQuantity"));
+        BigDecimal totalPoundage = new BigDecimal(map.get("totalPoundage"));
 
         //扣款
         deduct(buyQuantity, uid);
@@ -288,12 +373,48 @@ public class ApiWanToBuyController {
         return R.ok();
     }
 
+    /**-------------------------------------------工具---------------------------------------------*/
 
     /**
-     * 扣款
+     * -----------------手续费+订单数量------------------
+     *
+     */
+    public Map<String,Float> poundage(String id){
+        UserBuyEntity userBuy = userBuyService.selectById(Integer.parseInt(id));
+        if(userBuy == null){
+            return null;
+        }
+
+        DecimalFormat df = new DecimalFormat("#########.##" );
+        //交易数量
+        Float buyQuantity = Float.parseFloat(df.format(userBuy.getQuantity()));
+        //手续费比率
+        Float poundage = userTradeConfigService.selectOne(new EntityWrapper<UserTradeConfigEntity>().eq("remark", "交易手续费")).getPoundage();
+        //Float poundage = Float.parseFloat(df.format(poundagePer));
+        //手续费数量
+        Float totalPoundage = buyQuantity*poundage;
+        //实际交易总数量
+        Float totalQuantity = buyQuantity+totalPoundage;
+        //单价
+        Float price = userBuy.getPrice();
+        //总价格
+        Float totalMoney = buyQuantity*(price);
+
+        Map<String,Float> map = new HashMap<String,Float>();
+        map.put("buyQuantity",buyQuantity);
+        map.put("poundage",poundage);
+        map.put("totalPoundage",totalPoundage);
+        map.put("totalQuantity",totalQuantity);
+        map.put("price",price);
+        map.put("totalMoney",totalMoney);
+        return map;
+    }
+
+    /**
+     * --------------------------------扣款-------------------------------
+     *
      */
     public int deduct(BigDecimal money, String uid) {
-
         UserAccountEntity userAccountEntity = userAccountService.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", uid));
         if (userAccountEntity.getRegulateRelease().compareTo(money) != -1) {
             userAccountEntity.setRegulateRelease(userAccountEntity.getRegulateRelease().subtract(money));
@@ -305,78 +426,7 @@ public class ApiWanToBuyController {
             userAccountEntity.setAvailableAssets(userAccountEntity.getAvailableAssets().subtract(money));
             userAccountService.update(userAccountEntity, new EntityWrapper<UserAccountEntity>().eq("uid", uid));
         }
-
         return 1;
     }
 
-    /**
-     * 添加求购信息
-     *
-     * @param userBuyEntity
-     * @param user
-     * @return
-     */
-    @Login
-    @PostMapping("addBuyMessage")
-    public R addBuyMessage(@RequestBody UserBuyEntity userBuyEntity, @LoginUser UserEntity user) {
-        if (userBuyEntity == null) {
-            return R.error(501, "求购信息为空");
-        }
-        Float num = userBuyEntity.getQuantity();
-        if (num % 100 != 0 || num < 100) {
-            return R.error(502, "求购数量最低为100，且为100的倍数");
-        }
-        userBuyEntity.setCreate_time(new Date());
-        userBuyEntity.setState("0");
-        userBuyService.addBuyMessage(userBuyEntity, user.getUid());
-        return R.ok();
-    }
-
-    /**
-     * 撤销求购信息
-     *
-     * @param id
-     * @param user
-     * @return
-     */
-    @Login
-    @PostMapping("cancel")
-    public R cancelBuyMessage(@RequestParam String id, @LoginUser UserEntity user) {
-        UserBuyEntity ub = userBuyService.selectById(id);
-        if (ub == null) {
-            return R.error(501, "信息不存在");
-        }
-        if (ub.getState().equals("-1")) {
-            return R.error(502, "信息已经撤销");
-        }
-        if (ub.getState().equals("0")) {
-            ub.setState("0");
-            ub.setState("-1");
-            ub.setCancel_time(new Date());
-            userBuyService.updateById(ub);
-            return R.ok().put("code","200");
-        }
-        return R.ok();
-    }
-
-        /**
-         * 显示求购者详情
-         * @param id
-         * @return
-         */
-
-//    @Login
-//    @PostMapping("showDetailed" )
-//    public R showDetailed(@RequestParam String id) {
-//        UserBuyEntity ub = userBuyService.selectById(id);
-//        if (ub.getUid() == null) {
-//            return R.error(501, "订单不存在" );
-//        }
-//        UserInfoEntity ui = userFeign.selectUserInfoById(ub.getUid());
-//        if (ui == null) {
-//            return R.error(502, "卖出者信息不存在" );
-//        }
-//        return R.ok().put("buy", ub).put("user", ui);
-//    }
-
-    }
+}

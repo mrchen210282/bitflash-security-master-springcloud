@@ -59,16 +59,6 @@ public class ApiAppealController {
      * 2.向user_account表中，扣除发送用户的余额，并向接收者添加余额
      * 3.向user_send表中添加赠送记录
      * 4.向user_brokeage表中添加手续费记录
-//     */
-//    @Login
-//    @PostMapping("userSend" )
-//    public R userSend(@RequestParam String quantity, @RequestParam String uuid, @RequestParam String user_pwd , @LoginUser UserEntity user) {
-//
-//        //交易状态：‘-1’余额不足错误；‘0’操作成功；‘1’用户不存在；‘2’其他错误；‘3’交易数量错误；‘4’交易密码错误
-//        int code = 2;
-//
-//        return R.ok().put("code", code);
-//    }
-
+    public R userSend(@RequestParam String quantity, @RequestParam String uuid, @RequestParam String user_pwd , @LoginUser UserEntity user) {
 
 }

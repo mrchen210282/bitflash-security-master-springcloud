@@ -22,6 +22,7 @@ import java.util.Date;
 
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.enums.IdType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
@@ -37,7 +38,7 @@ public class UserTradeEntity implements Serializable {
     /**
      * id
      */
-    @TableId
+    @TableId(type = IdType.INPUT)
     private Integer id;
 
     private String uid;

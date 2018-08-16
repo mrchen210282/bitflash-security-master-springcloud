@@ -26,14 +26,14 @@ public class UserBuyEntity implements Serializable {
     private String state;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
-    private Date create_time;
+    private Date createTime;
 
     //取消时间
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
-    private Date cancel_time;
+    private Date cancelTime;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
-    private Date pay_time;
+    private Date payTime;
 
     public Integer getId() {
         return id;
@@ -75,27 +75,31 @@ public class UserBuyEntity implements Serializable {
         this.state = state;
     }
 
-    public Date getCreate_time() {
-        return create_time;
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
     }
 
-    public void setCreate_time(Date create_time) {
-        this.create_time = create_time;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public Date getCancel_time() {
-        return cancel_time;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
-    public void setCancel_time(Date cancel_time) {
-        this.cancel_time = cancel_time;
+    public Date getCancelTime() {
+        return cancelTime;
     }
 
-    public Date getPay_time() {
-        return pay_time;
+    public void setCancelTime(Date cancelTime) {
+        this.cancelTime = cancelTime;
     }
 
-    public void setPay_time(Date pay_time) {
-        this.pay_time = pay_time;
+    public Date getPayTime() {
+        return payTime;
+    }
+
+    public void setPayTime(Date payTime) {
+        this.payTime = payTime;
     }
 }

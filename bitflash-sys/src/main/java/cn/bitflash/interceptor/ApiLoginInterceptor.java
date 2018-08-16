@@ -37,6 +37,10 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
         if (annotation == null) {
             return true;
         }
+        /*Long time = Long.valueOf(request.getHeader("time"));
+        if (time + 30000 < System.currentTimeMillis()) {
+            throw new RRException("请求超时,请重新请求");
+        }*/
         String mobile = (String) request.getSession().getAttribute(MOBILE);
         String token = (String) request.getSession().getAttribute(TOKEN);
         if (StringUtils.isBlank(mobile)) {

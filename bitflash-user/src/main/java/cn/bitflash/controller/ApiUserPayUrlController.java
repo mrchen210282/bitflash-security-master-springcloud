@@ -207,25 +207,7 @@ public class ApiUserPayUrlController {
     @Login
     @PostMapping("getPictureUrl" )
     public R getSFZAdress(@LoginUser UserEntity userEntity, @RequestParam String imgType) {
-        List<UserPayUrlEntity> userPay;
-        if (imgType.equals("1" )) {
-            userPay = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>().eq("uid", userEntity.getUid())
-                    .and().eq("img_type", imgType).or().eq("img_type", "2" ).eq("uid", userEntity.getUid()));
-            if (userPay == null || userPay.size() == 0) {
-                return R.ok();
-            }
-            Map<String, Object> map = new HashMap<>();
-            if (userPay.get(0).getImgType().equals("1" )) {
-                map.put("wxPay", userPay.get(0).getImgUrl());
-                map.put("alipay", userPay.get(1).getImgUrl());
-            } else if (userPay.get(0).getImgType().equals("2" )) {
-                map.put("wxPay", userPay.get(1).getImgUrl());
-                map.put("alipay", userPay.get(0).getImgUrl());
-            }
 
-            return R.ok(map);
-
-        }
         return R.error("身份证接口暂未开放" );
     }
 
@@ -265,10 +247,23 @@ public class ApiUserPayUrlController {
         return R.ok().put("url",map).put("uid",uid);
     }
 
+    /**
+     *
+     * @param user 登录人的uid
+     * @param uid 别人的uid
+     * @param imgType 图片类型
+     * @return
+     */
     @Login
     @PostMapping("getPayUrl")
-    public R getPayUrl(@RequestParam("uid") String uid,@RequestParam("imgType")String imgType){
-        UserPayUrlEntity payUrlEntity = userPayUrlService.selectOne(new EntityWrapper<UserPayUrlEntity>().eq("uid",uid).eq("img_type",imgType));
+    public R getPayUrl(@LoginUser UserEntity user,@RequestParam(value = "uid",required = false) String uid,@RequestParam("imgType")String imgType){
+        UserPayUrlEntity payUrlEntity = null;
+        if(uid==null){
+             payUrlEntity = userPayUrlService.selectOne(new EntityWrapper<UserPayUrlEntity>().eq("uid",user.getUid()).eq("img_type",imgType));
+        }else{
+             payUrlEntity = userPayUrlService.selectOne(new EntityWrapper<UserPayUrlEntity>().eq("uid",uid).eq("img_type",imgType));
+        }
+
         return R.ok(payUrlEntity.getImgUrl());
     }
 

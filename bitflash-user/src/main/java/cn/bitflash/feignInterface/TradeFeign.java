@@ -3,6 +3,7 @@ package cn.bitflash.feignInterface;
 import cn.bitflash.feignInterface.impl.TradeFallback;
 import cn.bitflash.trade.UserAccountBean;
 import cn.bitflash.trade.UserAccountEntity;
+import cn.bitflash.trade.UserTradeEntity;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +30,10 @@ public interface TradeFeign {
 
     @PostMapping("/api/trade/inner/updateById")
     boolean updateById(@RequestBody UserAccountEntity userAccountEntity);
+
+    @PostMapping("/api/trade/inner/selectOneTrade")
+    public UserTradeEntity selectOneTrade(@RequestBody Map<String ,Object> map);
+
 
 
 }

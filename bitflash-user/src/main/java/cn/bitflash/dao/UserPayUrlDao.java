@@ -11,8 +11,4 @@ import java.util.Map;
  * @date 2018年6月19日 下午4:45:51
  */
 public interface UserPayUrlDao extends BaseMapper<UserPayUrlEntity> {
-
-    public List<UserPayUrlEntity> selectUserPayUrlByParam(Map<String, Object> map);
-
-    public void updateUserPayUrl(Map<String, Object> map);
 }

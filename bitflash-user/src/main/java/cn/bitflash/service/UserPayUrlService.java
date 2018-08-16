@@ -12,7 +12,4 @@ import java.util.Map;
  */
 public interface UserPayUrlService extends IService<UserPayUrlEntity> {
 
-    public List<UserPayUrlEntity> selectUserPayUrlByParam(Map<String, Object> map);
-
-    public void updateUserPayUrl(Map<String, Object> map);
 }

@@ -1,5 +1,6 @@
 package cn.bitflash.dao;
 
+import cn.bitflash.trade.UserBuyBean;
 import cn.bitflash.trade.UserBuyEntity;
 import cn.bitflash.trade.UserBuyMessageBean;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
@@ -14,4 +15,7 @@ public interface UserBuyDao extends BaseMapper<UserBuyEntity> {
 
     //获取求购信息数量
     Integer getNumToPaging();
+
+    List<UserBuyBean> selectBuyList(String uid);
+
 }

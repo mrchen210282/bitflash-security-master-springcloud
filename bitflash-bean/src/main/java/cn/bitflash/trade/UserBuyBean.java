@@ -18,7 +18,6 @@ package cn.bitflash.trade;
 
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.enums.IdType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
@@ -26,53 +25,29 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 手续费
+ * 用户
  *
  * @author eric
  */
-@TableName("trade_poundage" )
-public class TradePoundageEntity implements Serializable  {
+public class UserBuyBean extends UserBuyEntity implements Serializable  {
 
+    private String nickname;
 
-    @TableId(type = IdType.INPUT)
-    private Integer userTradeId;
+    private String sellState;
 
-    private String uid;
-
-    private BigDecimal poundage;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
-    private Date createTime;
-
-    public Integer getUserTradeId() {
-        return userTradeId;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setUserTradeId(Integer userTradeId) {
-        this.userTradeId = userTradeId;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
-    public String getUid() {
-        return uid;
+    public String getSellState() {
+        return sellState;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
-    public BigDecimal getPoundage() {
-        return poundage;
-    }
-
-    public void setPoundage(BigDecimal poundage) {
-        this.poundage = poundage;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
+    public void setSellState(String sellState) {
+        this.sellState = sellState;
     }
 }

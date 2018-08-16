@@ -1,5 +1,6 @@
 package cn.bitflash.service;
 
+import cn.bitflash.trade.UserBuyBean;
 import cn.bitflash.trade.UserBuyEntity;
 import cn.bitflash.trade.UserBuyMessageBean;
 import com.baomidou.mybatisplus.service.IService;
@@ -15,4 +16,6 @@ public interface UserBuyService extends IService<UserBuyEntity> {
     Integer getNumToPaging();
 
     void addBuyMessage(UserBuyEntity userBuyEntity, String uid);
+
+    List<UserBuyBean> selectBuyList(String uid);
 }

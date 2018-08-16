@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.bitflash.dao.UserBuyHistoryDao">
+
+    <select id="selectBuyHistory" resultType="cn.bitflash.trade.UserBuyHistoryBean">
+        select
+        ub.* ,ui.nickname,ui.mobile,uh.*
+        from user_buy ub left join user_info ui on(ub.uid=ui.uid)
+        left join user_buy_history uh on ub.id = uh.user_buy_id
+        where uh.user_buy_id = #{id}
+    </select>
+
+</mapper>

@@ -61,7 +61,7 @@ public class ApiAppealController {
      * 4.向user_brokeage表中添加手续费记录
      */
     @Login
-    @PostMapping("userSend" )
+    @PostMapping("userSen555d" )
     public R userSend(@RequestParam String quantity, @RequestParam String uuid, @RequestParam String user_pwd , @LoginUser UserEntity user) {
 
         //交易状态：‘-1’余额不足错误；‘0’操作成功；‘1’用户不存在；‘2’其他错误；‘3’交易数量错误；‘4’交易密码错误

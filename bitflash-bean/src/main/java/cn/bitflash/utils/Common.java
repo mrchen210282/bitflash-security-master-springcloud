@@ -66,6 +66,12 @@ public class Common {
 	//交易手续费
 	public final static String TRADE_CONFIG_ID = "1";
 
+	//申拆状态:未处理0
+	public final static String COMPLAINT_NO = "0";
+
+	//申拆状态:已处理1
+	public final static String COMPLAINT_YES = "1";
+
 	public static String returnMD5(List<String> list) {
 		if (list.size() > 0) {
 			StringBuffer buf = new StringBuffer();

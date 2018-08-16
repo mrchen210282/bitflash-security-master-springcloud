@@ -17,6 +17,7 @@
 package cn.bitflash.trade;
 
 import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -25,10 +26,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 用户
+ * 手续费
  *
  * @author eric
  */
+@TableName("user_poundage" )
 public class TradePoundageEntity implements Serializable  {
 
 

@@ -27,7 +27,10 @@ public class Common {
 	public final static String STATE_CONFIRM = "6";
 
 	// 已完成
-	public final static String STATE_FINISH = "7";
+	//public final static String STATE_FINISH = "7";
+
+	// 申拆中
+	public final static String STATE_COMPLAINT = "9";
 
 	// 最小价格
 	public final static String MIN_PRICE = "0.33";

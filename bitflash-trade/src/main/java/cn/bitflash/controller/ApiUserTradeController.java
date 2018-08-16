@@ -242,7 +242,7 @@ public class ApiUserTradeController {
             // 卖出数量
             double quantityD = Double.parseDouble(quantity);
             //必须为100的整数倍
-            if (quantityD % Common.MULTIPLE == 0) {
+            if (quantityD % 100 == 0) {
 
                 UserTradeConfigEntity userTradeConfigEntity = userTradeConfigService.selectOne(new EntityWrapper<UserTradeConfigEntity>().eq("id", "1"));
                 if (null != userTradeConfigEntity) {
@@ -312,7 +312,7 @@ public class ApiUserTradeController {
                 }
 
             } else {
-                return R.error("卖出数量必须为1000的倍数！");
+                return R.error("卖出数量必须为100的倍数！");
             }
         } else {
             return R.error("参数不能为空！");
@@ -685,10 +685,9 @@ public class ApiUserTradeController {
 //        String token2=AESTokenUtil.getToken(time,token);
 //        System.out.println("解密数据"+token2);
         //System.out.println(randomUtil());
+        double a = 100.00;
 
-        float a = 0.05f * 100;
-        int b = (int) a;
-        System.out.println(b);
+        System.out.println(a % 100 == 0);
     }
 
 }

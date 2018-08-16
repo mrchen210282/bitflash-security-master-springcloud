@@ -30,7 +30,7 @@ import java.util.Date;
  *
  * @author eric
  */
-@TableName("user_poundage" )
+@TableName("trade_poundage" )
 public class TradePoundageEntity implements Serializable  {
 
 

@@ -23,7 +23,7 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
     @Autowired
     private TokenService tokenService;
 
-    public static final String UID="uid";
+    public static final String UID = "uid";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -37,6 +37,10 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
         if (annotation == null) {
             return true;
         }
+        /*Long time = Long.valueOf(request.getHeader("time"));
+        if (time + 30000 < System.currentTimeMillis()) {
+            throw new RRException("请求超时,请重新请求");
+        }*/
         String mobile = (String) request.getSession().getAttribute(MOBILE);
         String token = (String) request.getSession().getAttribute(TOKEN);
         if (StringUtils.isBlank(mobile)) {
@@ -49,10 +53,12 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
         if (StringUtils.isBlank(mobile) || StringUtils.isBlank(token)) {
             throw new RRException("参数不能为空");
         }
+
+
         TokenEntity tokenEntity = tokenService.selectOne(new EntityWrapper<TokenEntity>().eq(TOKEN, token));
-/*
-        if (tokenEntity == null || tokenEntity.getExpireTime().getTime() < System.currentTimeMillis()) {
-            throw new RRException("登录过期，请重新登录" );
+
+        /*if (tokenEntity == null || tokenEntity.getExpireTime().getTime() < System.currentTimeMillis()) {
+            throw new RRException("登录过期，请重新登录");
         }*/
         String userMobile = tokenEntity.getMobile();
         if (!userMobile.equals(mobile)) {

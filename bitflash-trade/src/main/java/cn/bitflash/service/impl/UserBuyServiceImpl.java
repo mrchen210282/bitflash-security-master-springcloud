@@ -2,6 +2,7 @@ package cn.bitflash.service.impl;
 
 import cn.bitflash.dao.UserBuyDao;
 import cn.bitflash.service.UserBuyService;
+import cn.bitflash.trade.UserBuyBean;
 import cn.bitflash.trade.UserBuyEntity;
 import cn.bitflash.trade.UserBuyMessageBean;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
@@ -27,9 +28,14 @@ public class UserBuyServiceImpl extends ServiceImpl<UserBuyDao, UserBuyEntity> i
     @Override
     public void addBuyMessage(UserBuyEntity userBuyEntity, String uid) {
         userBuyEntity.setUid(uid);
-        userBuyEntity.setCreate_time(new Date());
-        userBuyEntity.setState("1" );
+        userBuyEntity.setCreateTime(new Date());
+        userBuyEntity.setState("0" );
         baseMapper.insert(userBuyEntity);
 
+    }
+
+    @Override
+    public List<UserBuyBean> selectBuyList(String uid){
+        return baseMapper.selectBuyList(uid);
     }
 }

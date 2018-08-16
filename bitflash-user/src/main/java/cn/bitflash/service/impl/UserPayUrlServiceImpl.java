@@ -12,13 +12,4 @@ import java.util.Map;
 @Service("userPayUrlService" )
 public class UserPayUrlServiceImpl extends ServiceImpl<UserPayUrlDao, UserPayUrlEntity> implements UserPayUrlService {
 
-    public List<UserPayUrlEntity> selectUserPayUrlByParam(Map<String, Object> map) {
-        List<UserPayUrlEntity> list = baseMapper.selectUserPayUrlByParam(map);
-        return list;
-    }
-
-    public void updateUserPayUrl(Map<String, Object> map) {
-        baseMapper.updateUserPayUrl(map);
-    }
-
 }

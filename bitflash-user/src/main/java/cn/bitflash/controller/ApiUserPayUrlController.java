@@ -7,6 +7,7 @@ import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserInfoService;
 import cn.bitflash.service.UserPayPwdService;
 import cn.bitflash.service.UserPayUrlService;
+import cn.bitflash.trade.UserTradeEntity;
 import cn.bitflash.user.ImgForm;
 import cn.bitflash.user.UserInfoEntity;
 import cn.bitflash.user.UserPayPwdEntity;
@@ -15,14 +16,13 @@ import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.MD5Util;
 import common.validator.ValidatorUtils;
-import org.apache.ibatis.annotations.Case;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import sun.misc.BASE64Decoder;
 
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -41,10 +41,12 @@ public class ApiUserPayUrlController {
     @Autowired
     private UserPayPwdService userPayPwdService;
 
+    @Autowired
+    private TradeFeign tradeFeign;
+
     /**
      * 上传的图片
-     * @param img     上传的图片
-     * @param imgType 图片类型(微信:1,支付宝:2,身份证正面：3，身份证反面：4，银行卡：5)
+     * @param imgForm 图片类型(微信:1,支付宝:2,身份证正面：3，身份证反面：4，银行卡：5)
      * @param
      * @return
      */
@@ -198,7 +200,7 @@ public class ApiUserPayUrlController {
     }
 
     /**
-     * 上传支付宝/微信图片
+     * 支付宝/微信图片
      * @param imgType 图片类型
      * @author chen
      */
@@ -227,5 +229,40 @@ public class ApiUserPayUrlController {
         return R.error("身份证接口暂未开放" );
     }
 
+    /**
+     * 获取支付信息
+     * @param uid
+     * @return
+     */
+    @Login
+    @PostMapping("getPayUrl")
+    public R getPayUrl(@RequestParam("accountId")String accountId){
+        UserTradeEntity tradeEntity = tradeFeign.selectOneTrade(new ModelMap("id",accountId));
+        String uid = tradeEntity.getUid();
+        List<UserPayUrlEntity> payUrlEntities = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>()
+                .eq("uid",uid).eq("img_type",1)
+                .or().eq("uid",uid).eq("img_type",2)
+                .or().eq("uid",uid).eq("img_type",5));
+        if(payUrlEntities == null || payUrlEntities.size()==0){
+            return R.error("未设置支付信息");
+        }
+        Map<String,Object> map= new HashMap<>();
+        map.put("wxpay",0);
+        map.put("alipay",0);
+        map.put("cnypay",0);
+        payUrlEntities.stream().forEach(u->{
+            if(u.getImgType().equals("1")){
+                map.put("wxpay",1);
+            }
+            if(u.getImgType().equals("2")){
+                map.put("alipay",1);
+            }
+            if(u.getImgType().equals("5")){
+                map.put("cny",1);
+            }
+        });
+
+        return R.ok().put("url",map);
+    }
 
 }

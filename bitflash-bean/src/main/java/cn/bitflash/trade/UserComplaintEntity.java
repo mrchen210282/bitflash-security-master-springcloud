@@ -13,26 +13,26 @@ import java.util.Date;
 public class UserComplaintEntity {
 
     //订单id
-    private Integer userTradeId;
+    private Integer orderId;
 
     //申拆人uid
     private String complaintUid;
 
     //申拆状态
-    private Integer complaintState;
+    private String complaintState;
 
     //订单状态
-    private Integer orderState;
+    private String orderState;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8" )
     private Date createTime;
 
-    public Integer getUserTradeId() {
-        return userTradeId;
+    public Integer getOrderId() {
+        return orderId;
     }
 
-    public void setUserTradeId(Integer userTradeId) {
-        this.userTradeId = userTradeId;
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
     }
 
     public String getComplaintUid() {
@@ -43,19 +43,19 @@ public class UserComplaintEntity {
         this.complaintUid = complaintUid;
     }
 
-    public Integer getComplaintState() {
+    public String getComplaintState() {
         return complaintState;
     }
 
-    public void setComplaintState(Integer complaintState) {
+    public void setComplaintState(String complaintState) {
         this.complaintState = complaintState;
     }
 
-    public Integer getOrderState() {
+    public String getOrderState() {
         return orderState;
     }
 
-    public void setOrderState(Integer orderState) {
+    public void setOrderState(String orderState) {
         this.orderState = orderState;
     }
 

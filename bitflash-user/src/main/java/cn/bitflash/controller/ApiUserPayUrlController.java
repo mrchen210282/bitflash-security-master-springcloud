@@ -23,10 +23,7 @@ import sun.misc.BASE64Decoder;
 
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
@@ -199,23 +196,20 @@ public class ApiUserPayUrlController {
         if (payUrlEntities == null || payUrlEntities.size() == 0) {
             return R.error("未设置支付信息");
         }
-        Map<String, Object> map = new HashMap<>();
-        map.put("wxpay", 0);
-        map.put("alipay", 0);
-        map.put("cnypay", 0);
+        List<Map<String,Object>> list = new ArrayList<>();
         payUrlEntities.stream().forEach(u -> {
             if (u.getImgType().equals("1")) {
-                map.put("wxpay", 1);
+                list.add(new ModelMap("name","微信").addAttribute("type",1));
             }
             if (u.getImgType().equals("2")) {
-                map.put("alipay", 1);
+                list.add(new ModelMap("name","支付宝").addAttribute("type",2));
             }
             if (u.getImgType().equals("5")) {
-                map.put("cny", 1);
+                list.add(new ModelMap("name","银行卡").addAttribute("type",5));
             }
         });
 
-        return R.ok().put("url", map).put("uid", uid);
+        return R.ok().put("url", list).put("uid", uid);
     }
 
     /**
@@ -233,11 +227,13 @@ public class ApiUserPayUrlController {
         } else {
             payUrlEntity = userPayUrlService.selectOne(new EntityWrapper<UserPayUrlEntity>().eq("uid", uid).eq("img_type", imgType));
         }
-        if(payUrlEntity == null){
+        if (payUrlEntity == null) {
             return R.error("未上传收款信息");
         }
-
-        return R.ok(payUrlEntity.getImgUrl());
+        if (payUrlEntity.getName() != null && payUrlEntity.getAccount() != null) {
+            return R.ok().put("url", payUrlEntity.getImgUrl()).put("name", payUrlEntity.getName()).put("account", payUrlEntity.getAccount());
+        }
+        return R.ok().put("url", payUrlEntity.getImgUrl());
     }
 
 }

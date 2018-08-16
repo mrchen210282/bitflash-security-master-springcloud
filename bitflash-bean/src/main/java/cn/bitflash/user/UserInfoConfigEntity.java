@@ -15,11 +15,7 @@ public class UserInfoConfigEntity implements Serializable {
 
     private Integer min;
 
-    private Integer max;
-
-    private Double profit;
-
-    private String showProfit;
+    private String showPower;
 
     private Double giveRate;
 
@@ -41,20 +37,12 @@ public class UserInfoConfigEntity implements Serializable {
         this.min = min;
     }
 
-    public Integer getMax() {
-        return max;
+    public String getShowPower() {
+        return showPower;
     }
 
-    public void setMax(Integer max) {
-        this.max = max;
-    }
-
-    public Double getProfit() {
-        return profit;
-    }
-
-    public void setProfit(Double profit) {
-        this.profit = profit;
+    public void setShowPower(String showPower) {
+        this.showPower = showPower;
     }
 
     public Double getGiveRate() {
@@ -63,14 +51,6 @@ public class UserInfoConfigEntity implements Serializable {
 
     public void setGiveRate(Double giveRate) {
         this.giveRate = giveRate;
-    }
-
-    public String getShowProfit() {
-        return showProfit;
-    }
-
-    public void setShowProfit(String showProfit) {
-        this.showProfit = showProfit;
     }
 
     public String getShowGiveRate() {

@@ -7,6 +7,7 @@ import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserInfoService;
 import cn.bitflash.service.UserPayPwdService;
 import cn.bitflash.service.UserPayUrlService;
+import cn.bitflash.trade.UserTradeEntity;
 import cn.bitflash.user.ImgForm;
 import cn.bitflash.user.UserInfoEntity;
 import cn.bitflash.user.UserPayPwdEntity;
@@ -15,21 +16,20 @@ import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.MD5Util;
 import common.validator.ValidatorUtils;
-import org.apache.ibatis.annotations.Case;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import sun.misc.BASE64Decoder;
 
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api" )
+@RequestMapping("/api")
 public class ApiUserPayUrlController {
 
     @Autowired
@@ -41,21 +41,24 @@ public class ApiUserPayUrlController {
     @Autowired
     private UserPayPwdService userPayPwdService;
 
+    @Autowired
+    private TradeFeign tradeFeign;
+
     /**
      * 上传的图片
-     * @param img     上传的图片
-     * @param imgType 图片类型(微信:1,支付宝:2,身份证正面：3，身份证反面：4，银行卡：5)
+     *
+     * @param imgForm 图片类型(微信:1,支付宝:2,身份证正面：3，身份证反面：4，银行卡：5)
      * @param
      * @return
      */
     @Login
     @PostMapping("upload")
-    public R upload(@RequestBody ImgForm imgForm,  @LoginUser UserEntity user) {
+    public R upload(@RequestBody ImgForm imgForm, @LoginUser UserEntity user) {
         ValidatorUtils.validateEntity(imgForm);
         //验证交易密码
         String password = imgForm.getPassword();
-        UserPayPwdEntity pwdEntity = userPayPwdService.selectOne(new EntityWrapper<UserPayPwdEntity>().eq("uid",user.getUid()));
-        if(!password.equals(pwdEntity.getPayPassword())){
+        UserPayPwdEntity pwdEntity = userPayPwdService.selectOne(new EntityWrapper<UserPayPwdEntity>().eq("uid", user.getUid()));
+        if (!password.equals(pwdEntity.getPayPassword())) {
             return R.error("交易密码错误");
         }
 
@@ -63,7 +66,7 @@ public class ApiUserPayUrlController {
         String imgUrl = "";
         String path = "/home/statics/qrcode/";
         String md5 = MD5Util.stringToMD5(user.getMobile() + System.currentTimeMillis());
-        switch (imgType){
+        switch (imgType) {
             case "1":
                 String md5_w = md5 + "_w";
                 path = path + md5_w + ".png";
@@ -75,7 +78,7 @@ public class ApiUserPayUrlController {
                 imgUrl = "http://www.bitflash.vip/qrcode/" + md5_z + ".png";
                 break;
             case "5":
-                String md5_c = md5 +"_c";
+                String md5_c = md5 + "_c";
                 path = path + md5_c + ".png";
                 imgUrl = "http://www.bitflash.vip/qrcode/" + md5_c + ".png";
                 break;
@@ -83,7 +86,7 @@ public class ApiUserPayUrlController {
         BASE64Decoder decoder = new BASE64Decoder();
         try {
             // Base64解码
-            String[] base64Str = imgForm.getImg().split("," );
+            String[] base64Str = imgForm.getImg().split(",");
             byte[] b = decoder.decodeBuffer(base64Str[1]);
             for (int i = 0; i < b.length; ++i) {
                 if (b[i] < 0) {// 调整异常数据
@@ -103,8 +106,8 @@ public class ApiUserPayUrlController {
 
         // 先查询是否已上传过图片，如果已上传则使用最新上传的图片
         UserPayUrlEntity userPayUrlEntity = userPayUrlService.selectOne(new EntityWrapper<UserPayUrlEntity>()
-                .eq("uid",user.getUid()).eq("img_type",imgType));
-        if (userPayUrlEntity==null || userPayUrlEntity.getId()==null) {
+                .eq("uid", user.getUid()).eq("img_type", imgType));
+        if (userPayUrlEntity == null || userPayUrlEntity.getId() == null) {
             userPayUrlEntity = new UserPayUrlEntity();
             userPayUrlEntity.setImgType(imgType);
             userPayUrlEntity.setAccount(imgForm.getAccount());
@@ -123,25 +126,6 @@ public class ApiUserPayUrlController {
         return R.ok();
     }
 
-    /**
-     * 取得上传的微信/支付宝图片
-     * @param user
-     * @return
-     */
-    @Login
-    @PostMapping("userInfoImg")
-    public R userInfoImg(@LoginUser UserEntity user) {
-        String uid = user.getUid();
-        List<UserPayUrlEntity> list = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>().eq("uid",uid)
-                .eq("img_type",1).or().eq("uid",uid).eq("img_type",2));
-           Map<String,String> map=new HashMap<>();
-           if(list.size()>=1){
-               map.put("wechatUrl",list.get(0).getImgUrl());
-               map.put("payUrl",list.get(1).getImgUrl());
-           }
-        return R.ok().put("payMap", map);
-
-    }
 
     /**
      * 上传身份证图片信息
@@ -151,19 +135,19 @@ public class ApiUserPayUrlController {
      * @author chen
      */
     @Login
-    @PostMapping("uploadImg" )
+    @PostMapping("uploadImg")
     public R uploadImgMessage(@RequestParam String img, @RequestParam String imgType,
                               @LoginUser UserEntity user) {
         UserPayUrlEntity userPay = userPayUrlService.selectOne(new EntityWrapper<UserPayUrlEntity>().eq("uid", user.getUid())
                 .and().eq("img_type", imgType));
-        String imgName = imgType.equals("3" ) ? MD5Util.stringToMD5(user.getMobile() + System.currentTimeMillis()) + "_z" : MD5Util.stringToMD5(user.getMobile() + System.currentTimeMillis()) + "_f";
+        String imgName = imgType.equals("3") ? MD5Util.stringToMD5(user.getMobile() + System.currentTimeMillis()) + "_z" : MD5Util.stringToMD5(user.getMobile() + System.currentTimeMillis()) + "_f";
         String imgUrl = "";
         String path = "/home/statics/idnumber/" + imgName + ".png";
         imgUrl = "http://www.bitflash.vip/auth/" + imgName + ".png";
         BASE64Decoder decoder = new BASE64Decoder();
         try {
             // Base64解码
-            String[] base64Str = img.split("," );
+            String[] base64Str = img.split(",");
             byte[] b = decoder.decodeBuffer(base64Str[1]);
             for (int i = 0; i < b.length; ++i) {
                 if (b[i] < 0) {// 调整异常数据
@@ -191,41 +175,69 @@ public class ApiUserPayUrlController {
             userPayUrlService.updateById(userPay);
         }
         UserInfoEntity userinfo = new UserInfoEntity();
-        userinfo.setIsAuthentication("1" );
+        userinfo.setIsAuthentication("1");
         userinfo.setUid(user.getUid());
         userInfoService.updateById(userinfo);
         return R.ok();
     }
 
     /**
-     * 上传支付宝/微信图片
-     * @param imgType 图片类型
-     * @author chen
+     * 获取支付信息
+     *
+     * @param accountId
+     * @return
      */
     @Login
-    @PostMapping("getPictureUrl" )
-    public R getSFZAdress(@LoginUser UserEntity userEntity, @RequestParam String imgType) {
-        List<UserPayUrlEntity> userPay;
-        if (imgType.equals("1" )) {
-            userPay = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>().eq("uid", userEntity.getUid())
-                    .and().eq("img_type", imgType).or().eq("img_type", "2" ).eq("uid", userEntity.getUid()));
-            if (userPay == null || userPay.size() == 0) {
-                return R.ok();
-            }
-            Map<String, Object> map = new HashMap<>();
-            if (userPay.get(0).getImgType().equals("1" )) {
-                map.put("wxPay", userPay.get(0).getImgUrl());
-                map.put("alipay", userPay.get(1).getImgUrl());
-            } else if (userPay.get(0).getImgType().equals("2" )) {
-                map.put("wxPay", userPay.get(1).getImgUrl());
-                map.put("alipay", userPay.get(0).getImgUrl());
-            }
-
-            return R.ok(map);
-
+    @PostMapping("getPayMessage")
+    public R getPayMessage(@RequestParam("accountId") String accountId) {
+        UserTradeEntity tradeEntity = tradeFeign.selectOneTrade(new ModelMap("id", accountId));
+        String uid = tradeEntity.getUid();
+        List<UserPayUrlEntity> payUrlEntities = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>()
+                .eq("uid", uid).eq("img_type", 1)
+                .or().eq("uid", uid).eq("img_type", 2)
+                .or().eq("uid", uid).eq("img_type", 5));
+        if (payUrlEntities == null || payUrlEntities.size() == 0) {
+            return R.error("未设置支付信息");
         }
-        return R.error("身份证接口暂未开放" );
+        Map<String, Object> map = new HashMap<>();
+        map.put("wxpay", 0);
+        map.put("alipay", 0);
+        map.put("cnypay", 0);
+        payUrlEntities.stream().forEach(u -> {
+            if (u.getImgType().equals("1")) {
+                map.put("wxpay", 1);
+            }
+            if (u.getImgType().equals("2")) {
+                map.put("alipay", 1);
+            }
+            if (u.getImgType().equals("5")) {
+                map.put("cny", 1);
+            }
+        });
+
+        return R.ok().put("url", map).put("uid", uid);
     }
 
+    /**
+     * @param user    登录人的uid
+     * @param uid     别人的uid
+     * @param imgType 图片类型
+     * @return
+     */
+    @Login
+    @PostMapping("getPayUrl")
+    public R getPayUrl(@LoginUser UserEntity user, @RequestParam(value = "uid", required = false) String uid, @RequestParam("imgType") String imgType) {
+        UserPayUrlEntity payUrlEntity = null;
+        if (uid == null) {
+            payUrlEntity = userPayUrlService.selectOne(new EntityWrapper<UserPayUrlEntity>().eq("uid", user.getUid()).eq("img_type", imgType));
+        } else {
+            payUrlEntity = userPayUrlService.selectOne(new EntityWrapper<UserPayUrlEntity>().eq("uid", uid).eq("img_type", imgType));
+        }
+        if(payUrlEntity == null){
+            return R.error("未上传收款信息");
+        }
+
+        return R.ok(payUrlEntity.getImgUrl());
+    }
 
 }

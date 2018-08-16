@@ -1,17 +1,20 @@
 package cn.bitflash.controller;
 
-import cn.bitflash.annotation.Login;
-import cn.bitflash.annotation.LoginUser;
-import cn.bitflash.annotation.PayPassword;
-import cn.bitflash.annotation.UserAccount;
-import cn.bitflash.feignInterface.UserFeign;
-import cn.bitflash.login.UserEntity;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import ch.qos.logback.core.net.SyslogOutputStream;
 import cn.bitflash.service.*;
 import cn.bitflash.trade.*;
-import cn.bitflash.user.UserPayPwdEntity;
-import cn.bitflash.user.UserPayUrlEntity;
-import cn.bitflash.utils.*;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +25,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.*;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+
+import cn.bitflash.annotation.Login;
+import cn.bitflash.annotation.LoginUser;
+import cn.bitflash.annotation.PayPassword;
+import cn.bitflash.annotation.UserAccount;
+import cn.bitflash.feignInterface.UserFeign;
+import cn.bitflash.login.UserEntity;
+import cn.bitflash.user.UserPayPwdEntity;
+import cn.bitflash.user.UserPayUrlEntity;
+import cn.bitflash.utils.BigDecimalUtils;
+import cn.bitflash.utils.Common;
+import cn.bitflash.utils.R;
+import cn.bitflash.utils.RedisUtils;
 
 /**
  * 获取用户交易接口
@@ -62,8 +73,11 @@ public class ApiUserTradeController {
     @Autowired
     private UserTradeConfigService userTradeConfigService;
 
+    @Autowired
+    private TradePoundageService tradePoundageService;
+
     /**
-     * 交易首页
+     * 卖出列表
      *
      * @param userAccount
      * @param pageNum     第几页
@@ -90,7 +104,37 @@ public class ApiUserTradeController {
         } else {
             return R.error("无此用户！");
         }
+        return R.ok().put("userAccount", param);
+    }
 
+    /**
+     * 订单列表
+     *
+     * @param userAccount
+     * @param pageNum     第几页
+     * @return
+     */
+    @Login
+    @PostMapping("/orderList")
+    public R orderList(@UserAccount UserAccountEntity userAccount, @RequestParam String pageNum) {
+        int pageTotal = 6;
+        Map<String, Object> param = new HashMap<String, Object>();
+        if (StringUtils.isNotBlank(userAccount.getUid())) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("uid", userAccount.getUid());
+            map.put("pageNum", new Integer(pageNum));
+            map.put("pageTotal", new Integer(pageTotal));
+            // 查询自身用户信息
+            List<UserTradeEntity> listEntity = userTradeService.queryTrade(map);
+
+            Integer count = userTradeService.selectTradeCount(map);
+
+            param.put("availableAssets", BigDecimalUtils.DecimalFormat(userAccount.getAvailableAssets()));
+            param.put("userAccountList", listEntity);
+            param.put("totalRecord", count);
+        } else {
+            return R.error("无此用户！");
+        }
         return R.ok().put("userAccount", param);
     }
 
@@ -117,7 +161,7 @@ public class ApiUserTradeController {
     }
 
     /**
-     * 跳转到付款页
+     * 跳转到下单页
      *
      * @param id
      * @return
@@ -131,20 +175,40 @@ public class ApiUserTradeController {
             logger.info("订单号:" + id);
 
             List<Map<String, Object>> list = userTradeService.selectTradeUrl(map);
-            Map<String, Object> returnMap1 = null;
+            Map<String, Object> returnMap = null;
             if (null != list && list.size() > 0) {
+                returnMap = list.get(0);
+                String quantity = returnMap.get("quantity").toString();
+                String price = returnMap.get("price").toString();
+                //卖出数量
+                double number = Double.parseDouble(quantity);
+                //卖出价格
+                double prix = Double.parseDouble(quantity);
 
-                returnMap1 = list.get(0);
-                returnMap1.put("wechatUrl", returnMap1.get("imgUrl"));
-                if (list.size() > 1) {
-                    Map<String, Object> returnMap2 = list.get(1);
-                    if (null != returnMap2.get("imgUrl")) {
-                        returnMap1.put("payUrl", returnMap2.get("imgUrl"));
-                    }
+                DecimalFormat df = new DecimalFormat("######0.00");
+                //计算总价格
+                double sum = number * prix;
+
+                //查询手续费
+                UserTradeConfigEntity userTradeConfigEntity = userTradeConfigService.selectById(Common.TRADE_CONFIG_ID);
+                Integer poundage = 0;
+                if(null != userTradeConfigEntity) {
+                    poundage = (int) userTradeConfigEntity.getPoundage() * 100;
                 }
-            }
-            return R.ok().put("payMap", returnMap1);
 
+                //userTradeConfigEntity.getPoundage() * 100;
+                returnMap.put("sum",df.format(sum));
+                //手续费
+                returnMap.put("poundage",poundage);
+                //returnMap.put("wechatUrl", returnMap.get("imgUrl"));
+//                if (list.size() > 1) {
+//                    Map<String, Object> returnMap2 = list.get(1);
+//                    if (null != returnMap2.get("imgUrl")) {
+//                        returnMap.put("payUrl", returnMap2.get("imgUrl"));
+//                    }
+//                }
+            }
+            return R.ok().put("payMap", returnMap);
         } else {
             return R.error("参数不能为空！");
         }
@@ -193,53 +257,55 @@ public class ApiUserTradeController {
                     BigDecimal purchase = quantityB.add(percentB);
                     // 等于1表示total大于percentB,可以交易
                     if (total.compareTo(purchase) == 1 || total.compareTo(purchase) == 0) {
-                        // 1.先扣除手续费，可用于撤消
-                        
-
-
-
-
-
                         // 手续费 = 总可用-百分比
-                        UserBrokerageEntity userBrokerageEntity = userBrokerageService.selectById("1");
-                        if (null != userBrokerageEntity) {
-                            BigDecimal sellBrokerage = userBrokerageEntity.getSellBrokerage();
-                            BigDecimal brokerage = sellBrokerage.add(percentB);
-                            userBrokerageEntity.setSellBrokerage(brokerage);
-                            userBrokerageService.insertOrUpdate(userBrokerageEntity);
+//                        UserBrokerageEntity userBrokerageEntity = userBrokerageService.selectById("1");
+//                        if (null != userBrokerageEntity) {
+//                            BigDecimal sellBrokerage = userBrokerageEntity.getSellBrokerage();
+//                            BigDecimal brokerage = sellBrokerage.add(percentB);
+//                            userBrokerageEntity.setSellBrokerage(brokerage);
+//                            userBrokerageService.insertOrUpdate(userBrokerageEntity);
 
-                            // 2.卖出数量
-                            BigDecimal quantityBig = new BigDecimal(quantity);
-                            // 卖出量-调节释放
-                            BigDecimal subtract = quantityBig.subtract(userAccount.getRegulateRelease());
-                            if (subtract.doubleValue() > 0 || subtract.doubleValue() == 0) {
-                                userAccount.setRegulateRelease(new BigDecimal(0.00));
-                                BigDecimal regulateIncome = userAccount.getRegulateIncome().subtract(subtract);
-                                userAccount.setRegulateIncome(regulateIncome.subtract(percentB));
-                                BigDecimal availableAssets = userAccount.getAvailableAssets().subtract(new BigDecimal(quantity));
-                                userAccount.setAvailableAssets(availableAssets.subtract(percentB));
-                            } else {
-
-                                BigDecimal release = quantityBig.add(percentB);
-                                BigDecimal availableAssets = userAccount.getAvailableAssets().subtract(new BigDecimal(quantity));
-                                userAccount.setAvailableAssets(availableAssets.subtract(percentB));
-                                BigDecimal RegulatRelease = userAccount.getRegulateRelease().subtract(release);
-                                userAccount.setRegulateRelease(RegulatRelease);
-                            }
-                            userAccountService.updateById(userAccount);
-
-                            // 添加卖出记录
-                            UserTradeEntity userTrade = new UserTradeEntity();
-                            userTrade.setPrice(new BigDecimal(price));
-                            userTrade.setState(Common.STATE_SELL);
-                            userTrade.setQuantity(new BigDecimal(quantity));
-                            userTrade.setUid(userAccount.getUid());
-                            userTrade.setCreateTime(new Date());
-                            userTradeService.insertUserTrade(userTrade);
-                            return R.ok();
+                        // 2.卖出数量
+                        BigDecimal quantityBig = new BigDecimal(quantity);
+                        // 卖出量-调节释放
+                        BigDecimal subtract = quantityBig.subtract(userAccount.getRegulateRelease());
+                        if (subtract.doubleValue() > 0 || subtract.doubleValue() == 0) {
+                            userAccount.setRegulateRelease(new BigDecimal(0.00));
+                            BigDecimal regulateIncome = userAccount.getRegulateIncome().subtract(subtract);
+                            userAccount.setRegulateIncome(regulateIncome.subtract(percentB));
+                            BigDecimal availableAssets = userAccount.getAvailableAssets().subtract(new BigDecimal(quantity));
+                            userAccount.setAvailableAssets(availableAssets.subtract(percentB));
                         } else {
-                            R.error();
+                            BigDecimal release = quantityBig.add(percentB);
+                            BigDecimal availableAssets = userAccount.getAvailableAssets().subtract(new BigDecimal(quantity));
+                            userAccount.setAvailableAssets(availableAssets.subtract(percentB));
+                            BigDecimal RegulatRelease = userAccount.getRegulateRelease().subtract(release);
+                            userAccount.setRegulateRelease(RegulatRelease);
                         }
+                        userAccountService.updateById(userAccount);
+
+                        // 添加卖出记录
+                        UserTradeEntity userTrade = new UserTradeEntity();
+                        int id = Common.randomUtil();
+                        userTrade.setId(id);
+                        userTrade.setPrice(new BigDecimal(price));
+                        userTrade.setState(Common.STATE_SELL);
+                        userTrade.setQuantity(new BigDecimal(quantity));
+                        userTrade.setUid(userAccount.getUid());
+                        userTrade.setCreateTime(new Date());
+                        userTradeService.insertUserTrade(userTrade);
+
+                        // 1.先扣除手续费，可用于撤消
+                        TradePoundageEntity tradePoundageEntity = new TradePoundageEntity();
+                        tradePoundageEntity.setUserTradeId(id);
+                        tradePoundageEntity.setUid(userAccount.getUid());
+                        tradePoundageEntity.setPoundage(percentB);
+                        tradePoundageService.insert(tradePoundageEntity);
+
+                        return R.ok();
+//                        } else {
+//                            R.error();
+//                        }
                     } else {
                         return R.error().put("code", "1");
                     }
@@ -280,6 +346,7 @@ public class ApiUserTradeController {
 
     /**
      * 撤消交易
+     * 订单id
      *
      * @param id
      * @return
@@ -299,17 +366,26 @@ public class ApiUserTradeController {
             if (null != userTradeBean) {
                 UserAccountEntity userAccountEntity = userAccountService.selectById(userTradeBean.getUid());
                 if (null != userAccountEntity) {
-                    // 撤消后要把卖出数量返回到user_account中
-                    // 调节收入+卖出数量
-                    BigDecimal regulateIncome = userAccountEntity.getRegulateIncome().add(userTradeBean.getQuantity());
-                    BigDecimal availableAssets = userAccountEntity.getRegulateRelease().add(regulateIncome);
-                    userAccountEntity.setAvailableAssets(availableAssets);
-                    userAccountEntity.setRegulateIncome(regulateIncome);
-                    userAccountService.updateById(userAccountEntity);
 
-                    // 更新状态为撤消
-                    map.put("state", Common.STATE_CANCEL);
-                    userTradeService.updateTrade(map);
+                    TradePoundageEntity tradePoundageEntity = tradePoundageService.selectById(id);
+                    if (null != tradePoundageEntity) {
+
+                        // 撤消后要把卖出数量返回到user_account中
+                        // 调节收入+卖出数量 + 手续费
+                        BigDecimal regulateIncome = userAccountEntity.getRegulateIncome().add(userTradeBean.getQuantity().add(tradePoundageEntity.getPoundage()));
+                        BigDecimal availableAssets = userAccountEntity.getRegulateRelease().add(regulateIncome);
+                        userAccountEntity.setAvailableAssets(availableAssets);
+                        userAccountEntity.setRegulateIncome(regulateIncome);
+                        userAccountService.updateById(userAccountEntity);
+
+                        // 更新状态为撤消
+                        map.put("state", Common.STATE_CANCEL);
+                        userTradeService.updateTrade(map);
+
+                    } else {
+                        logger.info("根据订单id:" + id + ",查询不到交易记录");
+                        return R.error();
+                    }
                 } else {
                     R.error("该用户不存在！");
                 }
@@ -384,38 +460,38 @@ public class ApiUserTradeController {
                         if (null != userAccountList && userAccountList.size() > 0) {
                             userAccount = userAccountList.get(0);
 
-                            // 计算手续费
-                            // 手续费=卖出数量*0.01
-//                            BigDecimal multiply = quantity.multiply(new BigDecimal("0.01"));
-//                            UserBrokerageEntity userBrokerageEntity = userBrokerageService.selectById("1");
-//                            if (null != userBrokerageEntity) {
-//                                double multiplyd = multiply.doubleValue();
-//                                BigDecimal multiplyB = userBrokerageEntity.getPurchaseBrokerage().add(new BigDecimal(Math.floor(multiplyd)));
-//                                userBrokerageEntity.setPurchaseBrokerage(multiplyB);
-//                                userBrokerageService.insertOrUpdate(userBrokerageEntity);
+                            TradePoundageEntity tradePoundageEntity = tradePoundageService.selectById(id);
+                            if (null != tradePoundageEntity) {
+                                // 计算手续费
+                                // 手续费=卖出数量*0.05
+                                UserBrokerageEntity userBrokerageEntity = userBrokerageService.selectById("1");
+                                if (null != userBrokerageEntity) {
+                                    BigDecimal multiplyB = userBrokerageEntity.getSellBrokerage().add(tradePoundageEntity.getPoundage());
+                                    userBrokerageEntity.setSellBrokerage(multiplyB);
+                                    userBrokerageService.updateById(userBrokerageEntity);
 
-                            // 购买量=买出数量-手续费
-//                                BigDecimal purchase = quantity.subtract(multiply);
+                                    BigDecimal regulateIncome = userAccount.getRegulateIncome().add(quantity);
+                                    userAccount.setRegulateIncome(regulateIncome);
+                                    BigDecimal availableAssets = userAccount.getAvailableAssets().add(quantity);
+                                    userAccount.setAvailableAssets(availableAssets);
+                                    userAccount.setUid(userTradeHistoryEntity.getPurchaseUid());
+                                    userAccountService.updateUserAccountByParam(userAccount);
 
-                            BigDecimal regulateIncome = userAccount.getRegulateIncome().add(quantity);
-
-                            userAccount.setRegulateIncome(regulateIncome);
-                            BigDecimal availableAssets = userAccount.getAvailableAssets().add(quantity);
-                            userAccount.setAvailableAssets(availableAssets);
-                            userAccount.setUid(userTradeHistoryEntity.getPurchaseUid());
-                            userAccountService.updateUserAccountByParam(userAccount);
-
-                            // 添加购买记录
-                            UserTradeHistoryEntity userTradeHistory = new UserTradeHistoryEntity();
-                            userTradeHistory.setUserTradeId(userTradeBean.getId());
-                            userTradeHistory.setSellUid(user.getUid());
-                            userTradeHistory.setCreateTime(new Date());
-                            userTradeHistory.setSellQuantity(quantity);
-                            userTradeHistory.setState(Common.STATE_PAY);
-                            userTradeHistory.setPrice(userTradeBean.getPrice());
-                            userTradeHistory.setCreateTime(new Date());
-                            userTradeHistoryService.updateUserTradeHistory(userTradeHistory);
-//                            }
+                                    // 添加购买记录
+                                    UserTradeHistoryEntity userTradeHistory = new UserTradeHistoryEntity();
+                                    userTradeHistory.setUserTradeId(userTradeBean.getId());
+                                    userTradeHistory.setSellUid(user.getUid());
+                                    userTradeHistory.setCreateTime(new Date());
+                                    userTradeHistory.setSellQuantity(quantity);
+                                    userTradeHistory.setState(Common.STATE_PAY);
+                                    userTradeHistory.setPrice(userTradeBean.getPrice());
+                                    userTradeHistory.setCreateTime(new Date());
+                                    userTradeHistoryService.updateUserTradeHistory(userTradeHistory);
+                                }
+                            } else {
+                                logger.info("");
+                                return R.error();
+                            }
                         }
                     }
                 } else {
@@ -480,9 +556,8 @@ public class ApiUserTradeController {
             UserTradeBean uesrTradeBean = userTradeService.queryDetail(map);
             logger.info("订单号:" + id + ",付款人:" + uesrTradeBean.getRealname() + ",数量:" + uesrTradeBean.getQuantity() + ",价格:" + uesrTradeBean.getPrice());
 
-
             if (null != uesrTradeBean) {
-                map.put("state", Common.STATE_PURCHASE);
+                map.put("state", Common.STATE_CONFIRM);
                 // 更新为已购买
                 userTradeService.updateTrade(map);
                 UserTradeHistoryEntity userTradeHistory = new UserTradeHistoryEntity();
@@ -522,7 +597,6 @@ public class ApiUserTradeController {
             return R.ok().put("code", 400);
         }
         return R.error("订单已锁定");
-
     }
 
     /**
@@ -610,7 +684,11 @@ public class ApiUserTradeController {
 //        System.out.println("加密数据"+token);
 //        String token2=AESTokenUtil.getToken(time,token);
 //        System.out.println("解密数据"+token2);
-          //System.out.println(randomUtil());
+        //System.out.println(randomUtil());
+
+        float a = 0.05f * 100;
+        int b = (int) a;
+        System.out.println(b);
     }
 
 }

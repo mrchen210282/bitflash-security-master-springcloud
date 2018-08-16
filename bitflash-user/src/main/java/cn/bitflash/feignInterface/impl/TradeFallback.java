@@ -3,6 +3,7 @@ package cn.bitflash.feignInterface.impl;
 import cn.bitflash.feignInterface.TradeFeign;
 import cn.bitflash.trade.UserAccountBean;
 import cn.bitflash.trade.UserAccountEntity;
+import cn.bitflash.trade.UserTradeEntity;
 import feign.hystrix.FallbackFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,12 @@ public class TradeFallback implements FallbackFactory<TradeFeign> {
             public boolean updateById(UserAccountEntity userAccountEntity) {
                 log.error("修改账号失败-----:"+throwable.getMessage());
                 return false;
+            }
+
+            @Override
+            public UserTradeEntity selectOneTrade(Map<String, Object> map) {
+                log.error("selectOneTrade-----:"+throwable.getMessage());
+                return null;
             }
         };
     }

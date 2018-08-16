@@ -80,4 +80,10 @@ public class ApiSystemController {
         return R.ok().put("date",date).put("price",price).put("yesterday",yestPrice);
     }
 
+    @Login
+    @PostMapping("getTime")
+    public R getTime(){
+        return R.ok(String.valueOf(System.currentTimeMillis()));
+    }
+
 }

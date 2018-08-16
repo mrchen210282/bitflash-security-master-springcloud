@@ -63,6 +63,15 @@ public class Common {
 	public final static String TOKEN = "token";
 	public final static String MOBILE = "mobile";
 
+	//交易手续费
+	public final static String TRADE_CONFIG_ID = "1";
+
+	//申拆状态:未处理0
+	public final static String COMPLAINT_NO = "0";
+
+	//申拆状态:已处理1
+	public final static String COMPLAINT_YES = "1";
+
 	public static String returnMD5(List<String> list) {
 		if (list.size() > 0) {
 			StringBuffer buf = new StringBuffer();
@@ -80,15 +89,8 @@ public class Common {
 	 * 生成8位随机数
 	 * @return
 	 */
-	public static String randomUtil(){
-		Random r = new Random();
-		String code = "";
-		for (int i = 0; i < 8; ++i) {
-			int temp = r.nextInt(52);
-			char x = (char) (temp < 26 ? temp + 97 : (temp % 26) + 65);
-			code += x;
-		}
-		return code;
+	public static int randomUtil(){
+		Random random = new Random();
+		return 10000000 + random.nextInt(90000000);
 	}
-
 }

@@ -53,4 +53,13 @@ public class UserTradeInnerService {
     public boolean insert(@RequestBody UserAccountEntity userAccountEntity) {
         return userAccountService.insert(userAccountEntity);
     }
+
+    @PostMapping("/selectOneTrade")
+    public UserTradeEntity selectOneTrade(@RequestBody Map<String ,Object> map) {
+        List<UserTradeEntity> trades = userTradeService.selectByMap(map);
+        if(trades !=null && trades.size()>0){
+            return trades.get(0);
+        }
+        return null;
+    }
 }

@@ -41,13 +41,13 @@ public class ApiAccountController {
     @Login
     @PostMapping("/accountInfo")
     public R accountInfo(@UserAccount UserAccountEntity account) {
-        String uid =account.getUid();
+        String uid = account.getUid();
         Date now = new DateTime().withTimeAtStartOfDay().toDate();
-        Date yesterday = DateUtils.addDateDays(now,-1);
+        Date yesterday = DateUtils.addDateDays(now, -1);
         List<UserTradeHistoryEntity> list = userTradeHistoryService.selectList(new EntityWrapper<UserTradeHistoryEntity>()
-                .eq("purchase_uid",uid).between("create_time",yesterday,now).eq("state",4));
-        Double yesterdayBkc = list.stream().mapToDouble(u->{
-            Double money= u.getSellQuantity().doubleValue();
+                .eq("purchase_uid", uid).between("create_time", yesterday, now).eq("state", 4));
+        Double yesterdayBkc = list.stream().mapToDouble(u -> {
+            Double money = u.getSellQuantity().doubleValue();
             return money;
         }).sum();
 

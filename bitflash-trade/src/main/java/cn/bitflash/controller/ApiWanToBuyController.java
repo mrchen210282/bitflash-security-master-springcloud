@@ -15,6 +15,7 @@ import cn.bitflash.service.*;
 import cn.bitflash.trade.*;
 import cn.bitflash.user.UserPayPwdEntity;
 import cn.bitflash.utils.R;
+import com.alibaba.druid.sql.ast.statement.SQLIfStatement;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.GeTuiSendMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,25 +106,35 @@ public class ApiWanToBuyController {
         List<UserBuyBean> userBuyEntities = userBuyService.selectBuyList(user.getUid());
         List<UserBuyBean> userBuyEntitiesList = new LinkedList<UserBuyBean>();
         String state = null;
+
         for(UserBuyBean userBuyEntity : userBuyEntities){
-            if("1".equals(userBuyEntity.getState()) || "1".equals(userBuyEntity.getSellState())){
+            if(userBuyEntity.getUid().equals(user.getUid())){
+                state = userBuyEntity.getState();
+            }else if(userBuyEntity.getSellUid().equals(user.getUid())){
+                state = userBuyEntity.getSellState();
+            }else if(userBuyEntity.getPurchaseUid().equals(user.getUid())){
+                state = userBuyEntity.getPurchaseState();
+            }
+
+            if("1".equals(state)){
                 state = "可撤销";
             }
-            if("2".equals(userBuyEntity.getState()) || "2".equals(userBuyEntity.getSellState())){
+            if("2".equals(state)){
                 state = "待收款";
             }
-            if("3".equals(userBuyEntity.getState()) || "3".equals(userBuyEntity.getSellState())){
+            if("3".equals(state)){
                 state = "待付款";
             }
-            if("4".equals(userBuyEntity.getState()) || "4".equals(userBuyEntity.getSellState())){
+            if("4".equals(state)){
                 state = "待确认";
             }
-            if("5".equals(userBuyEntity.getState()) || "5".equals(userBuyEntity.getSellState())){
+            if("5".equals(state)){
                 state = "待收币";
             }
             userBuyEntity.setState(state);
             userBuyEntitiesList.add(userBuyEntity);
         }
+
 
         return R.ok().put("userBuyEntitiesList",userBuyEntitiesList);
     }
@@ -194,7 +205,7 @@ public class ApiWanToBuyController {
         tradePoundageService.insert(tradePoundageEntity);
 
         //修改user_buy订单状态
-        userBuy.setState("2");
+        userBuy.setState("3");
         userBuyService.update(userBuy,new EntityWrapper<UserBuyEntity>().eq("id",Integer.parseInt(id)));
 
         //添加订单到user_buy_history
@@ -379,9 +390,9 @@ public class ApiWanToBuyController {
         //判断交易密码是否正确
         UserPayPwdEntity userPayPwdEntity = userFeign.selectUserPayPwd(new ModelMap("uid", user.getUid()));
         //交易密码不正确
-        if (!pwd.equals(userPayPwdEntity.getPayPassword())) {
-            return R.ok().put("code", "3");
-        }
+        //if (!pwd.equals(userPayPwdEntity.getPayPassword())) {
+        //    return R.ok().put("code", "3");
+        //}
 
         //手续费
         Map<String,Float> map = this.poundage(id);
@@ -404,10 +415,15 @@ public class ApiWanToBuyController {
         userBrokerageService.update(userBrokerageEntity, new EntityWrapper<UserBrokerageEntity>().eq("id", 1));
 
         //删除TRADE_POUNDAGE
-        tradePoundageService.delete(new EntityWrapper<TradePoundageEntity>().eq("userTradeId", id));
+        tradePoundageService.delete(new EntityWrapper<TradePoundageEntity>().eq("user_trade_id", id));
 
         //设置结束时间
         userBuyHistoryEntity.setFinishTime(new Date());
+
+        //设置状态
+        UserBuyEntity userBuyEntity = userBuyService.selectById(Integer.parseInt(id));
+        userBuyEntity.setState("6");
+        userBuyService.updateById(userBuyEntity);
 
         //设置状态,交易成功
         userBuyHistoryEntity.setSellState("6");

@@ -18,10 +18,10 @@
 
     <select id="selectBuyList" resultType="cn.bitflash.trade.UserBuyBean">
         select
-        ub.* ,ui.nickname,uh.sell_state
+        ub.* ,ui.nickname,uh.sell_uid,uh.purchase_uid,uh.purchase_state,uh.sell_state
         from user_buy ub left join user_info ui on(ub.uid=ui.uid)
         left join user_buy_history uh on ub.id = uh.user_buy_id
-        where ub.uid=#{uid} and ub.state !='6' and ub.state !='0' and ub.state !='9' or uh.sell_uid=#{uid} and ub.state !='6' and ub.state !='0' and ub.state !='9'
+        where ub.uid=#{uid} and ub.state !='6' and ub.state !='0' and ub.state !='9' or uh.sell_uid=#{uid} and uh.sell_state !='6' and uh.sell_state !='0' and uh.sell_state !='9'
     </select>
 
 </mapper>

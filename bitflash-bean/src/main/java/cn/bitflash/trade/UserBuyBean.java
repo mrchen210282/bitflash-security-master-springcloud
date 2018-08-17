@@ -35,6 +35,12 @@ public class UserBuyBean extends UserBuyEntity implements Serializable  {
 
     private String sellState;
 
+    private String purchaseUid;
+
+    private String  sellUid;
+
+    private String purchaseState;
+
     public String getNickname() {
         return nickname;
     }
@@ -49,5 +55,29 @@ public class UserBuyBean extends UserBuyEntity implements Serializable  {
 
     public void setSellState(String sellState) {
         this.sellState = sellState;
+    }
+
+    public String getPurchaseUid() {
+        return purchaseUid;
+    }
+
+    public void setPurchaseUid(String purchaseUid) {
+        this.purchaseUid = purchaseUid;
+    }
+
+    public String getSellUid() {
+        return sellUid;
+    }
+
+    public void setSellUid(String sellUid) {
+        this.sellUid = sellUid;
+    }
+
+    public String getPurchaseState() {
+        return purchaseState;
+    }
+
+    public void setPurchaseState(String purchaseState) {
+        this.purchaseState = purchaseState;
     }
 }

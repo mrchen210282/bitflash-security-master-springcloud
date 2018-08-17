@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.service.IService;
 
 import cn.bitflash.trade.UserTradeBean;
 import cn.bitflash.trade.UserTradeEntity;
+import cn.bitflash.trade.UserTradeJoinBuyEntity;
 
 /**
  * @author wangjun

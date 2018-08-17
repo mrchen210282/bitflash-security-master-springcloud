@@ -1,10 +1,13 @@
 package cn.bitflash.interceptor;
 
 import cn.bitflash.annotation.Login;
+import cn.bitflash.controller.ApiUserTradeController;
 import cn.bitflash.exception.RRException;
 import cn.bitflash.feignInterface.LoginFeign;
 import cn.bitflash.login.TokenEntity;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.ModelMap;
@@ -20,6 +23,7 @@ import static cn.bitflash.utils.Common.TOKEN;
 @Component
 public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
 
+    private final Logger logger = LoggerFactory.getLogger(ApiLoginInterceptor.class);
 
     @Autowired
     private LoginFeign loginFeign;
@@ -44,6 +48,8 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
         }*/
         String mobile = (String) request.getSession().getAttribute(MOBILE);
         String token = (String) request.getSession().getAttribute(TOKEN);
+        logger.info("查询交易类ApiLoginInterceptor，mobile:" + mobile);
+        logger.info("查询交易类ApiLoginInterceptor，token:" + token);
         if (StringUtils.isBlank(mobile)) {
             mobile = (String) request.getAttribute(MOBILE);
         }
@@ -59,7 +65,10 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
         if (tokenEntity == null || tokenEntity.getExpireTime().getTime() < System.currentTimeMillis()) {
             throw new RRException("登录过期，请重新登录" );
         }*/
+        logger.info("查询交易类ApiLoginInterceptor，tokenEntity:" + tokenEntity);
         String userMobile = tokenEntity.getMobile();
+        logger.info("查询交易类ApiLoginInterceptor，userMobile:" + mobile);
+
         if (!userMobile.equals(mobile)) {
             throw new RRException("token信息与用户信息不符");
         }

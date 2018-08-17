@@ -1,5 +1,7 @@
 package cn.bitflash.utils;
 
+import sun.applet.Main;
+
 import java.io.UnsupportedEncodingException;
 
 public class AESTokenUtil {
@@ -40,5 +42,11 @@ public class AESTokenUtil {
         return data;
     }
 
+    public static void main(String[] args) {
+        Long time = System.currentTimeMillis();
+        System.out.println("time:" + time.toString());
+        String str = AESTokenUtil.setToken(time.toString(),"aa6ad604703a4c72b853e994a1ca2bc9");
+        System.out.println(str);
+    }
 
 }

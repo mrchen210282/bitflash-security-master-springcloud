@@ -8,7 +8,6 @@ import cn.bitflash.trade.UserTradeJoinBuyEntity;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 
 import cn.bitflash.trade.UserTradeBean;
-import cn.bitflash.trade.UserTradeEntity;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -17,7 +16,7 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface UserTradeDao extends BaseMapper<UserTradeEntity> {
 
-    public List<UserTradeBean> selectTrade(Map<String, Object> param);
+    public List<UserTradeEntity> selectTrade(Map<String, Object> param);
 
     public Integer selectTradeCount(Map<String, Object> param);
 

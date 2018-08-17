@@ -10,9 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import cn.bitflash.service.*;
 import cn.bitflash.trade.*;
 import org.apache.commons.lang.StringUtils;
@@ -34,7 +32,6 @@ import cn.bitflash.annotation.UserAccount;
 import cn.bitflash.feignInterface.UserFeign;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.user.UserPayPwdEntity;
-import cn.bitflash.user.UserPayUrlEntity;
 import cn.bitflash.utils.BigDecimalUtils;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
@@ -108,7 +105,7 @@ public class ApiUserTradeController {
     }
 
     /**
-     * 订单列表
+     * 订单列表(卖出)
      *
      * @param userAccount
      * @param pageNum     第几页
@@ -300,6 +297,7 @@ public class ApiUserTradeController {
                         tradePoundageEntity.setUserTradeId(id);
                         tradePoundageEntity.setUid(userAccount.getUid());
                         tradePoundageEntity.setPoundage(percentB);
+                        tradePoundageEntity.setCreateTime(new Date());
                         tradePoundageService.insert(tradePoundageEntity);
 
                         return R.ok();
@@ -505,33 +503,45 @@ public class ApiUserTradeController {
     }
 
     /**
-     * 查看订单明细
+     * 查看买入订单明细
      *
-     * @param id 订单id
+     * @param orderId 订单id
      * @return
      */
     @Login
     @PostMapping("viewDetail")
-    public R viewDetail(@RequestParam String id) {
-        if (StringUtils.isNotBlank(id)) {
+    public R viewDetail(@RequestParam String orderId) {
+        if (StringUtils.isNotBlank(orderId)) {
             Map<String, Object> param = new HashMap<String, Object>();
-            param.put("userTradeId", id);
-            List<UserTradeHistoryBean> list = userTradeHistoryService.selectTradeHistory(param);
-            UserTradeHistoryBean userTradeHistoryBean = null;
-            if (null != list && list.size() > 0) {
-                userTradeHistoryBean = list.get(0);
-            }
-            String uid = userTradeHistoryBean.getPurchaseUid();
+            param.put("id", orderId);
 
-            List<UserPayUrlEntity> url = userFeign.selectUserPayUrl(uid);
-            try {
-                String aliurl = url.stream().filter((u) -> u.getImgType().equals("2")).findFirst().get().getImgUrl();
-                String wxurl = url.stream().filter((u) -> u.getImgType().equals("1")).findFirst().get().getImgUrl();
-                return R.ok().put("userTrade", userTradeHistoryBean).put("wxUrl", wxurl)
-                        .put("aliUrl", aliurl);
-            } catch (Exception e) {
-                return R.ok().put("userTrade", userTradeHistoryBean);
+            UserTradeBean userTradeBean = userTradeService.queryDetail(param);
+            if(null != userTradeBean) {
+                //数量
+                BigDecimal quantity = userTradeBean.getQuantity();
+                //价格
+                BigDecimal price = userTradeBean.getPrice();
+                BigDecimal tradeAmount = price.multiply(quantity);
+                userTradeBean.setTradeAmount(tradeAmount);
             }
+            return R.ok().put("userTradeBean", userTradeBean);
+
+//            List<UserTradeHistoryBean> list = userTradeHistoryService.selectTradeHistory(param);
+//            UserTradeHistoryBean userTradeHistoryBean = null;
+//            if (null != list && list.size() > 0) {
+//                userTradeHistoryBean = list.get(0);
+//            }
+//            String uid = userTradeHistoryBean.getPurchaseUid();
+//
+//            List<UserPayUrlEntity> url = userFeign.selectUserPayUrl(uid);
+//            try {
+//                String aliurl = url.stream().filter((u) -> u.getImgType().equals("2")).findFirst().get().getImgUrl();
+//                String wxurl = url.stream().filter((u) -> u.getImgType().equals("1")).findFirst().get().getImgUrl();
+//                return R.ok().put("userTrade", userTradeHistoryBean).put("wxUrl", wxurl)
+//                        .put("aliUrl", aliurl);
+//            } catch (Exception e) {
+//
+//            }
 
         } else {
             return R.error("参数不能为空！");
@@ -600,7 +610,7 @@ public class ApiUserTradeController {
     }
 
     /**
-     * 锁定订单
+     * 下单
      *
      * @param id 订单id
      * @author chen
@@ -677,6 +687,25 @@ public class ApiUserTradeController {
     public R buyMessage(@RequestParam String id) {
         return R.ok().put("buyMessage", userTradeService.buyMessage(id));
     }
+
+    /**
+     * 查询已完成订单
+     *
+     * @param
+     * @return
+     */
+    @Login
+    @PostMapping("selectFinishOrder")
+    public R selectFinishOrder(@UserAccount UserAccountEntity userAccount, @RequestParam String pageNum) {
+        int pageTotal = 6;
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("uid", userAccount.getUid());
+        map.put("pageNum", new Integer(pageNum));
+        map.put("pageTotal", new Integer(pageTotal));
+        List<UserTradeJoinBuyEntity> list = userTradeService.selectFinishOrder(map);
+        return R.ok().put("list", list);
+    }
+
 
     public static void main(String[] args) throws UnsupportedEncodingException {
 //        String time = String.valueOf(System.currentTimeMillis());

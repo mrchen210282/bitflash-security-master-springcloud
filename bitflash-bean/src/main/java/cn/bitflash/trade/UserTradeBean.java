@@ -33,7 +33,6 @@ public class UserTradeBean extends UserTradeEntity implements Serializable {
 
     private static final long serialVersionUID = -3272015324293238491L;
 
-
     private String realname;
 
     /**
@@ -41,15 +40,12 @@ public class UserTradeBean extends UserTradeEntity implements Serializable {
      */
     private String nickname;
 
-
-
     private String mobile;
 
     /**
      * 卖出(1)、购买(2),撤消(3)
      */
     private String state;
-
 
     /**
      * 报单总数 （实际报单数+赠送量）
@@ -68,6 +64,12 @@ public class UserTradeBean extends UserTradeEntity implements Serializable {
      * 卖出人姓名
      */
     private String sellName;
+
+    //手续费
+    private BigDecimal poundage;
+
+    //交易总额
+    private BigDecimal tradeAmount;
 
     public String getNickname() {
         return nickname;
@@ -134,4 +136,19 @@ public class UserTradeBean extends UserTradeEntity implements Serializable {
         this.totelAssets = totelAssets;
     }
 
+    public BigDecimal getPoundage() {
+        return poundage;
+    }
+
+    public void setPoundage(BigDecimal poundage) {
+        this.poundage = poundage;
+    }
+
+    public BigDecimal getTradeAmount() {
+        return tradeAmount;
+    }
+
+    public void setTradeAmount(BigDecimal tradeAmount) {
+        this.tradeAmount = tradeAmount;
+    }
 }

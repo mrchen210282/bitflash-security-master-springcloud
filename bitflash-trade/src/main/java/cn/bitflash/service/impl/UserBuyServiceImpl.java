@@ -29,7 +29,7 @@ public class UserBuyServiceImpl extends ServiceImpl<UserBuyDao, UserBuyEntity> i
     public void addBuyMessage(UserBuyEntity userBuyEntity, String uid) {
         userBuyEntity.setUid(uid);
         userBuyEntity.setCreateTime(new Date());
-        userBuyEntity.setState("0" );
+        userBuyEntity.setState("1" );
         baseMapper.insert(userBuyEntity);
 
     }

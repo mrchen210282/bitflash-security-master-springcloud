@@ -67,8 +67,8 @@ public class ApiSystemController {
     @Login
     @PostMapping("getWeekPriceRate")
     public R getWeekPriceRate(){
-        String str=platFormConfigService.getVal(Common.SHOW_DATE);
-        Long time = Long.valueOf(str);
+        /*String str=platFormConfigService.getVal(Common.SHOW_DATE);
+        Long time = Long.valueOf(str);*/
         Date now = new DateTime().withTimeAtStartOfDay().toDate();
         Date after = DateUtils.addDateDays(now,-7);
         DateTimeFormatter dt=DateTimeFormatter.ofPattern("MM-dd");
@@ -80,9 +80,9 @@ public class ApiSystemController {
         return R.ok().put("date",date).put("price",price).put("yesterday",yestPrice);
     }
 
-    @Login
     @PostMapping("getTime")
     public R getTime(){
+        System.out.println("请求");
         return R.ok(String.valueOf(System.currentTimeMillis()));
     }
 

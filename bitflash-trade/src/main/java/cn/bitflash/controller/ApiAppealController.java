@@ -2,12 +2,17 @@ package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
-import cn.bitflash.annotation.UserAccount;
 import cn.bitflash.feignInterface.LoginFeign;
 import cn.bitflash.feignInterface.UserFeign;
 import cn.bitflash.login.UserEntity;
-import cn.bitflash.service.*;
-import cn.bitflash.trade.*;
+import cn.bitflash.service.UserAccountService;
+import cn.bitflash.service.UserBrokerageService;
+import cn.bitflash.service.UserSendService;
+import cn.bitflash.service.UserTradeConfigService;
+import cn.bitflash.trade.UserAccountEntity;
+import cn.bitflash.trade.UserBrokerageEntity;
+import cn.bitflash.trade.UserSendEntity;
+import cn.bitflash.trade.UserTradeConfigEntity;
 import cn.bitflash.user.UserPayPwdEntity;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -20,81 +25,32 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author gao
  */
 @RestController
-@RequestMapping("/api/appeal" )
+@RequestMapping("/api" )
 public class ApiAppealController {
 
     @Autowired
-    private UserBuyService userBuyService;
+    private UserSendService userSendService;
 
     @Autowired
-    private UserBuyHistoryService userBuyHistoryService;
+    private UserFeign userFeign;
+
+    @Autowired
+    private LoginFeign loginFeign;
+
+    @Autowired
+    private UserBrokerageService userBrokerageService;
+
+    @Autowired
+    private UserAccountService userAccountService;
+
     @Autowired
     private UserTradeConfigService userTradeConfigService;
-
-    /**
-     * ---------------订单----------------
-     */
-
-    @Login
-    @PostMapping("showlist")
-    public R showNeedMessage(@LoginUser UserEntity user) {
-        List<UserBuyBean> userBuyEntities = userBuyService.selectAppealList(user.getUid());
-        List<UserBuyBean> userBuyEntitiesList = new LinkedList<UserBuyBean>();
-        for(UserBuyBean userBuyBean :userBuyEntities){
-            userBuyBean.setState("申诉中");
-            userBuyEntitiesList.add(userBuyBean);
-        }
-
-        return R.ok().put("userBuyEntitiesList", userBuyEntitiesList);
-    }
-
-    @Login
-    @PostMapping("appealMessage")
-    public R appealMessage(@RequestParam("id") String id) {
-        UserBuyHistoryBean userBuyHistoryBean = userBuyHistoryService.selectBuyHistory(id);
-
-        Map<String,Float> map = this.poundage(id);
-
-        return R.ok().put("userBuyHistoryBean",userBuyHistoryBean).put("totalQuantity",map.get("totalQuantity")).put("price",map.get("price")).put("buyQuantity",map.get("buyQuantity")).put("totalMoney",map.get("totalMoney"));
-    }
-
-    /**
-     * ----------------------------手续费------------------------
-     *
-     */
-    public Map<String,Float> poundage(String id){
-        UserBuyEntity userBuy = userBuyService.selectById(Integer.parseInt(id));
-
-        DecimalFormat df = new DecimalFormat("#########.##" );
-        //交易数量
-        Float buyQuantity = Float.parseFloat(df.format(userBuy.getQuantity()));
-        //手续费比率
-        Float poundage = userTradeConfigService.selectOne(new EntityWrapper<UserTradeConfigEntity>().eq("remark", "交易手续费")).getPoundage();
-        //Float poundage = Float.parseFloat(df.format(poundagePer));
-        //手续费数量
-        Float totalPoundage = buyQuantity*poundage;
-        //实际交易总数量
-        Float totalQuantity = buyQuantity+totalPoundage;
-        //单价
-        Float price = userBuy.getPrice();
-        //总价格
-        Float totalMoney = buyQuantity*(price);
-
-        Map<String,Float> map = new HashMap<String,Float>();
-        map.put("buyQuantity",buyQuantity);
-        map.put("poundage",poundage);
-        map.put("totalPoundage",totalPoundage);
-        map.put("totalQuantity",totalQuantity);
-        map.put("price",price);
-        map.put("totalMoney",totalMoney);
-        return map;
-    }
-
 
 }

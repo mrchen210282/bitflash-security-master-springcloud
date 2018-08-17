@@ -114,7 +114,7 @@
 
     <!-- add by wangjun 2018.6.23 查看订单明细 -->
     <select id="queryDetail" resultType="cn.bitflash.trade.UserTradeBean">
-        select b.realname,a.id,a.price,a.quantity,a.uid,a.create_time,tp.poundage
+        select b.realname,a.id,a.price,a.quantity,a.uid,a.create_time,tp.poundage,b.mobile
         from
         user_trade a
         left join trade_poundage tp on tp.user_trade_id = a.id

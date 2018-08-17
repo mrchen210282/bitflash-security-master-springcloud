@@ -74,8 +74,8 @@ public class UserTradeServiceImpl extends ServiceImpl<UserTradeDao, UserTradeEnt
 
     @Override
     public List<UserTradeEntity> queryTrade(Map<String, Object> param) {
-        List<UserTradeBean> list = baseMapper.selectTrade(param);
-        return null;
+        List<UserTradeEntity> list = baseMapper.selectTrade(param);
+        return list;
     }
     @Override
     public void updateTrade(Map<String, Object> param) {
@@ -148,3 +148,4 @@ public class UserTradeServiceImpl extends ServiceImpl<UserTradeDao, UserTradeEnt
     }
 
 }
+

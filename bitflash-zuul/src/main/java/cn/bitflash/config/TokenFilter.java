@@ -72,6 +72,9 @@ public class TokenFilter extends ZuulFilter {
         if (url.indexOf("bitflash-login/api/reg") != -1) {
             return false;
         }
+        if (url.indexOf("bitflash-sys/api/getTime") != -1) {
+            return false;
+        }
         return true;
     }
 

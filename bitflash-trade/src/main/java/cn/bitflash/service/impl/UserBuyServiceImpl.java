@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 
+import static cn.bitflash.utils.Common.STATE_BUY_CANCEL;
+
 @Service("userBuyService" )
 public class UserBuyServiceImpl extends ServiceImpl<UserBuyDao, UserBuyEntity> implements UserBuyService {
 
@@ -29,13 +31,18 @@ public class UserBuyServiceImpl extends ServiceImpl<UserBuyDao, UserBuyEntity> i
     public void addBuyMessage(UserBuyEntity userBuyEntity, String uid) {
         userBuyEntity.setUid(uid);
         userBuyEntity.setCreateTime(new Date());
-        userBuyEntity.setState("1" );
+        userBuyEntity.setState(STATE_BUY_CANCEL);
         baseMapper.insert(userBuyEntity);
 
     }
 
     @Override
     public List<UserBuyBean> selectBuyList(String uid){
+        return baseMapper.selectBuyList(uid);
+    }
+
+    @Override
+    public List<UserBuyBean> selectAppealList(String uid){
         return baseMapper.selectBuyList(uid);
     }
 }

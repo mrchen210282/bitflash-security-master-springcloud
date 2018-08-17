@@ -26,9 +26,6 @@ public class Common {
 	// 待确认
 	public final static String STATE_CONFIRM = "6";
 
-	// 已完成
-	//public final static String STATE_FINISH = "7";
-
 	// 申拆中
 	public final static String STATE_COMPLAINT = "9";
 

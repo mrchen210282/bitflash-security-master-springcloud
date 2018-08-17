@@ -7,6 +7,7 @@ import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserInfoService;
 import cn.bitflash.service.UserPayPwdService;
 import cn.bitflash.service.UserPayUrlService;
+import cn.bitflash.trade.UserBuyEntity;
 import cn.bitflash.trade.UserTradeEntity;
 import cn.bitflash.user.ImgForm;
 import cn.bitflash.user.UserInfoEntity;
@@ -23,7 +24,10 @@ import sun.misc.BASE64Decoder;
 
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -186,9 +190,15 @@ public class ApiUserPayUrlController {
      */
     @Login
     @PostMapping("getPayMessage")
-    public R getPayMessage(@RequestParam("accountId") String accountId) {
-        UserTradeEntity tradeEntity = tradeFeign.selectOneTrade(new ModelMap("id", accountId));
-        String uid = tradeEntity.getUid();
+    public R getPayMessage(@RequestParam("accountId") String accountId,@RequestParam("type") String type) {
+        String uid = null;
+        if(type. equals("1")){
+            UserTradeEntity tradeEntity = tradeFeign.selectOneTrade(new ModelMap("id", accountId));
+            uid = tradeEntity.getUid();
+        }else if(type.equals("2")){
+            UserBuyEntity userBuyEntity = tradeFeign.selectOneBuy(new ModelMap("id", accountId));
+            uid = userBuyEntity.getUid();
+        }
         List<UserPayUrlEntity> payUrlEntities = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>()
                 .eq("uid", uid).eq("img_type", 1)
                 .or().eq("uid", uid).eq("img_type", 2)

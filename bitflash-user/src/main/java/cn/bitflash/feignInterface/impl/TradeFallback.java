@@ -3,6 +3,7 @@ package cn.bitflash.feignInterface.impl;
 import cn.bitflash.feignInterface.TradeFeign;
 import cn.bitflash.trade.UserAccountBean;
 import cn.bitflash.trade.UserAccountEntity;
+import cn.bitflash.trade.UserBuyEntity;
 import cn.bitflash.trade.UserTradeEntity;
 import feign.hystrix.FallbackFactory;
 import org.slf4j.Logger;
@@ -53,6 +54,12 @@ public class TradeFallback implements FallbackFactory<TradeFeign> {
             @Override
             public UserTradeEntity selectOneTrade(Map<String, Object> map) {
                 log.error("selectOneTrade-----:"+throwable.getMessage());
+                return null;
+            }
+
+            @Override
+            public UserBuyEntity selectOneBuy(Map<String, Object> map) {
+                log.error("selectOneBuy-----:"+throwable.getMessage());
                 return null;
             }
         };

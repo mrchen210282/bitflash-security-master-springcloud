@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import cn.bitflash.trade.UserTradeEntity;
+import cn.bitflash.trade.UserTradeJoinBuyEntity;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 
 import cn.bitflash.trade.UserTradeBean;
@@ -16,7 +17,7 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface UserTradeDao extends BaseMapper<UserTradeEntity> {
 
-    public List<UserTradeEntity> selectTrade(Map<String, Object> param);
+    public List<UserTradeBean> selectTrade(Map<String, Object> param);
 
     public Integer selectTradeCount(Map<String, Object> param);
 
@@ -51,4 +52,7 @@ public interface UserTradeDao extends BaseMapper<UserTradeEntity> {
     public UserTradeBean buyMessage(@Param("id") String id);
 
     List<UserTradeEntity> getBystate(@Param("state") String id);
+
+    //查询已完成订单
+    List<UserTradeJoinBuyEntity> selectFinishOrder(Map<String,Object> map);
 }

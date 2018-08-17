@@ -38,7 +38,7 @@ public class ApiAppealController {
     private UserTradeConfigService userTradeConfigService;
 
     /**
-     * ---------------è®¢å•é¡µ----------------
+     * ---------------¶©µ¥Ò³----------------
      */
 
     @Login
@@ -47,7 +47,7 @@ public class ApiAppealController {
         List<UserBuyBean> userBuyEntities = userBuyService.selectAppealList(user.getUid());
         List<UserBuyBean> userBuyEntitiesList = new LinkedList<UserBuyBean>();
         for(UserBuyBean userBuyBean :userBuyEntities){
-            userBuyBean.setState("ç”³è¯‰ä¸­");
+            userBuyBean.setState("ÉêËßÖĞ");
             userBuyEntitiesList.add(userBuyBean);
         }
 
@@ -65,25 +65,25 @@ public class ApiAppealController {
     }
 
     /**
-     * ----------------------------æ‰‹ç»­è´¹+è®¢å•æ•°é‡------------------------
+     * ----------------------------ÊÖĞø·Ñ+¶©µ¥ÊıÁ¿------------------------
      *
      */
     public Map<String,Float> poundage(String id){
         UserBuyEntity userBuy = userBuyService.selectById(Integer.parseInt(id));
 
         DecimalFormat df = new DecimalFormat("#########.##" );
-        //äº¤æ˜“æ•°é‡
+        //½»Ò×ÊıÁ¿
         Float buyQuantity = Float.parseFloat(df.format(userBuy.getQuantity()));
-        //æ‰‹ç»­è´¹æ¯”ç‡
-        Float poundage = userTradeConfigService.selectOne(new EntityWrapper<UserTradeConfigEntity>().eq("remark", "äº¤æ˜“æ‰‹ç»­è´¹")).getPoundage();
+        //ÊÖĞø·Ñ±ÈÂÊ
+        Float poundage = userTradeConfigService.selectOne(new EntityWrapper<UserTradeConfigEntity>().eq("remark", "½»Ò×ÊÖĞø·Ñ")).getPoundage();
         //Float poundage = Float.parseFloat(df.format(poundagePer));
-        //æ‰‹ç»­è´¹æ•°é‡
+        //ÊÖĞø·ÑÊıÁ¿
         Float totalPoundage = buyQuantity*poundage;
-        //å®é™…äº¤æ˜“æ€»æ•°é‡
+        //Êµ¼Ê½»Ò××ÜÊıÁ¿
         Float totalQuantity = buyQuantity+totalPoundage;
-        //å•ä»·
+        //µ¥¼Û
         Float price = userBuy.getPrice();
-        //æ€»ä»·æ ¼
+        //×Ü¼Û¸ñ
         Float totalMoney = buyQuantity*(price);
 
         Map<String,Float> map = new HashMap<String,Float>();
@@ -95,5 +95,6 @@ public class ApiAppealController {
         map.put("totalMoney",totalMoney);
         return map;
     }
+
 
 }

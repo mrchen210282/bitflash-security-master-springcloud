@@ -3,10 +3,10 @@ package cn.bitflash.service;
 import java.util.List;
 import java.util.Map;
 
-import cn.bitflash.trade.UserTradeEntity;
 import com.baomidou.mybatisplus.service.IService;
 
 import cn.bitflash.trade.UserTradeBean;
+import cn.bitflash.trade.UserTradeEntity;
 
 /**
  * @author wangjun
@@ -56,6 +56,9 @@ public interface UserTradeService extends IService<UserTradeEntity> {
     public UserTradeBean buyMessage(String id);
 
     List<UserTradeEntity> getByState(String state);
+
+    //查询已完成订单
+    List<UserTradeJoinBuyEntity> selectFinishOrder(Map<String,Object> map);
 
 
 }

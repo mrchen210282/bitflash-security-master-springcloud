@@ -685,7 +685,8 @@ public class ApiUserTradeController {
     @Login
     @PostMapping("buyMessage")
     public R buyMessage(@RequestParam String id) {
-        return R.ok().put("buyMessage", userTradeService.buyMessage(id));
+        return null;
+        //return R.ok().put("buyMessage", userTradeService.buyMessage(id));
     }
 
     /**

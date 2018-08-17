@@ -66,22 +66,22 @@ public class UserTradeServiceImpl extends ServiceImpl<UserTradeDao, UserTradeEnt
         }
         return map;
     }
-
+    @Override
     public Integer selectTradeCount(Map<String, Object> param) {
         Integer count = baseMapper.selectTradeCount(param);
         return count;
     }
 
     @Override
-    public List<UserTradeBean> queryTrade(Map<String, Object> param) {
+    public List<UserTradeEntity> queryTrade(Map<String, Object> param) {
         List<UserTradeBean> list = baseMapper.selectTrade(param);
-        return list;
+        return null;
     }
-
+    @Override
     public void updateTrade(Map<String, Object> param) {
         baseMapper.updateTrade(param);
     }
-
+    @Override
     public List<Map<String, Object>> selectTradeUrl(Map<String, Object> param) {
         List<Map<String, Object>> list = baseMapper.selectTradeUrl(param);
         return list;
@@ -93,6 +93,7 @@ public class UserTradeServiceImpl extends ServiceImpl<UserTradeDao, UserTradeEnt
      * @param param
      * @return
      */
+    @Override
     public UserTradeBean queryDetail(Map<String, Object> param) {
         UserTradeBean userTradeBean = baseMapper.queryDetail(param);
         return userTradeBean;
@@ -101,11 +102,12 @@ public class UserTradeServiceImpl extends ServiceImpl<UserTradeDao, UserTradeEnt
     /**
      * 添加交易记录
      */
+    @Override
     public Integer insertUserTrade(UserTradeEntity userTradeEntity) {
         Integer i = baseMapper.insertUserTrade(userTradeEntity);
         return i;
     }
-
+    @Override
     public List<UserTradeEntity> searchTrade(Map<String, Object> param) {
         List<UserTradeEntity> list = baseMapper.searchTrade(param);
         return list;
@@ -127,7 +129,7 @@ public class UserTradeServiceImpl extends ServiceImpl<UserTradeDao, UserTradeEnt
         return baseMapper.selectById(id);
     }
 
-    @Override
+
     public UserTradeBean buyMessage(String id) {
 
         UserTradeBean userTradeBean = baseMapper.buyMessage(id);
@@ -140,6 +142,7 @@ public class UserTradeServiceImpl extends ServiceImpl<UserTradeDao, UserTradeEnt
     }
 
     //查询已完成订单
+    @Override
     public List<UserTradeJoinBuyEntity> selectFinishOrder(Map<String,Object> map) {
         return baseMapper.selectFinishOrder(map);
     }

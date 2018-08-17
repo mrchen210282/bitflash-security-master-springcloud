@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.bitflash.trade.UserTradeJoinBuyEntity;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,8 +73,8 @@ public class UserTradeServiceImpl extends ServiceImpl<UserTradeDao, UserTradeEnt
     }
 
     @Override
-    public List<UserTradeEntity> queryTrade(Map<String, Object> param) {
-        List<UserTradeEntity> list = baseMapper.selectTrade(param);
+    public List<UserTradeBean> queryTrade(Map<String, Object> param) {
+        List<UserTradeBean> list = baseMapper.selectTrade(param);
         return list;
     }
 
@@ -136,6 +137,11 @@ public class UserTradeServiceImpl extends ServiceImpl<UserTradeDao, UserTradeEnt
     @Override
     public List<UserTradeEntity> getByState(String state) {
         return baseMapper.getBystate(state);
+    }
+
+    //查询已完成订单
+    public List<UserTradeJoinBuyEntity> selectFinishOrder(Map<String,Object> map) {
+        return baseMapper.selectFinishOrder(map);
     }
 
 }

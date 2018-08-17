@@ -10,11 +10,10 @@
         <result property="mobile" column="mobile"/>
     </resultMap>
 
-    <insert id="insertUserTrade" keyProperty="id" useGeneratedKeys="true"
-            parameterType="cn.bitflash.trade.UserTradeEntity">
+    <insert id="insertUserTrade" parameterType="cn.bitflash.trade.UserTradeEntity">
         insert into user_trade
-        (create_time,price,quantity,state,uid) value
-        (#{createTime},#{price},#{quantity},#{state},#{uid})
+        (create_time,price,quantity,state,uid,id) value
+        (#{createTime},#{price},#{quantity},#{state},#{uid},#{id})
     </insert>
 
     <select id="searchTrade" resultType="cn.bitflash.trade.UserTradeEntity">
@@ -30,7 +29,7 @@
         order by price asc
     </select>
 
-    <select id="selectTrade" resultType="cn.bitflash.trade.UserTradeEntity">
+    <select id="selectTrade" resultType="cn.bitflash.trade.UserTradeBean">
         select
         realname,nickname,id,price,quantity,ut.uid,create_time,state FROM user_trade ut
         LEFT JOIN user_info ui ON ut.uid = ui.uid WHERE 1 = 1
@@ -115,9 +114,10 @@
 
     <!-- add by wangjun 2018.6.23 查看订单明细 -->
     <select id="queryDetail" resultType="cn.bitflash.trade.UserTradeBean">
-        select b.realname,a.id,a.price,a.quantity,a.uid,a.create_time
+        select b.realname,a.id,a.price,a.quantity,a.uid,a.create_time,tp.poundage
         from
         user_trade a
+        left join trade_poundage tp on tp.user_trade_id = a.id
         left join user_info b on a.uid = b.uid
         <where>
             1 = 1
@@ -220,5 +220,15 @@
 
     <select id="getBystate" resultType="cn.bitflash.trade.UserTradeEntity">
         select id,uid,state from user_trade where state=#{state}
+    </select>
+
+    <!-- add by wangjun 20180816 查询已完成订单-->
+    <select id="selectFinishOrder" resultType="cn.bitflash.trade.UserTradeJoinBuyEntity">
+        select uth.price as price,uth.sell_quantity as quantity,uth.finish_time as finishTime,'0' tradeState,uth.state,ui.nickname from user_trade_history uth
+        left join user_info ui on ui.uid = uth.sell_uid where state = '4' and uth.sell_uid = #{uid}
+        UNION
+        select ubh.price,ubh.quantity,ubh.finish_time as finishTime,'1' tradeState,ui.nickname,ubh.sell_state as state from user_buy_history ubh
+        left join user_info ui on ui.uid = ubh.sell_uid
+        where 1 = 1 and sell_state = '6' and ubh.sell_uid = #{uid} order by finishTime asc limit #{pageNum},#{pageTotal}
     </select>
 </mapper>

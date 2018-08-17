@@ -53,12 +53,6 @@ public class ApiAppealController {
     @Autowired
     private UserTradeConfigService userTradeConfigService;
 
-    /**
-     * @param quantity 发送
-     * @author 1.查询赠送对象是否存在，若不存在返回code=1错误
-     * 2.向user_account表中，扣除发送用户的余额，并向接收者添加余额
-     * 3.向user_send表中添加赠送记录
-     * 4.向user_brokeage表中添加手续费记录
-    public R userSend(@RequestParam String quantity, @RequestParam String uuid, @RequestParam String user_pwd , @LoginUser UserEntity user) {
+
 
 }

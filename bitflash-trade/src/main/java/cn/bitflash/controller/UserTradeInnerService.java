@@ -2,10 +2,12 @@ package cn.bitflash.controller;
 
 import cn.bitflash.login.UserGTCidEntity;
 import cn.bitflash.service.UserAccountService;
+import cn.bitflash.service.UserBuyService;
 import cn.bitflash.service.UserTradeHistoryService;
 import cn.bitflash.service.UserTradeService;
 import cn.bitflash.trade.UserAccountBean;
 import cn.bitflash.trade.UserAccountEntity;
+import cn.bitflash.trade.UserBuyEntity;
 import cn.bitflash.trade.UserTradeEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,9 @@ public class UserTradeInnerService {
     UserTradeHistoryService userTradeHistoryService;
     @Autowired
     UserAccountService userAccountService;
+
+    @Autowired
+    UserBuyService userBuyService;
 
     @PostMapping("/selectTradeHistoryIncome")
     public Map<String, Object> selectTradeHistoryIncome(@RequestBody Map<String, Object> map) {
@@ -62,4 +67,14 @@ public class UserTradeInnerService {
         }
         return null;
     }
+
+    @PostMapping("selectOneBuy")
+    public UserBuyEntity selectOneBuy(@RequestBody Map<String ,Object> map){
+        List<UserBuyEntity> buys = userBuyService.selectByMap(map);
+        if(buys !=null && buys.size()>0){
+            return buys.get(0);
+        }
+        return null;
+    }
+
 }

@@ -53,6 +53,8 @@ public class ApiAppealController {
     @Autowired
     private UserTradeConfigService userTradeConfigService;
 
+		return R.ok();
+    }
 
 
 }

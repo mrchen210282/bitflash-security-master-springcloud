@@ -7,6 +7,7 @@ import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserInfoService;
 import cn.bitflash.service.UserPayPwdService;
 import cn.bitflash.service.UserPayUrlService;
+import cn.bitflash.trade.UserBuyEntity;
 import cn.bitflash.trade.UserTradeEntity;
 import cn.bitflash.user.ImgForm;
 import cn.bitflash.user.UserInfoEntity;
@@ -23,8 +24,8 @@ import sun.misc.BASE64Decoder;
 
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -189,9 +190,15 @@ public class ApiUserPayUrlController {
      */
     @Login
     @PostMapping("getPayMessage")
-    public R getPayMessage(@RequestParam("accountId") String accountId) {
-        UserTradeEntity tradeEntity = tradeFeign.selectOneTrade(new ModelMap("id", accountId));
-        String uid = tradeEntity.getUid();
+    public R getPayMessage(@RequestParam("accountId") String accountId,@RequestParam("type") String type) {
+        String uid = null;
+        if(type. equals("1")){
+            UserTradeEntity tradeEntity = tradeFeign.selectOneTrade(new ModelMap("id", accountId));
+            uid = tradeEntity.getUid();
+        }else if(type.equals("2")){
+            UserBuyEntity userBuyEntity = tradeFeign.selectOneBuy(new ModelMap("id", accountId));
+            uid = userBuyEntity.getUid();
+        }
         List<UserPayUrlEntity> payUrlEntities = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>()
                 .eq("uid", uid).eq("img_type", 1)
                 .or().eq("uid", uid).eq("img_type", 2)
@@ -199,23 +206,20 @@ public class ApiUserPayUrlController {
         if (payUrlEntities == null || payUrlEntities.size() == 0) {
             return R.error("未设置支付信息");
         }
-        Map<String, Object> map = new HashMap<>();
-        map.put("wxpay", 0);
-        map.put("alipay", 0);
-        map.put("cnypay", 0);
+        List<Map<String,Object>> list = new ArrayList<>();
         payUrlEntities.stream().forEach(u -> {
             if (u.getImgType().equals("1")) {
-                map.put("wxpay", 1);
+                list.add(new ModelMap("name","微信").addAttribute("type",1));
             }
             if (u.getImgType().equals("2")) {
-                map.put("alipay", 1);
+                list.add(new ModelMap("name","支付宝").addAttribute("type",2));
             }
             if (u.getImgType().equals("5")) {
-                map.put("cny", 1);
+                list.add(new ModelMap("name","银行卡").addAttribute("type",5));
             }
         });
 
-        return R.ok().put("url", map).put("uid", uid);
+        return R.ok().put("url", list).put("uid", uid);
     }
 
     /**
@@ -233,11 +237,13 @@ public class ApiUserPayUrlController {
         } else {
             payUrlEntity = userPayUrlService.selectOne(new EntityWrapper<UserPayUrlEntity>().eq("uid", uid).eq("img_type", imgType));
         }
-        if(payUrlEntity == null){
+        if (payUrlEntity == null) {
             return R.error("未上传收款信息");
         }
-
-        return R.ok(payUrlEntity.getImgUrl());
+        if (payUrlEntity.getName() != null && payUrlEntity.getAccount() != null) {
+            return R.ok().put("url", payUrlEntity.getImgUrl()).put("name", payUrlEntity.getName()).put("account", payUrlEntity.getAccount());
+        }
+        return R.ok().put("url", payUrlEntity.getImgUrl());
     }
 
 }

@@ -18,4 +18,6 @@ public interface UserBuyService extends IService<UserBuyEntity> {
     void addBuyMessage(UserBuyEntity userBuyEntity, String uid);
 
     List<UserBuyBean> selectBuyList(String uid);
+
+    List<UserBuyBean> selectAppealList(String uid);
 }

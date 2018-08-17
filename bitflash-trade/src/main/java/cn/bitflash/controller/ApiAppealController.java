@@ -2,17 +2,12 @@ package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
+import cn.bitflash.annotation.UserAccount;
 import cn.bitflash.feignInterface.LoginFeign;
 import cn.bitflash.feignInterface.UserFeign;
 import cn.bitflash.login.UserEntity;
-import cn.bitflash.service.UserAccountService;
-import cn.bitflash.service.UserBrokerageService;
-import cn.bitflash.service.UserSendService;
-import cn.bitflash.service.UserTradeConfigService;
-import cn.bitflash.trade.UserAccountEntity;
-import cn.bitflash.trade.UserBrokerageEntity;
-import cn.bitflash.trade.UserSendEntity;
-import cn.bitflash.trade.UserTradeConfigEntity;
+import cn.bitflash.service.*;
+import cn.bitflash.trade.*;
 import cn.bitflash.user.UserPayPwdEntity;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -25,43 +20,80 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author gao
  */
 @RestController
-@RequestMapping("/api" )
+@RequestMapping("/api/appeal" )
 public class ApiAppealController {
 
     @Autowired
-    private UserSendService userSendService;
+    private UserBuyService userBuyService;
 
     @Autowired
-    private UserFeign userFeign;
-
-    @Autowired
-    private LoginFeign loginFeign;
-
-    @Autowired
-    private UserBrokerageService userBrokerageService;
-
-    @Autowired
-    private UserAccountService userAccountService;
-
+    private UserBuyHistoryService userBuyHistoryService;
     @Autowired
     private UserTradeConfigService userTradeConfigService;
 
     /**
-     * @param quantity 发送
-     * @author 1.查询赠送对象是否存在，若不存在返回code=1错误
-     * 2.向user_account表中，扣除发送用户的余额，并向接收者添加余额
-     * 3.向user_send表中添加赠送记录
-     * 4.向user_brokeage表中添加手续费记录
+     * ---------------订单页----------------
      */
-    public R userSend(@RequestParam String quantity, @RequestParam String uuid, @RequestParam String user_pwd , @LoginUser UserEntity user) {
-        return R.ok();
+
+    @Login
+    @PostMapping("showlist")
+    public R showNeedMessage(@LoginUser UserEntity user) {
+        List<UserBuyBean> userBuyEntities = userBuyService.selectAppealList(user.getUid());
+        List<UserBuyBean> userBuyEntitiesList = new LinkedList<UserBuyBean>();
+        for(UserBuyBean userBuyBean :userBuyEntities){
+            userBuyBean.setState("申诉中");
+            userBuyEntitiesList.add(userBuyBean);
+        }
+
+        return R.ok().put("userBuyEntitiesList", userBuyEntitiesList);
+    }
+
+    @Login
+    @PostMapping("appealMessage")
+    public R appealMessage(@RequestParam("id") String id) {
+        UserBuyHistoryBean userBuyHistoryBean = userBuyHistoryService.selectBuyHistory(id);
+
+        Map<String,Float> map = this.poundage(id);
+
+        return R.ok().put("userBuyHistoryBean",userBuyHistoryBean).put("totalQuantity",map.get("totalQuantity")).put("price",map.get("price")).put("buyQuantity",map.get("buyQuantity")).put("totalMoney",map.get("totalMoney"));
+    }
+
+    /**
+     * ----------------------------手续费+订单数量------------------------
+     *
+     */
+    public Map<String,Float> poundage(String id){
+        UserBuyEntity userBuy = userBuyService.selectById(Integer.parseInt(id));
+
+        DecimalFormat df = new DecimalFormat("#########.##" );
+        //交易数量
+        Float buyQuantity = Float.parseFloat(df.format(userBuy.getQuantity()));
+        //手续费比率
+        Float poundage = userTradeConfigService.selectOne(new EntityWrapper<UserTradeConfigEntity>().eq("remark", "交易手续费")).getPoundage();
+        //Float poundage = Float.parseFloat(df.format(poundagePer));
+        //手续费数量
+        Float totalPoundage = buyQuantity*poundage;
+        //实际交易总数量
+        Float totalQuantity = buyQuantity+totalPoundage;
+        //单价
+        Float price = userBuy.getPrice();
+        //总价格
+        Float totalMoney = buyQuantity*(price);
+
+        Map<String,Float> map = new HashMap<String,Float>();
+        map.put("buyQuantity",buyQuantity);
+        map.put("poundage",poundage);
+        map.put("totalPoundage",totalPoundage);
+        map.put("totalQuantity",totalQuantity);
+        map.put("price",price);
+        map.put("totalMoney",totalMoney);
+        return map;
     }
 
 }

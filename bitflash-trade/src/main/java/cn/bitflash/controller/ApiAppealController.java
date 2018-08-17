@@ -38,7 +38,7 @@ public class ApiAppealController {
     private UserTradeConfigService userTradeConfigService;
 
     /**
-     * ---------------¶©µ¥Ò³----------------
+     * ---------------è®¢å•----------------
      */
 
     @Login
@@ -47,7 +47,7 @@ public class ApiAppealController {
         List<UserBuyBean> userBuyEntities = userBuyService.selectAppealList(user.getUid());
         List<UserBuyBean> userBuyEntitiesList = new LinkedList<UserBuyBean>();
         for(UserBuyBean userBuyBean :userBuyEntities){
-            userBuyBean.setState("ÉêËßÖĞ");
+            userBuyBean.setState("ç”³è¯‰ä¸­");
             userBuyEntitiesList.add(userBuyBean);
         }
 
@@ -65,25 +65,25 @@ public class ApiAppealController {
     }
 
     /**
-     * ----------------------------ÊÖĞø·Ñ+¶©µ¥ÊıÁ¿------------------------
+     * ----------------------------æ‰‹ç»­è´¹------------------------
      *
      */
     public Map<String,Float> poundage(String id){
         UserBuyEntity userBuy = userBuyService.selectById(Integer.parseInt(id));
 
         DecimalFormat df = new DecimalFormat("#########.##" );
-        //½»Ò×ÊıÁ¿
+        //äº¤æ˜“æ•°é‡
         Float buyQuantity = Float.parseFloat(df.format(userBuy.getQuantity()));
-        //ÊÖĞø·Ñ±ÈÂÊ
-        Float poundage = userTradeConfigService.selectOne(new EntityWrapper<UserTradeConfigEntity>().eq("remark", "½»Ò×ÊÖĞø·Ñ")).getPoundage();
+        //æ‰‹ç»­è´¹æ¯”ç‡
+        Float poundage = userTradeConfigService.selectOne(new EntityWrapper<UserTradeConfigEntity>().eq("remark", "äº¤æ˜“æ‰‹ç»­è´¹")).getPoundage();
         //Float poundage = Float.parseFloat(df.format(poundagePer));
-        //ÊÖĞø·ÑÊıÁ¿
+        //æ‰‹ç»­è´¹æ•°é‡
         Float totalPoundage = buyQuantity*poundage;
-        //Êµ¼Ê½»Ò××ÜÊıÁ¿
+        //å®é™…äº¤æ˜“æ€»æ•°é‡
         Float totalQuantity = buyQuantity+totalPoundage;
-        //µ¥¼Û
+        //å•ä»·
         Float price = userBuy.getPrice();
-        //×Ü¼Û¸ñ
+        //æ€»ä»·æ ¼
         Float totalMoney = buyQuantity*(price);
 
         Map<String,Float> map = new HashMap<String,Float>();

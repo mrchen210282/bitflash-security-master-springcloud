@@ -153,9 +153,14 @@ public class ApiUserTradeController {
         if (null != userAccountEntity) {
             returnMap = userTradeService.selectTrade(param);
             //可卖份数 = 可用额度 / 100
+            if(userAccount.getAvailableAssets().compareTo(new BigDecimal(0)) <= -1) {
+                userAccount.getAvailableAssets().divide(new BigDecimal(Common.))
+            } else {
 
+            }
 
-            returnMap.put("availableAssets", BigDecimalUtils.DecimalFormat(userAccount.getAvailableAssets()));
+            String availableAssets = Common.decimalFormat(Double.valueOf(userAccount.getAvailableAssets().toString()));
+            returnMap.put("availableAssets", availableAssets);
         }
         return R.ok().put("userAccount", returnMap);
     }

@@ -1,5 +1,6 @@
 package cn.bitflash.utils;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Random;
 
@@ -58,6 +59,8 @@ public class Common {
 	//------------------finish----------------------
 	// 最小价格
 	public final static String MIN_PRICE = "0.33";
+
+	public final static
 
 	// 最小价格
 	public final static Double MULTIPLE = 10d;
@@ -119,5 +122,25 @@ public class Common {
 	public static int randomUtil(){
 		Random random = new Random();
 		return 10000000 + random.nextInt(90000000);
+	}
+
+	/**
+	 *
+	 * 保留两个小数，并不进行四舍五入
+	 * 100.00 > 100.00
+	 * 100.10 > 100.10
+	 * 100.01 > 100.01
+	 * @param 要格式化的值
+	 * @return
+	 */
+	public static String decimalFormat(double d) {
+		if(d <= 0) {
+			DecimalFormat df = new DecimalFormat("######0.00");
+			String str = df.format(d);
+			return str;
+		} else {
+			return null;
+		}
+
 	}
 }

@@ -24,7 +24,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/appeal" )
-public class ApiAppealController {
+public class ApiComplaintController {
 
     @Autowired
     private UserBuyService userBuyService;

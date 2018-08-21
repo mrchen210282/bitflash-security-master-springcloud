@@ -69,7 +69,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         Map<String, Object> map = new HashMap<>(2);
         Long time = System.currentTimeMillis();
         map.put("token", AESTokenUtil.setToken(time.toString(),tokenEntity.getToken()));
-        map.put("expire", time);
+        map.put("expire", time+"bkc");
 
         UserGTCidEntity gt = userGTCidService.selectOne(new EntityWrapper<UserGTCidEntity>().eq("uid", user.getUid()));
 

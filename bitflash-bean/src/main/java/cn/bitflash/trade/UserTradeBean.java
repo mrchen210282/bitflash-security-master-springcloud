@@ -76,6 +76,17 @@ public class UserTradeBean extends UserTradeEntity implements Serializable {
     //交易总额
     private BigDecimal tradeAmount;
 
+    //扣除交易额=交易额+手续费
+    private BigDecimal deductAmount;
+
+    public BigDecimal getDeductAmount() {
+        return deductAmount;
+    }
+
+    public void setDeductAmount(BigDecimal deductAmount) {
+        this.deductAmount = deductAmount;
+    }
+
     public String getPurchaseMobile() {
         return purchaseMobile;
     }

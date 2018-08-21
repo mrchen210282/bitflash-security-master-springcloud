@@ -6,10 +6,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import cn.bitflash.service.*;
 import cn.bitflash.trade.*;
@@ -126,7 +123,7 @@ public class ApiUserTradeController {
 
             Integer count = userTradeService.selectTradeCount(map);
 
-            param.put("availableAssets", BigDecimalUtils.DecimalFormat(userAccount.getAvailableAssets()));
+            param.put("availableAssets", Common.decimalFormat(Double.parseDouble(userAccount.getAvailableAssets().toString())));
             param.put("userAccountList", listEntity);
             param.put("totalRecord", count);
         } else {
@@ -526,12 +523,22 @@ public class ApiUserTradeController {
             param.put("id", orderId);
 
             UserTradeBean userTradeBean = userTradeService.queryDetail(param);
+
+            TradePoundageEntity tradePoundageEntity = tradePoundageService.selectById(orderId);
+
+            if(null != tradePoundageEntity) {
+                //扣除交易额=交易额+手续费
+                BigDecimal deductAmount = userTradeBean.getQuantity().add(tradePoundageEntity.getPoundage());
+                userTradeBean.setDeductAmount(deductAmount);
+            }
+
             if(null != userTradeBean) {
                 //数量
                 BigDecimal quantity = userTradeBean.getQuantity();
                 //价格
                 BigDecimal price = userTradeBean.getPrice();
                 BigDecimal tradeAmount = price.multiply(quantity);
+
                 userTradeBean.setTradeAmount(tradeAmount);
             }
             return R.ok().put("userTradeBean", userTradeBean);

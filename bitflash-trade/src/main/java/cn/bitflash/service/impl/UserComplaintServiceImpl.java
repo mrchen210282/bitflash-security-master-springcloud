@@ -4,6 +4,7 @@ import cn.bitflash.dao.UserComplaintDao;
 import cn.bitflash.dao.UserTradeDao;
 import cn.bitflash.service.UserComplaintService;
 import cn.bitflash.service.UserTradeService;
+import cn.bitflash.trade.UserComplaintBean;
 import cn.bitflash.trade.UserComplaintEntity;
 import cn.bitflash.trade.UserTradeBean;
 import cn.bitflash.trade.UserTradeEntity;
@@ -25,5 +26,10 @@ import java.util.Map;
  */
 @Service("userComplaintService" )
 public class UserComplaintServiceImpl extends ServiceImpl<UserComplaintDao, UserComplaintEntity> implements UserComplaintService {
+
+    @Override
+    public UserComplaintBean getComplaintMessage(String id){
+        return baseMapper.getComplaintMessage(id);
+    }
 
 }

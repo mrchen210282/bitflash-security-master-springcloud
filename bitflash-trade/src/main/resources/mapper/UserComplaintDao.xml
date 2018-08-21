@@ -3,4 +3,13 @@
 
 <mapper namespace="cn.bitflash.dao.UserComplaintDao">
 
+    <select id="getComplaintMessage" resultType="cn.bitflash.trade.UserComplaintBean">
+        select
+        uh.*,uc.*,ui.mobile,ui.nickname
+        from user_complaint uc
+        left join user_buy_history uh on uh.user_buy_id = uc.order_id
+        left join user_info ui on uh.purchase_id = ui.uid
+        where uc.order_id = #{id}
+    </select>
+
 </mapper>

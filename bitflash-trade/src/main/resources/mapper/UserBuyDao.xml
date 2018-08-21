@@ -26,11 +26,35 @@
 
 
     <select id="selectAppealList" resultType="cn.bitflash.trade.UserBuyBean">
-        select
-        ub.* ,ui.nickname,uh.sell_uid,uh.purchase_uid,uh.purchase_state,uh.sell_state
-        from user_buy ub left join user_info ui on(ub.uid=ui.uid)
-        left join user_buy_history uh on ub.id = uh.user_buy_id
-        where ub.uid=#{uid} and ub.state = '9' or uh.sell_uid=#{uid} and ub.state='9'
+    SELECT
+	ui.nickname as nickname,
+	uh.price as userPrice,
+	uh.quantity as userQuantity,
+	uc.order_state as orderState,
+	uc.complaint_state as complaintState
+FROM
+	user_complaint uc
+LEFT JOIN user_buy_history uh ON uc.order_id = uh.user_buy_id
+LEFT JOIN user_info ui ON uc.complaint_uid = ui.uid
+WHERE
+	uh.purchase_uid = #{uid}
+	OR uh.sell_uid = #{uid}
+UNION
+SELECT
+	ui.nickname as nickname,
+	uth.price as userPrice,
+	uth.purchase_quantity as userQuantity,
+	uc.order_state as orderState,
+	uc.complaint_state as complaintState
+FROM
+	user_complaint uc
+LEFT JOIN user_trade_history uth ON uc.order_id = uth.user_trade_id
+LEFT JOIN user_info ui ON uc.complaint_uid = ui.uid
+WHERE
+	uth.purchase_uid = #{uid}
+	OR uth.sell_uid = #{uid}
+limit #{pages},6
+
     </select>
 
 </mapper>

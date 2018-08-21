@@ -367,7 +367,7 @@ public class ApiWanToBuyController {
 
     /** ------------------5--------------------
      *
-     *  --------------点击申诉中(待收币)---------
+     *  --------------点击申诉(待收币)---------
      */
     @PostMapping("appeal")
     public R appeal(@RequestParam("id") String id){
@@ -378,11 +378,11 @@ public class ApiWanToBuyController {
 
         //添加订单到申诉表中
         UserComplaintEntity userComplaintEntity =  new UserComplaintEntity();
-        userComplaintEntity.setComplaintState(userBuyEntity.getState());
+        userComplaintEntity.setComplaintState("1");
         userComplaintEntity.setComplaintUid(userBuyEntity.getUid());
         userComplaintEntity.setCreateTime(new Date());
         userComplaintEntity.setOrderId(userBuyEntity.getId());
-        userComplaintEntity.setOrderState(STATE_BUY_CANCELFIISH);
+        userComplaintEntity.setOrderState("0");
         userComplaintService.insert(userComplaintEntity);
 
         return R.ok().put("code","0");
@@ -394,14 +394,14 @@ public class ApiWanToBuyController {
      */
     @Login
     @PostMapping("PayCoin")
-    public R PayCoin(@RequestParam("id") String id, @RequestParam("pwd") String pwd,  @LoginUser UserEntity user) {
+    public R payCoin(@RequestParam("id") String id, @RequestParam("pwd") String pwd,  @LoginUser UserEntity user) {
 
         //判断交易密码是否正确
         UserPayPwdEntity userPayPwdEntity = userFeign.selectUserPayPwd(new ModelMap("uid", user.getUid()));
         //交易密码不正确
-        //if (!pwd.equals(userPayPwdEntity.getPayPassword())) {
-        //    return R.ok().put("code", "3");
-        //}
+        if (!pwd.equals(userPayPwdEntity.getPayPassword())) {
+            return R.ok().put("code", "3");
+        }
 
         //手续费
         Map<String,Float> map = this.poundage(id);

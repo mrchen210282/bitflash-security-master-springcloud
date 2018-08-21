@@ -16,13 +16,8 @@
 
 package cn.bitflash.trade;
 
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * 用户
@@ -33,11 +28,19 @@ public class UserBuyBean extends UserBuyEntity implements Serializable  {
 
     private String nickname;
 
+    private BigDecimal userPrice;
+
+    private String userQuantity;
+
+    private String  orderState;
+
+    private String complaintState;
+
+    private String sellUid;
+
     private String sellState;
 
     private String purchaseUid;
-
-    private String  sellUid;
 
     private String purchaseState;
 
@@ -47,6 +50,46 @@ public class UserBuyBean extends UserBuyEntity implements Serializable  {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public BigDecimal getUserPrice() {
+        return userPrice;
+    }
+
+    public void setUserPrice(BigDecimal userPrice) {
+        this.userPrice = userPrice;
+    }
+
+    public String getUserQuantity() {
+        return userQuantity;
+    }
+
+    public void setUserQuantity(String userQuantity) {
+        this.userQuantity = userQuantity;
+    }
+
+    public String getOrderState() {
+        return orderState;
+    }
+
+    public void setOrderState(String orderState) {
+        this.orderState = orderState;
+    }
+
+    public String getComplaintState() {
+        return complaintState;
+    }
+
+    public void setComplaintState(String complaintState) {
+        this.complaintState = complaintState;
+    }
+
+    public String getSellUid() {
+        return sellUid;
+    }
+
+    public void setSellUid(String sellUid) {
+        this.sellUid = sellUid;
     }
 
     public String getSellState() {
@@ -63,14 +106,6 @@ public class UserBuyBean extends UserBuyEntity implements Serializable  {
 
     public void setPurchaseUid(String purchaseUid) {
         this.purchaseUid = purchaseUid;
-    }
-
-    public String getSellUid() {
-        return sellUid;
-    }
-
-    public void setSellUid(String sellUid) {
-        this.sellUid = sellUid;
     }
 
     public String getPurchaseState() {

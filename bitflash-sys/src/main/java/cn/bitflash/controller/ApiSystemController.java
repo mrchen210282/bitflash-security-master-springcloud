@@ -82,7 +82,6 @@ public class ApiSystemController {
 
     @PostMapping("getTime")
     public R getTime(){
-        System.out.println("请求");
         return R.ok(String.valueOf(System.currentTimeMillis()));
     }
 

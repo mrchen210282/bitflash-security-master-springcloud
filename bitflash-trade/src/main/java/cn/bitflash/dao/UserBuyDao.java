@@ -18,6 +18,6 @@ public interface UserBuyDao extends BaseMapper<UserBuyEntity> {
 
     List<UserBuyBean> selectBuyList(String uid);
 
-    List<UserBuyBean> selectAppealList(String uid);
+    List<UserBuyBean> selectAppealList(String uid, Integer pages);
 
 }

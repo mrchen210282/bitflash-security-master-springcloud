@@ -21,5 +21,5 @@ public interface UserBuyService extends IService<UserBuyEntity> {
 
     List<UserBuyBean> selectBuyList(String uid);
 
-    List<UserBuyBean> selectAppealList(String uid);
+    List<UserBuyBean> selectAppealList(String uid, Integer pages);
 }

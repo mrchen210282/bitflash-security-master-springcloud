@@ -42,7 +42,7 @@ public class UserBuyServiceImpl extends ServiceImpl<UserBuyDao, UserBuyEntity> i
     }
 
     @Override
-    public List<UserBuyBean> selectAppealList(String uid){
-        return baseMapper.selectBuyList(uid);
+    public List<UserBuyBean> selectAppealList(String uid, Integer pages){
+        return baseMapper.selectAppealList(uid, pages);
     }
 }

@@ -105,7 +105,7 @@ public class ApiUserTradeController {
     }
 
     /**
-     * 订单列表(卖出)
+     * 订单列表(卖入)
      *
      * @param userAccount
      * @param pageNum     第几页
@@ -121,7 +121,7 @@ public class ApiUserTradeController {
             map.put("uid", userAccount.getUid());
             map.put("pageNum", new Integer(pageNum));
             map.put("pageTotal", new Integer(pageTotal));
-            // 查询自身用户信息
+            // 查询交易
             List<UserTradeEntity> listEntity = userTradeService.queryTrade(map);
 
             Integer count = userTradeService.selectTradeCount(map);
@@ -152,6 +152,9 @@ public class ApiUserTradeController {
         Map<String, Object> returnMap = null;
         if (null != userAccountEntity) {
             returnMap = userTradeService.selectTrade(param);
+            //可卖份数 = 可用额度 / 100
+
+
             returnMap.put("availableAssets", BigDecimalUtils.DecimalFormat(userAccount.getAvailableAssets()));
         }
         return R.ok().put("userAccount", returnMap);
@@ -715,11 +718,16 @@ public class ApiUserTradeController {
 //        String token2=AESTokenUtil.getToken(time,token);
 //        System.out.println("解密数据"+token2);
         //System.out.println(randomUtil());
-        double a = 100.00;
+        double a = 100.10;
 
-        System.out.println(a % 100 == 0);
+        //System.out.println(a % 100 == 0);
 
         ApiUserTradeController api = new ApiUserTradeController();
+        DecimalFormat df = new DecimalFormat("######0.00");
+        String str = df.format(a);
+        System.out.println(str);
+
+
     }
 
 }

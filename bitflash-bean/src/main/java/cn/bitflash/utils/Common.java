@@ -60,7 +60,7 @@ public class Common {
 	// 最小价格
 	public final static String MIN_PRICE = "0.33";
 
-	public final static
+	public final static Double MIN_NUMBER = 100d;
 
 	// 最小价格
 	public final static Double MULTIPLE = 10d;
@@ -134,7 +134,7 @@ public class Common {
 	 * @return
 	 */
 	public static String decimalFormat(double d) {
-		if(d <= 0) {
+		if(d > 0) {
 			DecimalFormat df = new DecimalFormat("######0.00");
 			String str = df.format(d);
 			return str;

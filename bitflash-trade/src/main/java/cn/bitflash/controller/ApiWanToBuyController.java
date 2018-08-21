@@ -367,7 +367,7 @@ public class ApiWanToBuyController {
 
     /** ------------------5--------------------
      *
-     *  --------------点击申诉中(待收币)---------
+     *  --------------点击申诉(待收币)---------
      */
     @PostMapping("appeal")
     public R appeal(@RequestParam("id") String id){

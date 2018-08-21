@@ -29,41 +29,41 @@
         order by price asc
     </select>
 
-    <select id="selectTrade" resultType="cn.bitflash.trade.UserTradeBean">
-        select
-        realname,nickname,id,price,quantity,ut.uid,create_time,state FROM user_trade ut
-        LEFT JOIN user_info ui ON ut.uid = ui.uid WHERE 1 = 1
-        AND <![CDATA[ut.state <> '3']]> and <![CDATA[ ut.state <>'4']]>
-        AND <![CDATA[ut.uid <> #{uid}]]> ORDER BY state desc,price asc limit
-        #{pageNum},#{pageTotal}
-    </select>
-
-    <!--<select id="selectTrade" resultType="cn.bitflash.trade.UserTradeEntity">-->
+    <!--<select id="selectTrade" resultType="cn.bitflash.trade.UserTradeBean">-->
         <!--select-->
-        <!--realname,nickname,id,price,quantity,uid,create_time,state,isMySelf from (SELECT-->
-        <!--b.realname,b.nickname,ut.id,ut.price,ut.quantity,ut.uid,ut.create_time,ut.state,"1"-->
-        <!--AS isMySelf FROM user_trade ut-->
-        <!--LEFT JOIN user_info b ON ut.uid = b.uid WHERE 1 = 1-->
+        <!--realname,nickname,id,price,quantity,ut.uid,create_time,state FROM user_trade ut-->
+        <!--LEFT JOIN user_info ui ON ut.uid = ui.uid WHERE 1 = 1-->
         <!--AND <![CDATA[ut.state <> '3']]> and <![CDATA[ ut.state <>'4']]>-->
-        <!--AND ut.uid = #{uid}-->
-        <!--UNION-->
-        <!--SELECT-->
-        <!--ui.realname,ui.nickname,ut.id,ut.price,ut.quantity,ut.uid,ut.create_time,uth.state,"0" AS isMySelf-->
-        <!--from user_trade_history uth-->
-        <!--left join user_trade ut on uth.user_trade_id = ut.id-->
-        <!--left join user_info ui on ut.uid = ui.uid-->
-        <!--where uth.state = '6'-->
-        <!--and uth.purchase_uid = #{uid}-->
-        <!--UNION-->
-        <!--SELECT-->
-        <!--b.realname,b.nickname,a.id,a.price,a.quantity,a.uid,a.create_time,a.state,"0" AS isMySelf-->
-        <!--FROM user_trade a-->
-        <!--LEFT JOIN user_info b ON a.uid = b.uid-->
-        <!--WHERE 1 = 1-->
-        <!--AND <![CDATA[ a.uid <> #{uid} ]]> AND a.state in( '1','5')) t-->
-        <!--where 1 ORDER BY state desc,isMyself desc,price asc limit-->
+        <!--AND <![CDATA[ut.uid <> #{uid}]]> ORDER BY state desc,price asc limit-->
         <!--#{pageNum},#{pageTotal}-->
     <!--</select>-->
+
+    <select id="selectTrade" resultType="cn.bitflash.trade.UserTradeBean">
+        select
+        realname,nickname,id,price,quantity,uid,create_time,state,isMySelf from (SELECT
+        b.realname,b.nickname,ut.id,ut.price,ut.quantity,ut.uid,ut.create_time,ut.state,"1"
+        AS isMySelf FROM user_trade ut
+        LEFT JOIN user_info b ON ut.uid = b.uid WHERE 1 = 1
+        AND <![CDATA[ut.state <> '3']]> and <![CDATA[ ut.state <>'4']]>
+        AND ut.uid = #{uid}
+        UNION
+        SELECT
+        ui.realname,ui.nickname,ut.id,ut.price,ut.quantity,ut.uid,ut.create_time,uth.state,"0" AS isMySelf
+        from user_trade_history uth
+        left join user_trade ut on uth.user_trade_id = ut.id
+        left join user_info ui on ut.uid = ui.uid
+        where uth.state = '6'
+        and uth.purchase_uid = #{uid}
+        UNION
+        SELECT
+        b.realname,b.nickname,a.id,a.price,a.quantity,a.uid,a.create_time,a.state,"0" AS isMySelf
+        FROM user_trade a
+        LEFT JOIN user_info b ON a.uid = b.uid
+        WHERE 1 = 1
+        AND <![CDATA[ a.uid <> #{uid} ]]> AND a.state in( '1','5')) t
+        where 1 ORDER BY state desc,isMyself desc,price asc limit
+        #{pageNum},#{pageTotal}
+    </select>
 
     <select id="selectTradeCount" resultType="java.lang.Integer">
         select count(*) from
@@ -114,6 +114,27 @@
 
     <!-- add by wangjun 2018.6.23 查看订单明细 -->
     <select id="queryDetail" resultType="cn.bitflash.trade.UserTradeBean">
+        select b.realname,a.id,a.price,a.quantity,a.uid,a.create_time,tp.poundage,b.mobile,
+        (select b.nickname from user_trade_history uth where uth.purchase_uid = a.uid and a.id = uth.user_trade_id) purchaseName,
+        (select b.mobile from user_trade_history uth where uth.purchase_uid = a.uid and a.id = uth.user_trade_id) purchaseMobile
+        from
+        user_trade a
+        left join trade_poundage tp on tp.user_trade_id = a.id
+        left join user_info b on a.uid = b.uid
+        <where>
+            1 = 1
+            <if test="id != null and id != ''">
+                and a.id = #{id}
+            </if>
+            <if test="state != null and state != ''">
+                and a.state = #{state}
+            </if>
+        </where>
+    </select>
+
+
+    <!-- add by wangjun 2018.8.21 查看购买人明细 -->
+    <select id="queryPoundageDetail" resultType="cn.bitflash.trade.UserTradeBean">
         select b.realname,a.id,a.price,a.quantity,a.uid,a.create_time,tp.poundage,b.mobile
         from
         user_trade a

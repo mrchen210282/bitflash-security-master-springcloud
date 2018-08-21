@@ -56,7 +56,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     @Override
     public Map<String, Object> login(LoginForm form) {
         UserEntity user = queryByMobile(form.getMobile());
-        Assert.isNull(user, "手机号或密码错误" );
+        //Assert.isNull(user, "手机号或密码错误" );
 
         // 密码错误
         if (!user.getPassword().equals(form.getPassword())) {

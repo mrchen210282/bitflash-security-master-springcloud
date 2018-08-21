@@ -58,10 +58,15 @@ public class ApiLoginInterceptor extends HandlerInterceptorAdapter {
         if (tokenEntity == null || tokenEntity.getExpireTime().getTime() < System.currentTimeMillis()) {
             throw new RRException("登录过期，请重新登录" );
         }*/
-        String userMobile = tokenEntity.getMobile();
-        if (!userMobile.equals(mobile)) {
+        try{
+            String userMobile = tokenEntity.getMobile();
+            if (!userMobile.equals(mobile)) {
+                throw new RRException("token信息与用户信息不符");
+            }
+        }catch (NullPointerException e){
             throw new RRException("token信息与用户信息不符");
         }
+
         //设置userId到request里，后续根据userId，获取用户信息
         request.setAttribute(UID, tokenEntity.getUid());
         return true;

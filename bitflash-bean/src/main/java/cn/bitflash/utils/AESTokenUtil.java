@@ -45,7 +45,7 @@ public class AESTokenUtil {
     public static void main(String[] args) {
         Long time = System.currentTimeMillis();
         System.out.println("time:" + time.toString());
-        String str = AESTokenUtil.setToken(time.toString(),"aa6ad604703a4c72b853e994a1ca2bc9");
+        String str = AESTokenUtil.setToken(time.toString(),"cff5b04d4812402ea49584f7c55b0d3e");
         System.out.println(str);
     }
 

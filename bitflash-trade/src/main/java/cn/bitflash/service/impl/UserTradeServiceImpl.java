@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cn.bitflash.trade.UserTradeJoinBuyEntity;
+import cn.bitflash.dao.TradePoundageDao;
+import cn.bitflash.dao.UserTradeConfigDao;
+import cn.bitflash.trade.*;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.RedisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +16,6 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 
 import cn.bitflash.dao.UserTradeDao;
-import cn.bitflash.trade.UserTradeBean;
-import cn.bitflash.trade.UserTradeEntity;
 import cn.bitflash.service.UserTradeService;
 
 /**
@@ -28,6 +28,9 @@ public class UserTradeServiceImpl extends ServiceImpl<UserTradeDao, UserTradeEnt
 
     @Autowired
     private RedisUtils redisUtils;
+
+    @Autowired
+    private UserTradeConfigDao userTradeConfigDao;
 
     /**
      * 计算出参考价格
@@ -59,6 +62,12 @@ public class UserTradeServiceImpl extends ServiceImpl<UserTradeDao, UserTradeEnt
                 } else {
                     // 1.如果没有卖出数量则默认参考价格为0.33
                     map.put("divide", Common.MIN_PRICE);
+                }
+
+                //查询手续费
+                UserTradeConfigEntity userTradeConfigEntity = userTradeConfigDao.selectById("1");
+                if(null != userTradeConfigEntity) {
+                    map.put("poundage",userTradeConfigEntity.getPoundage());
                 }
             } catch (Exception e) {
                 e.printStackTrace();

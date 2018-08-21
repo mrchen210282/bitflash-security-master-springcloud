@@ -61,6 +61,11 @@ public class UserTradeBean extends UserTradeEntity implements Serializable {
     private String purchaseName;
 
     /**
+     * 购买人手机
+     */
+    private String purchaseMobile;
+
+    /**
      * 卖出人姓名
      */
     private String sellName;
@@ -70,6 +75,14 @@ public class UserTradeBean extends UserTradeEntity implements Serializable {
 
     //交易总额
     private BigDecimal tradeAmount;
+
+    public String getPurchaseMobile() {
+        return purchaseMobile;
+    }
+
+    public void setPurchaseMobile(String purchaseMobile) {
+        this.purchaseMobile = purchaseMobile;
+    }
 
     public String getNickname() {
         return nickname;

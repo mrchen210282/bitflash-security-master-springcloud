@@ -54,6 +54,7 @@ public class ApiUserComplaintController {
             userTradeEntity.setState(Common.STATE_COMPLAINT);
             userTradeService.insertOrUpdate(userTradeEntity);
 
+            //添加申拆
             userComplaintEntity = new UserComplaintEntity();
             userComplaintEntity.setComplaintState(complaintState);
             userComplaintEntity.setComplaintUid(uid);

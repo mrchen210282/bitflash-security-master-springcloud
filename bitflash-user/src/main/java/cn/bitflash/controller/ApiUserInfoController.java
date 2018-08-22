@@ -8,10 +8,12 @@ import cn.bitflash.feignInterface.SysFeign;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserInfoService;
+import cn.bitflash.service.UserPayPwdService;
 import cn.bitflash.service.UserRelationService;
 import cn.bitflash.trade.UserAccountEntity;
 import cn.bitflash.user.UserInfoEntity;
 import cn.bitflash.user.UserInvitationCodeEntity;
+import cn.bitflash.user.UserPayPwdEntity;
 import cn.bitflash.user.UserRelationEntity;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
@@ -41,6 +43,8 @@ public class ApiUserInfoController {
     @Autowired
     private SysFeign sysfeign;
 
+    @Autowired
+    private UserPayPwdService userPayPwdService;
 
     /**
      * 获取用户体系信息
@@ -119,6 +123,11 @@ public class ApiUserInfoController {
         }
     }
 
+    /**
+     * 获取用户信息判断
+     * @param uid
+     * @return
+     */
     @Login
     @PostMapping("getUserPower")
     public R getUserPower(@RequestAttribute(ApiLoginInterceptor.UID) String uid){
@@ -130,6 +139,34 @@ public class ApiUserInfoController {
         map.put("isAuthentication",infoEntity.getIsAuthentication());
         //是否是体系内的
         map.put("isInvitation",infoEntity.getIsInvitation());
+        //用户昵称
+        map.put("nickName",infoEntity.getNickname());
         return R.ok(map);
+    }
+
+    /**
+     * 获取钱包地址
+     * @param userEntity
+     * @return
+     */
+    @Login
+    @PostMapping("getWalletToken")
+    public R getWalletToken(@LoginUser UserEntity userEntity){
+        return R.ok(userEntity.getUuid());
+    }
+
+    /**
+     * 验证用户是否设置交易密码
+     * @param uid
+     * @return
+     */
+    @Login
+    @PostMapping("validatePwd")
+    public R validatePwd(@RequestAttribute(ApiLoginInterceptor.UID) String uid){
+        UserPayPwdEntity payPwdEntity = userPayPwdService.selectOne(new EntityWrapper<UserPayPwdEntity>().eq("uid",uid));
+        if(payPwdEntity!=null && StringUtils.isNotBlank(payPwdEntity.getPayPassword())){
+            return R.ok();
+        }
+        return R.error();
     }
 }

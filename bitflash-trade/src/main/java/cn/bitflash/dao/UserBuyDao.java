@@ -5,7 +5,6 @@ import cn.bitflash.trade.UserBuyEntity;
 import cn.bitflash.trade.UserBuyMessageBean;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -19,6 +18,6 @@ public interface UserBuyDao extends BaseMapper<UserBuyEntity> {
 
     List<UserBuyBean> selectBuyList(String uid);
 
-    List<UserBuyBean> selectAppealList(@Param("uid")String uid, @Param("pages")Integer pages);
+    List<UserBuyBean> selectAppealList(@Param("uid") String uid, @Param("pages") Integer pages);
 
 }

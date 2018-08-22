@@ -24,7 +24,7 @@ import java.math.BigDecimal;
  *
  * @author eric
  */
-public class UserBuyBean extends UserBuyEntity implements Serializable  {
+public class UserBuyBean extends UserBuyEntity implements Serializable {
 
     private String nickname;
 
@@ -32,9 +32,9 @@ public class UserBuyBean extends UserBuyEntity implements Serializable  {
 
     private String userQuantity;
 
-    private String  orderState;
+    private String orderState;
 
-    private String  orderId;
+    private String orderId;
 
     private String complaintState;
 

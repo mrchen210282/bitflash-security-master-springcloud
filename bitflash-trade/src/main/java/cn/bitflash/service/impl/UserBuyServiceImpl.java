@@ -8,14 +8,13 @@ import cn.bitflash.trade.UserBuyMessageBean;
 import cn.bitflash.utils.Common;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
 import java.util.List;
 
 import static cn.bitflash.utils.Common.STATE_BUY_CANCEL;
 
-@Service("userBuyService" )
+@Service("userBuyService")
 public class UserBuyServiceImpl extends ServiceImpl<UserBuyDao, UserBuyEntity> implements UserBuyService {
 
 
@@ -40,12 +39,12 @@ public class UserBuyServiceImpl extends ServiceImpl<UserBuyDao, UserBuyEntity> i
     }
 
     @Override
-    public List<UserBuyBean> selectBuyList(String uid){
+    public List<UserBuyBean> selectBuyList(String uid) {
         return baseMapper.selectBuyList(uid);
     }
 
     @Override
-    public List<UserBuyBean> selectAppealList(String uid, Integer pages){
+    public List<UserBuyBean> selectAppealList(String uid, Integer pages) {
         return baseMapper.selectAppealList(uid, pages);
     }
 }

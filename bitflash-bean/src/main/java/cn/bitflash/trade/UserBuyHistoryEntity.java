@@ -29,8 +29,8 @@ import java.util.Date;
  *
  * @author eric
  */
-@TableName("user_buy_history" )
-public class UserBuyHistoryEntity implements Serializable  {
+@TableName("user_buy_history")
+public class UserBuyHistoryEntity implements Serializable {
 
     /**
      * id
@@ -76,7 +76,7 @@ public class UserBuyHistoryEntity implements Serializable  {
     /**
      * 完成时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8" )
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date finishTime;
 
     public Integer getId() {

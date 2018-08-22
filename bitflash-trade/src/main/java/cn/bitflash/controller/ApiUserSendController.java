@@ -34,7 +34,7 @@ import java.util.*;
  * @author gao
  */
 @RestController
-@RequestMapping("/api" )
+@RequestMapping("/api")
 public class ApiUserSendController {
 
     @Autowired
@@ -63,8 +63,8 @@ public class ApiUserSendController {
      * 4.向user_brokeage表中添加手续费记录
      */
     @Login
-    @PostMapping("userSend" )
-    public R userSend(@RequestParam String quantity, @RequestParam String uuid, @RequestParam String user_pwd , @LoginUser UserEntity user) {
+    @PostMapping("userSend")
+    public R userSend(@RequestParam String quantity, @RequestParam String uuid, @RequestParam String user_pwd, @LoginUser UserEntity user) {
 
         //交易状态：‘-1’余额不足错误；‘0’操作成功；‘1’用户不存在；‘2’其他错误；‘3’交易数量错误；‘4’交易密码错误
         int code = 2;
@@ -82,8 +82,8 @@ public class ApiUserSendController {
 
 
         //如果交易密码不正确,返回错误
-        UserPayPwdEntity pwd = userFeign.selectUserPayPwd(new ModelMap("uid",user.getUid()));
-        if(!user_pwd .equals(pwd.getPayPassword())){
+        UserPayPwdEntity pwd = userFeign.selectUserPayPwd(new ModelMap("uid", user.getUid()));
+        if (!user_pwd.equals(pwd.getPayPassword())) {
             // 交易密码不正确
             code = 4;
             return R.ok().put("code", code);
@@ -92,15 +92,15 @@ public class ApiUserSendController {
 
         //赠送数量
         //String 转换成 float
-        DecimalFormat df = new DecimalFormat("#########.##" );
+        DecimalFormat df = new DecimalFormat("#########.##");
         Float quantitys = Float.parseFloat(quantity);
         //赠送数量转换成BigDecimal
         BigDecimal user_quantity = new BigDecimal(quantitys);
 
 
         //手续费
-        UserTradeConfigEntity userTradeConfig = userTradeConfigService.selectOne(new EntityWrapper<UserTradeConfigEntity>().eq("remark","发送手续费"));
-        Float poundage =userTradeConfig.getPoundage();
+        UserTradeConfigEntity userTradeConfig = userTradeConfigService.selectOne(new EntityWrapper<UserTradeConfigEntity>().eq("remark", "发送手续费"));
+        Float poundage = userTradeConfig.getPoundage();
 
         UserBrokerageEntity userbroker = userBrokerageService.selectOne(new EntityWrapper<UserBrokerageEntity>().eq("id", 1));
         //2.5%手续费
@@ -189,7 +189,7 @@ public class ApiUserSendController {
      * @author
      */
     @Login
-    @PostMapping("record" )
+    @PostMapping("record")
     public R record(@LoginUser UserEntity user, @RequestParam int state) {
 
         //state = 1 :发送

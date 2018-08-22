@@ -17,9 +17,9 @@
     </insert>
 
     <select id="searchTrade" resultType="cn.bitflash.trade.UserTradeEntity">
-        select a.id,price,quantity,a.uid,a.create_time,a.state from
-        user_trade
-        a
+        select ui.realname,ui.nickname,a.id,a.price,a.quantity,ui.uid,a.create_time,a.state from
+        user_trade a
+        left join user_info ui on a.uid = ui.uid
         <where>
             1 = 1
             <if test='state != null and state != ""'>
@@ -29,23 +29,36 @@
         order by price asc
     </select>
 
-    <!--<select id="selectTrade" resultType="cn.bitflash.trade.UserTradeBean">-->
-        <!--select-->
-        <!--realname,nickname,id,price,quantity,ut.uid,create_time,state FROM user_trade ut-->
-        <!--LEFT JOIN user_info ui ON ut.uid = ui.uid WHERE 1 = 1-->
-        <!--AND <![CDATA[ut.state <> '3']]> and <![CDATA[ ut.state <>'4']]>-->
-        <!--AND <![CDATA[ut.uid <> #{uid}]]> ORDER BY state desc,price asc limit-->
-        <!--#{pageNum},#{pageTotal}-->
-    <!--</select>-->
+    <select id="searchTradeCount" resultType="java.lang.Integer">
+        select count(*) from
+        user_trade a
+        left join user_info ui on a.uid = ui.uid
+        <where>
+            1 = 1
+            <if test='state != null and state != ""'>
+                and a.state = '1'
+            </if>
+        </where>
+        order by price asc
+    </select>
 
     <select id="selectTrade" resultType="cn.bitflash.trade.UserTradeBean">
+        select
+        realname,nickname,id,price,quantity,ut.uid,create_time,state FROM user_trade ut
+        LEFT JOIN user_info ui ON ut.uid = ui.uid WHERE 1 = 1
+        AND <![CDATA[ut.state <> '3']]> and <![CDATA[ ut.state <>'4']]>
+        AND <![CDATA[ut.uid <> #{uid}]]> ORDER BY state desc,price asc limit
+        #{pageNum},#{pageTotal}
+    </select>
+
+    <select id="selectOrderTrade" resultType="cn.bitflash.trade.UserTradeBean">
         select
         realname,nickname,id,price,quantity,uid,create_time,state,isMySelf from (SELECT
         b.realname,b.nickname,ut.id,ut.price,ut.quantity,ut.uid,ut.create_time,ut.state,"1"
         AS isMySelf FROM user_trade ut
         LEFT JOIN user_info b ON ut.uid = b.uid WHERE 1 = 1
         AND <![CDATA[ut.state <> '3']]> and <![CDATA[ ut.state <>'4']]>
-        AND ut.uid = #{uid}
+        AND <![CDATA[ut.uid <> #{uid}]]>
         UNION
         SELECT
         ui.realname,ui.nickname,ut.id,ut.price,ut.quantity,ut.uid,ut.create_time,uth.state,"0" AS isMySelf
@@ -65,26 +78,30 @@
         #{pageNum},#{pageTotal}
     </select>
 
-    <select id="selectTradeCount" resultType="java.lang.Integer">
+    <select id="selectOrderCount" resultType="java.lang.Integer">
         select count(*) from
         (
         SELECT
-        b.realname,
-        b.nickname,
-        a.id,
-        a.price,
-        a.quantity,
-        a.uid,
-        a.create_time,
-        a.state
-        FROM
-        user_trade a
-        LEFT JOIN user_info b ON a.uid =
-        b.uid
-        WHERE
-        1 = 1
-        AND <![CDATA[a.state <> '3']]> and <![CDATA[a.state <>'4']]>
-        AND  <![CDATA[a.uid <> #{uid}]]>
+        b.realname,b.nickname,ut.id,ut.price,ut.quantity,ut.uid,ut.create_time,ut.state,"1"
+        AS isMySelf FROM user_trade ut
+        LEFT JOIN user_info b ON ut.uid = b.uid WHERE 1 = 1
+        AND <![CDATA[ut.state <> '3']]> and  <![CDATA[ut.state <>'4']]>
+        AND <![CDATA[ut.uid <> #{uid}]]>
+        UNION
+        SELECT
+        ui.realname,ui.nickname,ut.id,ut.price,ut.quantity,ut.uid,ut.create_time,uth.state,"0" AS isMySelf
+        from user_trade_history uth
+        left join user_trade ut on uth.user_trade_id = ut.id
+        left join user_info ui on ut.uid = ui.uid
+        where uth.state = '6'
+        and uth.purchase_uid = #{uid}
+        UNION
+        SELECT
+        b.realname,b.nickname,a.id,a.price,a.quantity,a.uid,a.create_time,a.state,"0" AS isMySelf
+        FROM user_trade a
+        LEFT JOIN user_info b ON a.uid = b.uid
+        WHERE 1 = 1
+        AND <![CDATA[a.uid <> #{uid} ]]> AND a.state in( '1','5')
         ) t where 1 ORDER BY price asc
     </select>
 

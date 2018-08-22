@@ -86,6 +86,7 @@ public class UserTradeServiceImpl extends ServiceImpl<UserTradeDao, UserTradeEnt
         List<UserTradeEntity> list = baseMapper.selectTrade(param);
         return list;
     }
+
     @Override
     public void updateTrade(Map<String, Object> param) {
         baseMapper.updateTrade(param);

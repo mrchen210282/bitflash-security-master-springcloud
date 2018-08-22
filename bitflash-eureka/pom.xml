@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>bitflash-eureka</artifactId>
 
-    <name>eureka-server</name>
+    <name>bitflash-eureka</name>
     <description>eureka server(贝莱科技-注册中心)</description>
     <dependencies>
 

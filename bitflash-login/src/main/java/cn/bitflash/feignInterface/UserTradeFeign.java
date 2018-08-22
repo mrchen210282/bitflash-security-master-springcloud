@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.Map;
 
 
-@FeignClient(value="bitflsh-trade",fallbackFactory = UserTradeFallback.class)
+@FeignClient(value="bitflash-trade",fallbackFactory = UserTradeFallback.class)
 public interface UserTradeFeign {
 
     @PostMapping("/api/trade/inner/insert")

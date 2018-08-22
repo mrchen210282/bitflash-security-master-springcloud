@@ -79,6 +79,9 @@ public class TokenFilter extends ZuulFilter {
         if (url.indexOf("bitflash-sys/api/getTime") != -1) {
             return false;
         }
+        if (url.indexOf("bitflash-login/api/login/changePassword2" )!= -1) {
+            return false;
+        }
         return true;
     }
 
@@ -109,8 +112,8 @@ public class TokenFilter extends ZuulFilter {
             }
 
             String token = AESTokenUtil.getToken(secretTime, secretToken);
-            TokenEntity tokenEntity=redisUtils.get(token,TokenEntity.class);
-            if(tokenEntity==null){
+            TokenEntity tokenEntity = redisUtils.get(token, TokenEntity.class);
+            if (tokenEntity == null) {
                 throw new RRException("token错误/失效");
             }
             session.setAttribute(TOKEN, token);

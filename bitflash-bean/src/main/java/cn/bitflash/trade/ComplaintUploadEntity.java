@@ -1,5 +1,6 @@
 package cn.bitflash.trade;
 
+import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
 import java.io.Serializable;
@@ -12,7 +13,7 @@ import java.io.Serializable;
 @TableName("complaint_upload" )
 public class ComplaintUploadEntity implements Serializable {
 
-    //
+    @TableId
     private Integer complaintId;
 
     //上传图片地址

@@ -28,7 +28,7 @@ import java.util.Date;
  *
  * @author eric
  */
-@TableName("user_send" )
+@TableName("user_send")
 public class UserSendEntity implements Serializable {
 
     /**
@@ -55,7 +55,7 @@ public class UserSendEntity implements Serializable {
     /**
      * 创建时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8" )
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date sendTime;
 
     public int getId() {

@@ -2,12 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="cn.bitflash.dao.UserSendDao">
-<!--     <resultMap id="buyMessage" type="cn.bitflash.entity.UserEntity"> -->
-<!--         <result property="uid" column="uid"/> -->
-<!--         <result property="mobile" column="mobile"/> -->
-<!--         <result property="password" column="password"/> -->
-<!--         <result property="uuid" column="uuid"/> -->
-<!--     </resultMap> -->
 
     <select id="selectaccount" resultType="cn.bitflash.trade.UserSendEntity">
         select us.send_uid , us.sendee_uid ,us.quantity, us.send_time, tu.uuid

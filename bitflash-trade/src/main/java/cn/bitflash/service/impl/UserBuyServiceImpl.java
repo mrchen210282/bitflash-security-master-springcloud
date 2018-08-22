@@ -5,6 +5,7 @@ import cn.bitflash.service.UserBuyService;
 import cn.bitflash.trade.UserBuyBean;
 import cn.bitflash.trade.UserBuyEntity;
 import cn.bitflash.trade.UserBuyMessageBean;
+import cn.bitflash.utils.Common;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,7 @@ import java.util.List;
 
 import static cn.bitflash.utils.Common.STATE_BUY_CANCEL;
 
-@Service("userBuyService" )
+@Service("userBuyService")
 public class UserBuyServiceImpl extends ServiceImpl<UserBuyDao, UserBuyEntity> implements UserBuyService {
 
 
@@ -29,6 +30,7 @@ public class UserBuyServiceImpl extends ServiceImpl<UserBuyDao, UserBuyEntity> i
 
     @Override
     public void addBuyMessage(UserBuyEntity userBuyEntity, String uid) {
+        userBuyEntity.setId(Common.randomUtil());
         userBuyEntity.setUid(uid);
         userBuyEntity.setCreateTime(new Date());
         userBuyEntity.setState(STATE_BUY_CANCEL);
@@ -37,12 +39,12 @@ public class UserBuyServiceImpl extends ServiceImpl<UserBuyDao, UserBuyEntity> i
     }
 
     @Override
-    public List<UserBuyBean> selectBuyList(String uid){
+    public List<UserBuyBean> selectBuyList(String uid) {
         return baseMapper.selectBuyList(uid);
     }
 
     @Override
-    public List<UserBuyBean> selectAppealList(String uid, Integer pages){
+    public List<UserBuyBean> selectAppealList(String uid, Integer pages) {
         return baseMapper.selectAppealList(uid, pages);
     }
 }

@@ -9,14 +9,15 @@ import org.springframework.stereotype.Service;
 
 /**
  * 申拆
+ *
  * @author wangjun
  * @date 2018年8月16日 下午4:48:48
  */
-@Service("userComplaintService" )
+@Service("userComplaintService")
 public class UserComplaintServiceImpl extends ServiceImpl<UserComplaintDao, UserComplaintEntity> implements UserComplaintService {
 
     @Override
-    public UserComplaintBean getComplaintMessage(String id){
+    public UserComplaintBean getComplaintMessage(String id) {
         return baseMapper.getComplaintMessage(id);
     }
 

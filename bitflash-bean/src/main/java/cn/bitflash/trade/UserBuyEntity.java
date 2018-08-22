@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
 import java.util.Date;
 
-@TableName("user_buy" )
+@TableName("user_buy")
 public class UserBuyEntity implements Serializable {
 
     private static final long serialVersionUID = 1798150948428590399L;
@@ -25,14 +25,14 @@ public class UserBuyEntity implements Serializable {
     //状态
     private String state;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     //取消时间
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date cancelTime;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date payTime;
 
     public Integer getId() {

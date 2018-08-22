@@ -23,7 +23,7 @@ import java.io.Serializable;
  *
  * @author eric
  */
-public class UserBuyHistoryBean extends UserBuyHistoryEntity implements Serializable  {
+public class UserBuyHistoryBean extends UserBuyHistoryEntity implements Serializable {
 
     private String nickname;
 

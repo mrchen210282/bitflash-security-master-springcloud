@@ -34,6 +34,8 @@ public class UserBuyBean extends UserBuyEntity implements Serializable  {
 
     private String  orderState;
 
+    private String  orderId;
+
     private String complaintState;
 
     private String sellUid;
@@ -114,5 +116,13 @@ public class UserBuyBean extends UserBuyEntity implements Serializable  {
 
     public void setPurchaseState(String purchaseState) {
         this.purchaseState = purchaseState;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 }

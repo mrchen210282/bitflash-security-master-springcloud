@@ -26,34 +26,38 @@
 
 
     <select id="selectAppealList" resultType="cn.bitflash.trade.UserBuyBean">
-    SELECT
-	ui.nickname as nickname,
-	uh.price as userPrice,
-	uh.quantity as userQuantity,
-	uc.order_state as orderState,
-	uc.complaint_state as complaintState
-FROM
-	user_complaint uc
-LEFT JOIN user_buy_history uh ON uc.order_id = uh.user_buy_id
-LEFT JOIN user_info ui ON uc.complaint_uid = ui.uid
-WHERE
-	uh.purchase_uid = #{uid}
-	OR uh.sell_uid = #{uid}
-UNION
-SELECT
-	ui.nickname as nickname,
-	uth.price as userPrice,
-	uth.purchase_quantity as userQuantity,
-	uc.order_state as orderState,
-	uc.complaint_state as complaintState
-FROM
-	user_complaint uc
-LEFT JOIN user_trade_history uth ON uc.order_id = uth.user_trade_id
-LEFT JOIN user_info ui ON uc.complaint_uid = ui.uid
-WHERE
-	uth.purchase_uid = #{uid}
-	OR uth.sell_uid = #{uid}
-limit #{pages},6
+        SELECT
+            ui.nickname as nickname,
+            uh.price as userPrice,
+            uh.quantity as userQuantity,
+            uc.order_state as orderState,
+            uc.complaint_state as complaintState,
+            uc.create_time as createTime,
+            uc.order_id as orderId
+        FROM
+            user_complaint uc
+        LEFT JOIN user_buy_history uh ON uc.order_id = uh.user_buy_id
+        LEFT JOIN user_info ui ON uc.complaint_uid = ui.uid
+        WHERE
+            uh.purchase_uid = #{uid}
+            OR uh.sell_uid = #{uid}
+        UNION
+        SELECT
+            ui.nickname as nickname,
+            uth.price as userPrice,
+            uth.purchase_quantity as userQuantity,
+            uc.order_state as orderState,
+            uc.complaint_state as complaintState,
+            uc.create_time as createTime,
+            uc.order_id as orderId
+        FROM
+            user_complaint uc
+        LEFT JOIN user_trade_history uth ON uc.order_id = uth.user_trade_id
+        LEFT JOIN user_info ui ON uc.complaint_uid = ui.uid
+        WHERE
+            uth.purchase_uid = #{uid}
+            OR uth.sell_uid = #{uid}
+        limit #{pages},6
 
     </select>
 

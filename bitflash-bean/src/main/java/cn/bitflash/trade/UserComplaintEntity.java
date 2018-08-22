@@ -1,5 +1,6 @@
 package cn.bitflash.trade;
 
+import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -12,11 +13,15 @@ import java.util.Date;
 @TableName("user_complaint" )
 public class UserComplaintEntity {
 
+    @TableId
     //订单id
     private Integer orderId;
 
     //申拆人uid
     private String complaintUid;
+
+    //联系人uid
+    private String contactsUid;
 
     //申拆状态
     private String complaintState;
@@ -65,5 +70,13 @@ public class UserComplaintEntity {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public String getContactsUid() {
+        return contactsUid;
+    }
+
+    public void setContactsUid(String contactsUid) {
+        this.contactsUid = contactsUid;
     }
 }

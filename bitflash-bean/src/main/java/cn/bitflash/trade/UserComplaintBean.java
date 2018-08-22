@@ -13,23 +13,22 @@ import java.util.Date;
 @TableName("user_complaint" )
 public class UserComplaintBean extends UserComplaintEntity implements Serializable {
 
-    private String mobile;
+    private String contactsUname;
+    private String contactsMobile;
 
-    private String username;
-
-    public String getMobile() {
-        return mobile;
+    public String getContactsUname() {
+        return contactsUname;
     }
 
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
+    public void setContactsUname(String contactsUname) {
+        this.contactsUname = contactsUname;
     }
 
-    public String getUsername() {
-        return username;
+    public String getContactsMobile() {
+        return contactsMobile;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setContactsMobile(String contactsMobile) {
+        this.contactsMobile = contactsMobile;
     }
 }

@@ -5,8 +5,10 @@ import cn.bitflash.service.UserBuyService;
 import cn.bitflash.trade.UserBuyBean;
 import cn.bitflash.trade.UserBuyEntity;
 import cn.bitflash.trade.UserBuyMessageBean;
+import cn.bitflash.utils.Common;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
 import java.util.List;
@@ -29,6 +31,7 @@ public class UserBuyServiceImpl extends ServiceImpl<UserBuyDao, UserBuyEntity> i
 
     @Override
     public void addBuyMessage(UserBuyEntity userBuyEntity, String uid) {
+        userBuyEntity.setId(Common.randomUtil());
         userBuyEntity.setUid(uid);
         userBuyEntity.setCreateTime(new Date());
         userBuyEntity.setState(STATE_BUY_CANCEL);

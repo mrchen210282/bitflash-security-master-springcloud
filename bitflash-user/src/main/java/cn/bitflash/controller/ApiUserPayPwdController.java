@@ -53,24 +53,4 @@ public class ApiUserPayPwdController {
 
     }
 
-    /**
-     * 更新交易密码
-     * @param oldPwd 旧密码
-     * @param newPwd 新密码
-     * @author chen
-     */
-    @Login
-    @PostMapping("updatePayPwd" )
-    public R updatePayPwd(@PayPassword UserPayPwdEntity payPwd, @RequestParam String oldPwd, @RequestParam String newPwd) {
-        if (payPwd != null) {
-            if (oldPwd.equals(payPwd.getPayPassword())) {
-                payPwd.setPayPassword(newPwd);
-                userPayPwdService.updateById(payPwd);
-                return R.ok();
-            } else {
-                return R.error("原始密码不正确" );
-            }
-        }
-        return R.error("未初始化密码" );
-    }
 }

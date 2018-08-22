@@ -3,12 +3,45 @@
 
 <mapper namespace="cn.bitflash.dao.UserBuyHistoryDao">
 
-    <select id="selectBuyHistory" resultType="cn.bitflash.trade.UserBuyHistoryBean">
-        select
-        ub.* ,ui.nickname,ui.mobile,uh.*
-        from user_buy ub left join user_info ui on(ub.uid=ui.uid)
-        left join user_buy_history uh on ub.id = uh.user_buy_id
-        where uh.user_buy_id = #{id}
+	<select id="selectBuyHistory" resultType="cn.bitflash.trade.UserBuyHistoryBean">
+	SELECT
+		ub.*,uh.*,
+		(
+			SELECT
+				ui.nickname
+			FROM
+				user_info ui
+			WHERE
+				uh.purchase_uid=ui.uid
+		) AS purUname,
+		(
+			SELECT
+				ui.nickname
+			FROM
+				user_info ui
+			WHERE
+				uh.sell_uid=ui.uid
+		) AS sellUname,
+		(
+			SELECT
+				ui.mobile
+			FROM
+				user_info ui
+			WHERE
+				uh.purchase_uid=ui.uid
+		) AS purMobile,
+		(
+			SELECT
+				ui.mobile
+			FROM
+				user_info ui
+			WHERE
+				uh.sell_uid=ui.uid
+		) AS sellMobile
+	FROM
+		user_buy_history uh
+	left join user_buy ub on ub.id = uh.user_buy_id
+	where uh.user_buy_id = #{id}
     </select>
 
 </mapper>

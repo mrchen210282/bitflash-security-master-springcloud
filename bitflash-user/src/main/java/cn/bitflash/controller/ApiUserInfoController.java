@@ -141,6 +141,8 @@ public class ApiUserInfoController {
         map.put("isInvitation",infoEntity.getIsInvitation());
         //用户昵称
         map.put("nickName",infoEntity.getNickname());
+        //是否修改过昵称
+        map.put("nicklock",infoEntity.getNicklock());
         return R.ok(map);
     }
 

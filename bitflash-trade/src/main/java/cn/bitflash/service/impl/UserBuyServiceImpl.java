@@ -31,6 +31,7 @@ public class UserBuyServiceImpl extends ServiceImpl<UserBuyDao, UserBuyEntity> i
     @Override
     public void addBuyMessage(UserBuyEntity userBuyEntity, String uid) {
         userBuyEntity.setId(Common.randomUtil());
+        System.out.println(userBuyEntity.getId());
         userBuyEntity.setUid(uid);
         userBuyEntity.setCreateTime(new Date());
         userBuyEntity.setState(STATE_BUY_CANCEL);

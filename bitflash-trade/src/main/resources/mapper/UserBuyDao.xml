@@ -7,7 +7,7 @@
         select
         ub.* ,ui.nickname
         from user_buy ub left join user_info ui on(ub.uid=ui.uid)
-        where ub.uid!=#{uid} and state ='0'
+        where ub.uid!=#{uid} and state ='1'
         limit #{pages},6
     </select>
 

@@ -7,7 +7,7 @@
 	SELECT
 		ucc.*, (
 			SELECT
-				ui.realname
+				ui.nickname
 			FROM
 				user_info ui
 			WHERE
@@ -23,7 +23,7 @@
 		) AS contactsMobile
 	FROM
 		user_complaint ucc
-	where uc.order_id = #{id}
+	where ucc.order_id = #{id}
     </select>
 
 </mapper>

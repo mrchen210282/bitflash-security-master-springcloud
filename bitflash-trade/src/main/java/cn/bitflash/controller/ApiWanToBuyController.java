@@ -92,7 +92,6 @@ public class ApiWanToBuyController {
     @Login
     @PostMapping("showBuyMessage")
     public R showNeedMessage(@LoginUser UserEntity user, @RequestParam("pages") String pages, @UserAccount UserAccountEntity userAccount) {
-
         List<UserBuyMessageBean> ub = userBuyService.getBuyMessage(user.getUid(), Integer.valueOf(pages));
         if (ub == null || ub.size() < 0) {
             return R.error("暂时没有求购信息");
@@ -123,10 +122,10 @@ public class ApiWanToBuyController {
             if (STATE_BUY_CANCEL.equals(state)) {
                 state = "可撤销";
             }
-            if (STATE_BUY_PAYMONEY.equals(state)) {
+            if (STATE_BUY_ACCMONEY.equals(state)) {
                 state = "待收款";
             }
-            if (STATE_BUY_ACCMONEY.equals(state)) {
+            if (STATE_BUY_PAYMONEY.equals(state)) {
                 state = "待付款";
             }
             if (STATE_BUY_PAYCOIN.equals(state)) {
@@ -183,8 +182,8 @@ public class ApiWanToBuyController {
         //交易状态:'1'资金不足,'2'订单不存在
         String code = "0";
 
-        UserBuyEntity userBuy = userBuyService.selectById(Integer.parseInt(id));
-        if (userBuy == null) {
+        UserBuyEntity userBuy = userBuyService.selectOne(new EntityWrapper<UserBuyEntity>().eq("id",id));
+        if (userBuy == null || !userBuy.getState().equals(STATE_BUY_CANCEL)) {
             return R.ok().put("code", "2");
         }
 
@@ -233,8 +232,7 @@ public class ApiWanToBuyController {
     @PostMapping("showBuyMessagePage")
     public R showBuyMessagePage(@RequestParam("id") String id) {
         //订单详情
-        UserBuyEntity userBuy = userBuyService.selectById(Integer.parseInt(id));
-
+        UserBuyEntity userBuy = userBuyService.selectOne(new EntityWrapper<UserBuyEntity>().eq("id",id));
         //判定订单不存在
         if (userBuy == null) {
             return R.ok().put("code", "订单不存在");
@@ -252,24 +250,30 @@ public class ApiWanToBuyController {
      */
     @PostMapping("checkOrder")
     public R checkOrder(@RequestParam("id") String id) {
+        Object userBean = new Object();
 
         UserBuyHistoryBean userBuyHistoryBean = userBuyHistoryService.selectBuyHistory(id);
 
         //判定订单不存在
         if (userBuyHistoryBean == null) {
-            return R.ok().put("code", "订单不存在");
+            //订单详情
+            UserBuyEntity userBuy = userBuyService.selectOne(new EntityWrapper<UserBuyEntity>().eq("id",id));
+            userBean = userBuy;
+            if(userBuy == null){
+                return R.ok().put("code", "订单不存在");
+            }
         }
-
+        userBean = userBuyHistoryBean;
         Map<String, Float> map = this.poundage(id);
 
-        return R.ok().put("userBuyHistoryBean", userBuyHistoryBean).put("totalQuantity", map.get("totalQuantity")).put("price", map.get("price")).put("buyQuantity", map.get("buyQuantity")).put("totalMoney", map.get("totalMoney"));
+        return R.ok().put("userBean", userBean).put("totalQuantity", map.get("totalQuantity")).put("price", map.get("price")).put("buyQuantity", map.get("buyQuantity")).put("totalMoney", map.get("totalMoney"));
     }
 
     /**-------------------------------------------------点击操作----------------------------------------------------------*/
 
     /**
      * -----------------1-----------------
-     * <p>
+     *
      * --------------点击撤销--------------
      */
     @PostMapping("cancel")
@@ -305,9 +309,6 @@ public class ApiWanToBuyController {
             return R.error(TRADEMISS);
         }
 
-        if (userBuyEntity.getState() != "2") {
-            return R.error(FAIL);
-        }
 
         try {
             //设置支付时间
@@ -394,6 +395,8 @@ public class ApiWanToBuyController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
     public R appeal(@RequestParam("id") String id) {
         try {
+
+            UserBuyHistoryEntity userBuyHistoryEntity = userBuyHistoryService.selectOne(new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id",id));
             //修改订单状态
             UserBuyEntity userBuyEntity = userBuyService.selectById(Integer.parseInt(id));
             userBuyEntity.setState(STATE_BUY_APPEAL);
@@ -403,8 +406,9 @@ public class ApiWanToBuyController {
             UserComplaintEntity userComplaintEntity = new UserComplaintEntity();
             userComplaintEntity.setComplaintState("1");
             userComplaintEntity.setComplaintUid(userBuyEntity.getUid());
+            userComplaintEntity.setContactsUid(userBuyHistoryEntity.getSellUid());
             userComplaintEntity.setCreateTime(new Date());
-            userComplaintEntity.setOrderId(userBuyEntity.getId());
+            userComplaintEntity.setOrderId(Integer.parseInt(id));
             userComplaintEntity.setOrderState("0");
             userComplaintService.insert(userComplaintEntity);
         } catch (Exception e) {
@@ -428,9 +432,9 @@ public class ApiWanToBuyController {
         UserPayPwdEntity userPayPwdEntity = userFeign.selectUserPayPwd(new ModelMap("uid", user.getUid()));
 
         //交易密码不正确
-        if (!pwd.equals(userPayPwdEntity.getPayPassword())) {
-            return R.ok().put("code", "3");
-        }
+        //if (!pwd.equals(userPayPwdEntity.getPayPassword())) {
+        //    return R.ok().put("code", "3");
+        //}
 
         //手续费
         Map<String, Float> map = this.poundage(id);
@@ -524,8 +528,8 @@ public class ApiWanToBuyController {
                 userAccountEntity.setAvailableAssets(userAccountEntity.getAvailableAssets().subtract(money));
                 userAccountService.update(userAccountEntity, new EntityWrapper<UserAccountEntity>().eq("uid", uid));
             } else {
+                userAccountEntity.setRegulateIncome(userAccountEntity.getRegulateIncome().subtract(money.subtract(userAccountEntity.getRegulateRelease())));
                 userAccountEntity.setRegulateRelease(new BigDecimal(0));
-                userAccountEntity.setRegulateIncome(userAccountEntity.getRegulateIncome().subtract(money));
                 userAccountEntity.setAvailableAssets(userAccountEntity.getAvailableAssets().subtract(money));
                 userAccountService.update(userAccountEntity, new EntityWrapper<UserAccountEntity>().eq("uid", uid));
             }

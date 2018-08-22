@@ -29,6 +29,14 @@ public class UserBuyHistoryBean extends UserBuyHistoryEntity implements Serializ
 
     private String mobile;
 
+    private String purUname;
+
+    private String sellUname;
+
+    private String purMobile;
+
+    private String sellMobile;
+
     public String getNickname() {
         return nickname;
     }
@@ -43,5 +51,37 @@ public class UserBuyHistoryBean extends UserBuyHistoryEntity implements Serializ
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
+    }
+
+    public String getPurUname() {
+        return purUname;
+    }
+
+    public void setPurUname(String purUname) {
+        this.purUname = purUname;
+    }
+
+    public String getSellUname() {
+        return sellUname;
+    }
+
+    public void setSellUname(String sellUname) {
+        this.sellUname = sellUname;
+    }
+
+    public String getPurMobile() {
+        return purMobile;
+    }
+
+    public void setPurMobile(String purMobile) {
+        this.purMobile = purMobile;
+    }
+
+    public String getSellMobile() {
+        return sellMobile;
+    }
+
+    public void setSellMobile(String sellMobile) {
+        this.sellMobile = sellMobile;
     }
 }

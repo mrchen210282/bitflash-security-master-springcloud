@@ -22,6 +22,9 @@ public class UserTradeJoinBuyEntity {
     //昵称
     private String nickname;
 
+    //交易状态0:买入,1:卖出
+    private String tradeType;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone="GMT+8" )
     private Date finishTime;
 

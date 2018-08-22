@@ -15,7 +15,6 @@ public class AESTokenUtil {
      */
     public static String getToken(String time, String str1) {
         //time为密匙解密，取22位长度
-        time = time + "bkc";
         //解密后的token
         String token = AES.aesDecrypt(str1, time);
         return token;
@@ -31,7 +30,6 @@ public class AESTokenUtil {
     //加密token
     public static String setToken(String time, String str1) {
         //time为密匙加密，取22位长度
-        time = time + "bkc";
         String token = AES.aesEncrypt(str1, time);
         return token;
     }

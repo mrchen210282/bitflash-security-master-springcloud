@@ -27,6 +27,7 @@ import cn.bitflash.service.UserGTCidService;
 import cn.bitflash.service.UserService;
 import cn.bitflash.utils.AES;
 import cn.bitflash.utils.AESTokenUtil;
+import cn.bitflash.utils.RedisUtils;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import common.validator.Assert;
@@ -44,6 +45,9 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     @Autowired
     private UserGTCidService userGTCidService;
+
+    @Autowired
+    private RedisUtils redisUtils;
 
     @Override
     public UserEntity queryByMobile(String mobile) {
@@ -65,10 +69,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
         // 获取登录token
         TokenEntity tokenEntity = tokenService.createToken(user);
+        redisUtils.set(tokenEntity.getToken(),tokenEntity,60*60*24*15);
 
         Map<String, Object> map = new HashMap<>(2);
-        Long time = System.currentTimeMillis();
-        map.put("token", AESTokenUtil.setToken(time.toString(),tokenEntity.getToken()));
+        String time = System.currentTimeMillis()+"bkc";
+        map.put("token", AESTokenUtil.setToken(time,tokenEntity.getToken()));
         map.put("expire", time);
 
         UserGTCidEntity gt = userGTCidService.selectOne(new EntityWrapper<UserGTCidEntity>().eq("uid", user.getUid()));

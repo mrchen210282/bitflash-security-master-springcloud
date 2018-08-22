@@ -1,5 +1,7 @@
 package cn.bitflash.config;
 
+import cn.bitflash.exception.RRException;
+import cn.bitflash.login.TokenEntity;
 import cn.bitflash.utils.AESTokenUtil;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
@@ -86,7 +88,6 @@ public class TokenFilter extends ZuulFilter {
         HttpServletRequest request = ctx.getRequest();
         String secretTime = request.getHeader(TIME);
         String secretToken = request.getHeader(TOKEN);
-        String mobile = request.getHeader(MOBILE);
         //如果header中不存在token，则从参数中获取token
         if (StringUtils.isBlank(secretTime)) {
             secretTime = request.getParameter(TIME);
@@ -96,8 +97,7 @@ public class TokenFilter extends ZuulFilter {
         }
         //token为空
         if (StringUtils.isBlank(secretTime) || StringUtils.isBlank(secretToken)) {
-            this.errorMessage(ctx, "token值不能为空");
-            return null;
+            throw new RRException("token不能为空");
         }
         try {
             HttpSession session = request.getSession();
@@ -107,18 +107,20 @@ public class TokenFilter extends ZuulFilter {
                 ctx.addZuulRequestHeader("Cookie", "SESSION=" + sessionBase64);
                 logger.info("Session Base64:{}", sessionBase64);
             }
-            session.setAttribute(Common.MOBILE, mobile);
+
             String token = AESTokenUtil.getToken(secretTime, secretToken);
+            TokenEntity tokenEntity=redisUtils.get(token,TokenEntity.class);
+            if(tokenEntity==null){
+                throw new RRException("token错误/失效");
+            }
             session.setAttribute(TOKEN, token);
         } catch (Exception e) {
-            this.errorMessage(ctx, "解密异常");
-            e.printStackTrace();
-            return null;
+            throw new RRException("token错误/失效");
         }
         return null;
     }
 
-    public void errorMessage(RequestContext ctx, String mess) {
+   /* public void errorMessage(RequestContext ctx, String mess) {
         HttpServletResponse response = ctx.getResponse();
         response.setCharacterEncoding("utf-8");  //设置字符集
         response.setContentType("text/html; charset=utf-8"); //设置相应格式
@@ -131,5 +133,5 @@ public class TokenFilter extends ZuulFilter {
             e.printStackTrace();
         }
         ctx.setResponse(response);
-    }
+    }*/
 }

@@ -62,8 +62,7 @@ public class LoginController {
     }
 
     /**
-     * 修改密码
-     *
+     * 找回密码
      * @param mobile
      * @param newPwd
      * @return

@@ -16,9 +16,15 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface UserTradeDao extends BaseMapper<UserTradeEntity> {
 
+    //交易列表(卖入)
     public List<UserTradeEntity> selectTrade(Map<String, Object> param);
 
     public Integer selectTradeCount(Map<String, Object> param);
+
+    //订单列表(卖入)
+    public List<UserTradeEntity> selectOrderTrade(Map<String, Object> param);
+
+    public Integer selectOrderTradeCount(Map<String, Object> param);
 
     public void updateTrade(Map<String, Object> param);
 

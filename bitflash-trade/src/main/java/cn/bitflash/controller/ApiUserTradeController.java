@@ -71,7 +71,7 @@ public class ApiUserTradeController {
     private TradePoundageService tradePoundageService;
 
     /**
-     * 卖入列表
+     * 交易列表(卖入)
      *
      * @param userAccount
      * @param pageNum     第几页
@@ -721,14 +721,14 @@ public class ApiUserTradeController {
 //        String token2=AESTokenUtil.getToken(time,token);
 //        System.out.println("解密数据"+token2);
         //System.out.println(randomUtil());
-        double a = 100.10;
+        double a = 1000000;
 
-        //System.out.println(a % 100 == 0);
+        System.out.println(a % 100d);
 
-        ApiUserTradeController api = new ApiUserTradeController();
-        DecimalFormat df = new DecimalFormat("######0.00");
-        String str = df.format(a);
-        System.out.println(str);
+//        ApiUserTradeController api = new ApiUserTradeController();
+//        DecimalFormat df = new DecimalFormat("######0.00");
+//        String str = df.format(a);
+//        System.out.println(str);
 
 
     }

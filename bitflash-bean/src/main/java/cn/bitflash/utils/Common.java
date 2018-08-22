@@ -12,8 +12,8 @@ public class Common {
 	// 卖出
 	public final static String STATE_SELL = "1";
 
-	// 购买
-	public final static String STATE_PURCHASE = "2";
+	// 购买业务设计原因已删除
+	//public final static String STATE_PURCHASE = "2";
 
 	// 撤消
 	public final static String STATE_CANCEL = "3";

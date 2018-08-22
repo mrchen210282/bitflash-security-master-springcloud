@@ -12,9 +12,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service("tradePoundageService" )
 public class TradePoundageServiceImpl extends ServiceImpl<TradePoundageDao, TradePoundageEntity> implements TradePoundageService {
 
-
+    public void deleteTradePoundageById(Map<String,Object> map) {
+        baseMapper.deleteTradePoundageById(map);
+    }
 }

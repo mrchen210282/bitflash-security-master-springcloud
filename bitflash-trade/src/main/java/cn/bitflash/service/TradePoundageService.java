@@ -6,8 +6,9 @@ import cn.bitflash.trade.UserBuyMessageBean;
 import com.baomidou.mybatisplus.service.IService;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TradePoundageService extends IService<TradePoundageEntity> {
 
-
+    public void deleteTradePoundageById(Map<String,Object> map);
 }

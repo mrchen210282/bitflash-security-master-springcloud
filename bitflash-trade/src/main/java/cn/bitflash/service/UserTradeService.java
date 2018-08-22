@@ -16,13 +16,21 @@ import cn.bitflash.trade.UserTradeJoinBuyEntity;
  */
 public interface UserTradeService extends IService<UserTradeEntity> {
 
-    public Map<String, Object> selectTrade(Map<String, Object> param);
+    //交易列表(卖入)
+    public List<UserTradeEntity> tradeList(Map<String, Object> param);
+
+    public Integer tradeListCount(Map<String, Object> param);
+
+    public Map<String, Object> responseTrade(Map<String, Object> param);
+
+    public List<UserTradeEntity> selectTrade(Map<String, Object> param);
 
     public Integer selectTradeCount(Map<String, Object> param);
 
-    public List<UserTradeEntity> searchTrade(Map<String, Object> param);
+    //订单列表(卖入)
+    public List<UserTradeBean> selectOrderTrade(Map<String, Object> param);
 
-    public List<UserTradeEntity> queryTrade(Map<String, Object> param);
+    public Integer selectOrderTradeCount(Map<String, Object> param);
 
     public void updateTrade(Map<String, Object> param);
 
@@ -48,9 +56,6 @@ public interface UserTradeService extends IService<UserTradeEntity> {
      * @return
      */
     public List<UserTradeBean> selectTradeHistory(Map<String, Object> param);
-
-
-    public List<Map<String, Object>> getHistoryBystate5();
 
     public UserTradeEntity selectById(String id);
 

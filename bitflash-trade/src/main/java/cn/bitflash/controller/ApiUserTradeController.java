@@ -26,7 +26,6 @@ import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.annotation.PayPassword;
 import cn.bitflash.annotation.UserAccount;
-import cn.bitflash.feignInterface.UserFeign;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.user.UserPayPwdEntity;
 import cn.bitflash.utils.BigDecimalUtils;
@@ -59,9 +58,6 @@ public class ApiUserTradeController {
     private UserBrokerageService userBrokerageService;
 
     @Autowired
-    private UserFeign userFeign;
-
-    @Autowired
     private RedisUtils redisUtils;
 
     @Autowired
@@ -88,9 +84,9 @@ public class ApiUserTradeController {
             map.put("pageNum", new Integer(pageNum));
             map.put("pageTotal", new Integer(pageTotal));
             // 查询自身用户信息
-            List<UserTradeEntity> listEntity = userTradeService.queryTrade(map);
+            List<UserTradeEntity> listEntity = userTradeService.tradeList(map);
 
-            Integer count = userTradeService.selectTradeCount(map);
+            Integer count = userTradeService.tradeListCount(map);
 
             param.put("availableAssets", BigDecimalUtils.DecimalFormat(userAccount.getAvailableAssets()));
             param.put("userAccountList", listEntity);
@@ -119,7 +115,7 @@ public class ApiUserTradeController {
             map.put("pageNum", new Integer(pageNum));
             map.put("pageTotal", new Integer(pageTotal));
             // 查询交易
-            List<UserTradeEntity> listEntity = userTradeService.queryTrade(map);
+            List<UserTradeBean> listEntity = userTradeService.selectOrderTrade(map);
 
             Integer count = userTradeService.selectTradeCount(map);
 
@@ -148,7 +144,7 @@ public class ApiUserTradeController {
         UserAccountEntity userAccountEntity = userAccountService.selectById(userAccount.getUid());
         Map<String, Object> returnMap = null;
         if (null != userAccountEntity) {
-            returnMap = userTradeService.selectTrade(param);
+            returnMap = userTradeService.responseTrade(param);
             //可卖份数 = 可用额度 / 100
             if(userAccount.getAvailableAssets().compareTo(new BigDecimal(0)) <= -1) {
                 returnMap.put("number","0");
@@ -482,7 +478,8 @@ public class ApiUserTradeController {
                                     userAccountService.updateUserAccountByParam(userAccount);
 
                                     //删除手续费记录
-                                    tradePoundageService.deleteById(orderId);
+                                    param.put("orderId",orderId);
+                                    tradePoundageService.deleteTradePoundageById(param);
 
                                     // 添加购买记录
                                     UserTradeHistoryEntity userTradeHistory = new UserTradeHistoryEntity();

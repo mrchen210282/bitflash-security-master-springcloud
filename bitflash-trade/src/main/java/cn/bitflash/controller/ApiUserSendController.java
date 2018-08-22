@@ -71,24 +71,21 @@ public class ApiUserSendController {
         //业务状态
         boolean relation = false;
 
-
         //如果用户不存在,返回‘用户不存在’错误。
         UserEntity Sendee = loginFeign.selectOneByUser(new ModelMap("uuid", uuid));
-        if (Sendee == null || Sendee.equals("")) {
+        if (Sendee == null || "".equals(Sendee)) {
             //用户不存在
             code = 1;
             return R.ok().put("code", code);
         }
-
 
         //如果交易密码不正确,返回错误
         UserPayPwdEntity pwd = userFeign.selectUserPayPwd(new ModelMap("uid", user.getUid()));
         if (!user_pwd.equals(pwd.getPayPassword())) {
             // 交易密码不正确
             code = 4;
-            return R.ok().put("code", code);
+           return R.ok().put("code", code);
         }
-
 
         //赠送数量
         //String 转换成 float
@@ -97,7 +94,6 @@ public class ApiUserSendController {
         //赠送数量转换成BigDecimal
         BigDecimal user_quantity = new BigDecimal(quantitys);
 
-
         //手续费
         UserTradeConfigEntity userTradeConfig = userTradeConfigService.selectOne(new EntityWrapper<UserTradeConfigEntity>().eq("remark", "发送手续费"));
         Float poundage = userTradeConfig.getPoundage();
@@ -105,7 +101,6 @@ public class ApiUserSendController {
         UserBrokerageEntity userbroker = userBrokerageService.selectOne(new EntityWrapper<UserBrokerageEntity>().eq("id", 1));
         //2.5%手续费
         BigDecimal user_brokerage = new BigDecimal(quantitys * poundage);
-
 
         //Send在user——account中修改
         UserAccountEntity send_account = userAccountService.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", user.getUid()));
@@ -123,7 +118,6 @@ public class ApiUserSendController {
                 //更新数据
                 userAccountService.update(send_account, new EntityWrapper<UserAccountEntity>().eq("uid", user.getUid()));
                 relation = true;
-
             } else {//如果regulateRelease数量不足够扣款
                 //查询regulate_income
                 BigDecimal surplus = user_quantitys.subtract(send_account.getRegulateRelease());
@@ -135,7 +129,6 @@ public class ApiUserSendController {
                 //更新数据
                 userAccountService.update(send_account, new EntityWrapper<UserAccountEntity>().eq("uid", user.getUid()));
                 relation = true;
-
             }
             //Sendee在user——account中修改
             if (relation) {
@@ -147,7 +140,6 @@ public class ApiUserSendController {
                 sendee_account.setAvailableAssets(availableAssets);
                 //更新数据
                 userAccountService.update(sendee_account, new EntityWrapper<UserAccountEntity>().eq("uid", Sendee.getUid()));
-
             }
 
         } else {
@@ -156,7 +148,6 @@ public class ApiUserSendController {
             //交易失败
             return R.ok().put("code", code);
         }
-
 
         //添加数据user_send,添加赠送记录
         if (relation) {
@@ -169,16 +160,13 @@ public class ApiUserSendController {
             userSendService.insert(us);
         }
 
-
         //如果双方交易完成
         if (relation) {
             BigDecimal get_brokerages = user_brokerage.add(userbroker.getSellBrokerage());
-
             userbroker.setSellBrokerage(get_brokerages);
             //修改到user_brokerage
             userBrokerageService.update(userbroker, new EntityWrapper<UserBrokerageEntity>().eq("id", 1));
             code = 0;
-
         }
         return R.ok().put("code", code);
     }

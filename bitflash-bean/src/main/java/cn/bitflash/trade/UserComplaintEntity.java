@@ -2,6 +2,7 @@ package cn.bitflash.trade;
 
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.enums.IdType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
@@ -13,7 +14,7 @@ import java.util.Date;
 @TableName("user_complaint" )
 public class UserComplaintEntity {
 
-    @TableId
+    @TableId(type = IdType.INPUT)
     //订单id
     private Integer orderId;
 

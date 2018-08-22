@@ -54,6 +54,15 @@ public class Common {
 	public final static String STATE_BUY_APPEAL = "9";
 
 	//------------------finish----------------------
+
+	//----------------code值---------------------
+
+	public final static String SUCCESS = "交易成功";
+	public final static String FAIL = "交易失败";
+	public final static String TRADEMISS = "交易不存在";
+	public final static String TRADECANCEL = "交易已取消";
+	public final static String USERMISS = "用户不存在";
+
 	// 最小价格
 	public final static String MIN_PRICE = "0.33";
 

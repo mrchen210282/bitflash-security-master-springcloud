@@ -49,4 +49,5 @@ public class WebMvcConfig implements WebMvcConfigurer {
         argumentResolvers.add(userInvitationHandlerMethodArgumentResolver);
         argumentResolvers.add(userRelationHandlerMethodArgumentResolver);
     }
+
 }

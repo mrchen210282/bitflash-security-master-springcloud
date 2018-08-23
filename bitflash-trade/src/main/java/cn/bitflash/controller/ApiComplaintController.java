@@ -37,6 +37,14 @@ public class ApiComplaintController {
     @Autowired
     private UserTradeService userTradeService;
 
+    /**
+     * 申诉列表
+     *
+     * @param user
+     * @param pages
+     * @param userAccount
+     * @return
+     */
     @Login
     @PostMapping("/List")
     public R selectAppealList(@LoginUser UserEntity user, @RequestParam("pages") String pages, @UserAccount UserAccountEntity userAccount) {
@@ -49,6 +57,12 @@ public class ApiComplaintController {
         return R.ok().put("count", count).put("list", ub).put("availableAssets", userAccount.getAvailableAssets());
     }
 
+    /**
+     * 申诉详情
+     *
+     * @param id
+     * @return
+     */
     @PostMapping("/check")
     public R checkAppeal(@RequestParam("id") String id) {
         System.out.println(id);

@@ -288,11 +288,11 @@
 
     <!-- add by wangjun 20180816 查询已完成订单-->
     <select id="selectFinishOrder" resultType="cn.bitflash.trade.UserTradeJoinBuyEntity">
-        select uth.price as price,uth.sell_quantity as quantity,uth.finish_time as finishTime,'0' tradeState,uth.state,ui.nickname,'0' as tradeType from user_trade_history uth
-        left join user_info ui on ui.uid = uth.sell_uid where state = '4' and uth.sell_uid = #{uid}
+        select uth.user_trade_id as orderId,uth.price as price,uth.sell_quantity as quantity,uth.finish_time as finishTime,'0' tradeState,uth.state,ui.nickname from user_trade_history uth
+        left join user_info ui on ui.uid = uth.sell_uid where state = '4' and uth.sell_uid = #{uid} or purchase_uid = #{uid}
         UNION
-        select ubh.price,ubh.quantity,ubh.finish_time as finishTime,'1' tradeState,ui.nickname,ubh.sell_state as state,'1' as tradeType from user_buy_history ubh
+        selectubh.user_buy_id as orderId, ubh.price,ubh.quantity,ubh.finish_time as finishTime,'1' tradeState,ui.nickname,ubh.sell_state as state from user_buy_history ubh
         left join user_info ui on ui.uid = ubh.sell_uid
-        where 1 = 1 and sell_state = '6' and ubh.sell_uid = #{uid} order by finishTime asc limit #{pageNum},#{pageTotal}
+        where 1 = 1 and sell_state = '6' and ubh.sell_uid = #{uid} OR purchase_uid = #{uid} order by finishTime asc limit #{pageNum},#{pageTotal}
     </select>
 </mapper>

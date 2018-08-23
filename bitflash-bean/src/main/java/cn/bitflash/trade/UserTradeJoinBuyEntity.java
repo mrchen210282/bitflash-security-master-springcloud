@@ -10,23 +10,30 @@ import java.util.Date;
  */
 public class UserTradeJoinBuyEntity {
 
+    private Integer orderId;
+
     //价格
     private float price;
 
     //数量
     private float quantity;
 
-    //0:交易  1:求购
+    //0:卖入  1:卖出
     private String tradeState;
 
     //昵称
     private String nickname;
 
-    //交易状态0:买入,1:卖出
-    private String tradeType;
-
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm",timezone="GMT+8" )
     private Date finishTime;
+
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
 
     public float getPrice() {
         return price;

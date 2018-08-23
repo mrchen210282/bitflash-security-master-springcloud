@@ -32,4 +32,5 @@ public class PayPasswordHandlerMethodArgumentResolver implements HandlerMethodAr
         UserPayPwdEntity payPwd = userFeign.selectUserPayPwd(new ModelMap("uid", object.toString()));
         return payPwd == null ? null : payPwd;
     }
+
 }

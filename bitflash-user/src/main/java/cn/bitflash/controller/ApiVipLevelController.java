@@ -92,8 +92,13 @@ public class ApiVipLevelController {
                 vipList.remove(0);
                 return R.ok().put("vip", vipLevel).put("bit", num).put("level", vipMap).put("vip_conditions", vipList);
             }
-            vipList.remove(0);
-            return R.ok().put("vip", vipLevel).put("bit", num).put("vip_conditions", vipList);
+            Map<String, Object> vipMap = new HashMap<>();
+            vipMap.put("vip1", 1);
+            vipMap.put("vip2", 1);
+            vipMap.put("vip3", 1);
+            vipMap.put("vip4", 1);
+            vipMap.put("vip5", 1);
+            return R.ok().put("vip", vipLevel).put("bit", num).put("level", vipMap).put("vip_conditions", vipList);
         } else {
             return R.error("此用户不存在");
         }

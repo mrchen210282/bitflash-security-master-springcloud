@@ -35,7 +35,6 @@ public class TokenFilter extends ZuulFilter {
 
     public static final String TIME = "time";
     public static final String TOKEN = "token";
-    public static final String MOBILE = "mobile";
     public static final Long DIFFERENCE = 1000 * 10L;
 
     /**

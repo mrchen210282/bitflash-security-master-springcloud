@@ -17,7 +17,7 @@ import org.apache.ibatis.annotations.Param;
 public interface UserTradeDao extends BaseMapper<UserTradeEntity> {
 
     //交易列表(卖入)
-    public List<UserTradeEntity> tradeList(Map<String, Object> param);
+    public List<UserTradeBean> tradeList(Map<String, Object> param);
 
     public Integer tradeListCount(Map<String, Object> param);
 

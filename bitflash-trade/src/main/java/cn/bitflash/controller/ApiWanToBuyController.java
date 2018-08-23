@@ -182,7 +182,7 @@ public class ApiWanToBuyController {
         //交易状态:'1'资金不足,'2'订单不存在
         String code = "0";
 
-        UserBuyEntity userBuy = userBuyService.selectOne(new EntityWrapper<UserBuyEntity>().eq("id",id));
+        UserBuyEntity userBuy = userBuyService.selectOne(new EntityWrapper<UserBuyEntity>().eq("id", id));
         if (userBuy == null || !userBuy.getState().equals(STATE_BUY_CANCEL)) {
             return R.ok().put("code", "2");
         }
@@ -232,7 +232,7 @@ public class ApiWanToBuyController {
     @PostMapping("showBuyMessagePage")
     public R showBuyMessagePage(@RequestParam("id") String id) {
         //订单详情
-        UserBuyEntity userBuy = userBuyService.selectOne(new EntityWrapper<UserBuyEntity>().eq("id",id));
+        UserBuyEntity userBuy = userBuyService.selectOne(new EntityWrapper<UserBuyEntity>().eq("id", id));
         //判定订单不存在
         if (userBuy == null) {
             return R.ok().put("code", "订单不存在");
@@ -257,9 +257,9 @@ public class ApiWanToBuyController {
         //判定订单不存在
         if (userBuyHistoryBean == null) {
             //订单详情
-            UserBuyEntity userBuy = userBuyService.selectOne(new EntityWrapper<UserBuyEntity>().eq("id",id));
+            UserBuyEntity userBuy = userBuyService.selectOne(new EntityWrapper<UserBuyEntity>().eq("id", id));
             userBean = userBuy;
-            if(userBuy == null){
+            if (userBuy == null) {
                 return R.ok().put("code", "订单不存在");
             }
         }
@@ -273,7 +273,7 @@ public class ApiWanToBuyController {
 
     /**
      * -----------------1-----------------
-     *
+     * <p>
      * --------------点击撤销--------------
      */
     @PostMapping("cancel")
@@ -376,7 +376,7 @@ public class ApiWanToBuyController {
         //获取Cid
         String cid = loginFeign.selectGT(new ModelMap("uid", userBuyHistoryEntity.getSellUid())).getCid();
         //获取推送信息
-        String text = userBuyHistoryEntity.getUserBuyId() + sysFeign.getVal("reminders");
+        String text = sysFeign.getVal("reminders");
 
         try {
             GeTuiSendMessage.sendSingleMessage(text, cid);
@@ -396,7 +396,7 @@ public class ApiWanToBuyController {
     public R appeal(@RequestParam("id") String id) {
         try {
 
-            UserBuyHistoryEntity userBuyHistoryEntity = userBuyHistoryService.selectOne(new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id",id));
+            UserBuyHistoryEntity userBuyHistoryEntity = userBuyHistoryService.selectOne(new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id", id));
             //修改订单状态
             UserBuyEntity userBuyEntity = userBuyService.selectById(Integer.parseInt(id));
             userBuyEntity.setState(STATE_BUY_APPEAL);
@@ -432,9 +432,9 @@ public class ApiWanToBuyController {
         UserPayPwdEntity userPayPwdEntity = userFeign.selectUserPayPwd(new ModelMap("uid", user.getUid()));
 
         //交易密码不正确
-        //if (!pwd.equals(userPayPwdEntity.getPayPassword())) {
-        //    return R.ok().put("code", "3");
-        //}
+        if (!pwd.equals(userPayPwdEntity.getPayPassword())) {
+            return R.ok().put("code", "3");
+        }
 
         //手续费
         Map<String, Float> map = this.poundage(id);

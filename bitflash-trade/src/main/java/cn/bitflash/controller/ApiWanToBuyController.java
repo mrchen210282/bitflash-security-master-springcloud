@@ -376,7 +376,7 @@ public class ApiWanToBuyController {
         //获取Cid
         String cid = loginFeign.selectGT(new ModelMap("uid", userBuyHistoryEntity.getSellUid())).getCid();
         //获取推送信息
-        String text = userBuyHistoryEntity.getUserBuyId() + sysFeign.getVal("reminders");
+        String text = sysFeign.getVal("reminders");
 
         try {
             GeTuiSendMessage.sendSingleMessage(text, cid);

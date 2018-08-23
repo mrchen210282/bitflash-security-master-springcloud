@@ -84,7 +84,7 @@ public class ApiUserTradeController {
             map.put("pageNum", new Integer(pageNum));
             map.put("pageTotal", new Integer(pageTotal));
             // 查询自身用户信息
-            List<UserTradeEntity> listEntity = userTradeService.tradeList(map);
+            List<UserTradeBean> listEntity = userTradeService.tradeList(map);
 
             Integer count = userTradeService.tradeListCount(map);
 

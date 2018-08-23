@@ -32,7 +32,7 @@ public class UserTradeServiceImpl extends ServiceImpl<UserTradeDao, UserTradeEnt
     private UserTradeConfigDao userTradeConfigDao;
 
     @Override
-    public List<UserTradeEntity> tradeList(Map<String, Object> param) {
+    public List<UserTradeBean> tradeList(Map<String, Object> param) {
         return baseMapper.tradeList(param);
     }
 

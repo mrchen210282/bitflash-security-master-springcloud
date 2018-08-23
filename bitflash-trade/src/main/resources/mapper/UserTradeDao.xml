@@ -16,7 +16,7 @@
         (#{createTime},#{price},#{quantity},#{state},#{uid},#{id})
     </insert>
 
-    <select id="tradeList" resultType="cn.bitflash.trade.UserTradeEntity">
+    <select id="tradeList" resultType="cn.bitflash.trade.UserTradeBean">
         select ui.realname,ui.nickname,a.id,a.price,a.quantity,ui.uid,a.create_time,a.state from
         user_trade a
         left join user_info ui on a.uid = ui.uid
@@ -27,7 +27,7 @@
             </if>
             and a.state = '1'
         </where>
-        order by price asc
+        order by price asc limit #{pageNum},#{pageTotal}
     </select>
 
     <select id="tradeListCount" resultType="java.lang.Integer">
@@ -41,7 +41,7 @@
             </if>
             and a.state = '1'
         </where>
-        order by price asc
+        order by price asc limit #{pageNum},#{pageTotal}
     </select>
 
     <select id="selectTrade" resultType="cn.bitflash.trade.UserTradeEntity">

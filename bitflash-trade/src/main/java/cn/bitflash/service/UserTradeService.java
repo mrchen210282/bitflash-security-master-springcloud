@@ -17,7 +17,7 @@ import cn.bitflash.trade.UserTradeJoinBuyEntity;
 public interface UserTradeService extends IService<UserTradeEntity> {
 
     //交易列表(卖入)
-    public List<UserTradeEntity> tradeList(Map<String, Object> param);
+    public List<UserTradeBean> tradeList(Map<String, Object> param);
 
     public Integer tradeListCount(Map<String, Object> param);
 

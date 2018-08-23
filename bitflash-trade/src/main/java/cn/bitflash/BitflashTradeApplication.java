@@ -11,7 +11,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 
 @SpringBootApplication
 @EnableEurekaClient
-@EnableFeignClients
+@EnableFeignClients(basePackages = "cn.bitflash.feignInterface")
 @EnableRedisHttpSession
 @MapperScan(basePackages = {"cn.bitflash.dao"})
 public class BitflashTradeApplication extends SpringBootServletInitializer {
@@ -19,8 +19,10 @@ public class BitflashTradeApplication extends SpringBootServletInitializer {
     public static void main(String[] args) {
         SpringApplication.run(BitflashTradeApplication.class, args);
     }
+
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(BitflashTradeApplication.class);
     }
+
 }

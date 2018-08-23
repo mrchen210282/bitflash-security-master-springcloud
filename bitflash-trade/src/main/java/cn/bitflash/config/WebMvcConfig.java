@@ -19,22 +19,22 @@ import java.util.List;
 public class WebMvcConfig implements WebMvcConfigurer {
 
     @Autowired
-    ApiLoginInterceptor apiLoginInterceptor;
+    private ApiLoginInterceptor apiLoginInterceptor;
 
     @Autowired
-    LoginUserHandlerMethodArgumentResolver loginUserHandlerMethodArgumentResolver;
+    private LoginUserHandlerMethodArgumentResolver loginUserHandlerMethodArgumentResolver;
 
     @Autowired
-    PayPasswordHandlerMethodArgumentResolver payPasswordHandlerMethodArgumentResolver;
+    private PayPasswordHandlerMethodArgumentResolver payPasswordHandlerMethodArgumentResolver;
 
     @Autowired
-    UserAccountHandlerMethodArgumentResolver userAccountHandlerMethodArgumentResolver;
+    private UserAccountHandlerMethodArgumentResolver userAccountHandlerMethodArgumentResolver;
 
     @Autowired
-    UserInvitationHandlerMethodArgumentResolver userInvitationHandlerMethodArgumentResolver;
+    private UserInvitationHandlerMethodArgumentResolver userInvitationHandlerMethodArgumentResolver;
 
     @Autowired
-    UserRelationHandlerMethodArgumentResolver userRelationHandlerMethodArgumentResolver;
+    private UserRelationHandlerMethodArgumentResolver userRelationHandlerMethodArgumentResolver;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

@@ -1,22 +1,20 @@
-package cn.bitflash.feignInterface.impl;
+package cn.bitflash.userutil;
 
-import cn.bitflash.feignInterface.UserFeign;
 import cn.bitflash.user.UserInfoEntity;
 import cn.bitflash.user.UserInvitationCodeEntity;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import feign.hystrix.FallbackFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserFeignFallback implements FallbackFactory<UserFeign> {
+public class UserFeignFallback implements FallbackFactory<UserUtils> {
 
     private static final Logger log=LoggerFactory.getLogger(UserFeignFallback.class);
 
     @Override
-    public UserFeign create(Throwable throwable) {
-        return new UserFeign() {
+    public UserUtils create(Throwable throwable) {
+        return new UserUtils() {
             @Override
             public UserInvitationCodeEntity selectOne(String invitationCode) {
                 log.error("查询邀请码出错原因-----:"+throwable.getMessage());

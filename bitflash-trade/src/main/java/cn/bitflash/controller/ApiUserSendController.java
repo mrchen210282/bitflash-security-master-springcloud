@@ -2,9 +2,8 @@ package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
-import cn.bitflash.feignInterface.LoginFeign;
-import cn.bitflash.feignInterface.UserFeign;
 import cn.bitflash.login.UserEntity;
+import cn.bitflash.loginutil.LoginUtils;
 import cn.bitflash.service.UserAccountService;
 import cn.bitflash.service.UserBrokerageService;
 import cn.bitflash.service.UserSendService;
@@ -12,12 +11,11 @@ import cn.bitflash.service.UserTradeConfigService;
 import cn.bitflash.trade.UserAccountEntity;
 import cn.bitflash.trade.UserBrokerageEntity;
 import cn.bitflash.trade.UserSendEntity;
-
 import cn.bitflash.trade.UserTradeConfigEntity;
 import cn.bitflash.user.UserPayPwdEntity;
+import cn.bitflash.userutil.UserUtils;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,10 +23,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author gao
@@ -41,10 +39,10 @@ public class ApiUserSendController {
     private UserSendService userSendService;
 
     @Autowired
-    private UserFeign userFeign;
+    private UserUtils userUtils;
 
     @Autowired
-    private LoginFeign loginFeign;
+    private LoginUtils loginFeign;
 
     @Autowired
     private UserBrokerageService userBrokerageService;
@@ -81,7 +79,7 @@ public class ApiUserSendController {
         }
 
         //如果交易密码不正确,返回错误
-        UserPayPwdEntity pwd = userFeign.selectUserPayPwd(new ModelMap("uid", user.getUid()));
+        UserPayPwdEntity pwd = userUtils.selectUserPayPwd(new ModelMap("uid", user.getUid()));
         if (!user_pwd.equals(pwd.getPayPassword())) {
             // 交易密码不正确
             code = 4;

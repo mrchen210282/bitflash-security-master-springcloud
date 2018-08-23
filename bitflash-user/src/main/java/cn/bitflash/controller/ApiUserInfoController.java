@@ -4,7 +4,7 @@ import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.annotation.UserAccount;
 import cn.bitflash.annotation.UserInvitationCode;
-import cn.bitflash.feignInterface.SysFeign;
+import cn.bitflash.sysutils.SysUtils;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserInfoService;
@@ -41,7 +41,7 @@ public class ApiUserInfoController {
     private UserInfoService userInfoService;
 
     @Autowired
-    private SysFeign sysfeign;
+    private SysUtils sysfeign;
 
     @Autowired
     private UserPayPwdService userPayPwdService;

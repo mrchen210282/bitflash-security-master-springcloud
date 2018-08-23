@@ -1,24 +1,22 @@
-package cn.bitflash.feignInterface.impl;
+package cn.bitflash.userutil;
 
-import cn.bitflash.feignInterface.UserFeign;
 import cn.bitflash.user.*;
 import feign.hystrix.FallbackFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Component
-public class UserFallback implements FallbackFactory<UserFeign> {
+public class UserFallback implements FallbackFactory<UserUtils> {
 
     private static final Logger log=LoggerFactory.getLogger(UserFallback.class);
 
     @Override
-    public UserFeign create(Throwable throwable) {
-        return new UserFeign() {
+    public UserUtils create(Throwable throwable) {
+        return new UserUtils() {
 
             @Override
             public UserInfoEntity selectUserInfoById(String uid) {

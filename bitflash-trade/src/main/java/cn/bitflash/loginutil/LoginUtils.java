@@ -1,6 +1,5 @@
-package cn.bitflash.feignInterface;
+package cn.bitflash.loginutil;
 
-import cn.bitflash.feignInterface.impl.LoginFallback;
 import cn.bitflash.login.TokenEntity;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.login.UserGTCidEntity;
@@ -13,9 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.Map;
 
-@Lazy(true)
 @FeignClient(value = "bitflash-login",fallbackFactory = LoginFallback.class)
-public interface LoginFeign {
+public interface LoginUtils {
 
     @PostMapping("/api/user/inner/selectUserOne")
     public List<UserEntity> selectUserOne(@RequestParam("params") Map<String, Object> params);

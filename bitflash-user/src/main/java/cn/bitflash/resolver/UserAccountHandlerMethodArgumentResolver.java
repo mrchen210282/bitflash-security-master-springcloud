@@ -17,7 +17,7 @@
 package cn.bitflash.resolver;
 
 import cn.bitflash.annotation.UserAccount;
-import cn.bitflash.feignInterface.TradeFeign;
+import cn.bitflash.tradeutil.TradeUtils;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.trade.UserAccountEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Component
 public class UserAccountHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
     @Autowired
-    private TradeFeign tradeFeign;
+    private TradeUtils tradeUtils;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -56,7 +56,7 @@ public class UserAccountHandlerMethodArgumentResolver implements HandlerMethodAr
         }
 
         // 获取用户信息
-        UserAccountEntity user = tradeFeign.selectOne(new ModelMap(ApiLoginInterceptor.UID, object.toString()));
+        UserAccountEntity user = tradeUtils.selectOne(new ModelMap(ApiLoginInterceptor.UID, object.toString()));
 
         return user;
     }

@@ -1,8 +1,8 @@
-package cn.bitflash.feignInterface.impl;
+package cn.bitflash.tradeutil;
 
-import cn.bitflash.feignInterface.UserTradeFeign;
+import cn.bitflash.tradeutil.TradeUtils;
 import cn.bitflash.trade.UserAccountEntity;
-import com.baomidou.mybatisplus.mapper.Wrapper;
+import cn.bitflash.userutil.UserFeignFallback;
 import feign.hystrix.FallbackFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,13 +11,13 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class UserTradeFallback implements FallbackFactory<UserTradeFeign> {
+public class UserTradeFallback implements FallbackFactory<TradeUtils> {
 
     private static final Logger log=LoggerFactory.getLogger(UserFeignFallback.class);
 
     @Override
-    public UserTradeFeign create(Throwable throwable) {
-        return new UserTradeFeign() {
+    public TradeUtils create(Throwable throwable) {
+        return new TradeUtils() {
             @Override
             public boolean insert(UserAccountEntity userAccountEntity) {
                 log.error("注册初始化用户数量失败-----:"+throwable.getMessage());

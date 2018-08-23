@@ -1,6 +1,5 @@
-package cn.bitflash.feignInterface.impl;
+package cn.bitflash.loginutil;
 
-import cn.bitflash.feignInterface.LoginFeign;
 import cn.bitflash.login.TokenEntity;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.login.UserGTCidEntity;
@@ -8,22 +7,20 @@ import feign.hystrix.FallbackFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Component
-public class LoginFallback implements FallbackFactory<LoginFeign> {
+public class LoginFallback implements FallbackFactory<LoginUtils> {
 
     private static final Logger log= LoggerFactory.getLogger(LoginFallback.class);
 
     @Override
-    public LoginFeign create(Throwable throwable) {
-        return new LoginFeign() {
+    public LoginUtils create(Throwable throwable) {
+        return new LoginUtils() {
             @Override
             public List<UserEntity> selectUserOne(Map<String, Object> params) {
                 log.error("获取用户信息失败-----:"+throwable);

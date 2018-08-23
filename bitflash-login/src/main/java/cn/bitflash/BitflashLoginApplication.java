@@ -11,7 +11,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableEurekaClient
-@EnableFeignClients
+@EnableFeignClients(basePackages = {"cn.bitflash.userutil","cn.bitflash.tradeutil"})
 @EnableCircuitBreaker
 @MapperScan(basePackages = {"cn.bitflash.dao"})
 public class BitflashLoginApplication extends SpringBootServletInitializer {

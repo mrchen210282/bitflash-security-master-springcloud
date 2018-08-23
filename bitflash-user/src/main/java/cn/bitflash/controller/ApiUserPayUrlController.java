@@ -3,6 +3,7 @@ package cn.bitflash.controller;
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.feignInterface.TradeFeign;
+import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserInfoService;
 import cn.bitflash.service.UserPayPwdService;
@@ -245,6 +246,16 @@ public class ApiUserPayUrlController {
             return R.ok().put("url", payUrlEntity.getImgUrl()).put("name", payUrlEntity.getName()).put("account", payUrlEntity.getAccount());
         }
         return R.ok().put("url", payUrlEntity.getImgUrl());
+    }
+
+    @Login
+    @PostMapping("successUpload")
+    public R successUpload(@RequestAttribute(ApiLoginInterceptor.UID)String uid){
+        UserInfoEntity userinfo = new UserInfoEntity();
+        userinfo.setIsAuthentication("1");
+        userinfo.setUid(uid);
+        userInfoService.updateById(userinfo);
+        return R.ok();
     }
 
 }

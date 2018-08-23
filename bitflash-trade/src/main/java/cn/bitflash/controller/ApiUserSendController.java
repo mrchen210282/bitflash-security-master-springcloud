@@ -71,6 +71,7 @@ public class ApiUserSendController {
         //业务状态
         boolean relation = false;
 
+
         //如果用户不存在,返回‘用户不存在’错误。
         UserEntity Sendee = loginFeign.selectOneByUser(new ModelMap("uuid", uuid));
         if (Sendee == null || "".equals(Sendee)) {

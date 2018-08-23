@@ -511,19 +511,19 @@ public class ApiUserTradeController {
     /**
      * 查看买入订单明细
      *
-     * @param orderId 订单id
+     * @param id 订单id
      * @return
      */
     @Login
     @PostMapping("viewDetail")
-    public R viewDetail(@RequestParam String orderId) {
-        if (StringUtils.isNotBlank(orderId)) {
+    public R viewDetail(@RequestParam String id) {
+        if (StringUtils.isNotBlank(id)) {
             Map<String, Object> param = new HashMap<String, Object>();
-            param.put("id", orderId);
+            param.put("id", id);
 
             UserTradeBean userTradeBean = userTradeService.queryDetail(param);
 
-            TradePoundageEntity tradePoundageEntity = tradePoundageService.selectById(orderId);
+            TradePoundageEntity tradePoundageEntity = tradePoundageService.selectById(id);
 
             if(null != tradePoundageEntity) {
                 //扣除交易额=交易额+手续费

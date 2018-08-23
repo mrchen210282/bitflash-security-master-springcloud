@@ -17,7 +17,6 @@
 package cn.bitflash.dao;
 
 import cn.bitflash.trade.UserSendEntity;
-import cn.bitflash.trade.UserSendEntity;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.springframework.stereotype.Repository;
 

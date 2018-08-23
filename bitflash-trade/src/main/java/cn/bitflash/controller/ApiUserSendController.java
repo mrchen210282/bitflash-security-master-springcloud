@@ -84,7 +84,7 @@ public class ApiUserSendController {
         if (!user_pwd.equals(pwd.getPayPassword())) {
             // 交易密码不正确
             code = 4;
-           return R.ok().put("code", code);
+            return R.ok().put("code", code);
         }
 
         //赠送数量

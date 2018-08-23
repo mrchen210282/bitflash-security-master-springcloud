@@ -25,6 +25,6 @@ public interface LoginFeign {
     @PostMapping("/api/login/inner/selectUser")
     UserEntity selectOneByUser(@RequestBody Map<String,Object> map);
 
-    @PostMapping("selectGT")
+    @PostMapping("/api/login/inner/selectGT")
     public UserGTCidEntity selectGT(@RequestBody Map<String,Object> map);
 }

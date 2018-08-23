@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(value = "bitflash-sys",fallbackFactory = SysFallback.class)
 public interface SysFeign {
 
-    @PostMapping("/api/sys/inner/getVal")
-    String getVal(@RequestParam("uid") String uid);
+    @PostMapping("/api/sys/inner/getval")
+    String getVal(@RequestParam("key") String key);
 }

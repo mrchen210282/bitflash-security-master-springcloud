@@ -9,9 +9,10 @@ import java.util.Date;
 
 /**
  * 申拆表
+ *
  * @author wangjun
  */
-@TableName("user_complaint" )
+@TableName("user_complaint")
 public class UserComplaintEntity {
 
     @TableId(type = IdType.INPUT)
@@ -30,7 +31,7 @@ public class UserComplaintEntity {
     //订单状态
     private String orderState;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8" )
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
     public Integer getOrderId() {

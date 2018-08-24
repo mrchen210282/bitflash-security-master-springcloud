@@ -17,9 +17,9 @@
 package cn.bitflash.resolver;
 
 import cn.bitflash.annotation.UserRelation;
-import cn.bitflash.feignInterface.UserFeign;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.user.UserRelationJoinAccountEntity;
+import cn.bitflash.userutil.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -39,7 +39,7 @@ import java.util.List;
 @Component
 public class UserRelationHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
     @Autowired
-    private UserFeign userFeign;
+    private UserUtils userUtils;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -57,7 +57,7 @@ public class UserRelationHandlerMethodArgumentResolver implements HandlerMethodA
         }
 
         // 获取用户信息
-        List<UserRelationJoinAccountEntity> ura = userFeign.selectTreeNodes((String) object);
+        List<UserRelationJoinAccountEntity> ura = userUtils.selectTreeNodes((String) object);
         return ura;
     }
 }

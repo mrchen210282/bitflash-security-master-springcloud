@@ -2,7 +2,7 @@ package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
-import cn.bitflash.feignInterface.TradeFeign;
+import cn.bitflash.tradeutil.TradeUtils;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserInfoConfigService;
 import cn.bitflash.service.UserInfoService;
@@ -60,14 +60,14 @@ public class ApiVipLevelController {
     private UserInfoConfigService userInfoConfigService;
 
     @Autowired
-    private TradeFeign tradeFeign;
+    private TradeUtils tradeUtils;
 
     //@Autowired
     //private SysFeign sysfeign;
 
     @PostMapping("aaa")
     public void getaaa(@RequestParam("uid") String uid){
-        System.out.println(tradeFeign.selectById(uid));
+        System.out.println(tradeUtils.selectById(uid));
     }
 
     /**
@@ -83,7 +83,7 @@ public class ApiVipLevelController {
 
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("uid",uid);
-            UserAccountEntity userAccountEntity = tradeFeign.selectOne(map);
+            UserAccountEntity userAccountEntity = tradeUtils.selectOne(map);
             Double num = userAccountEntity.getAvailableAssets().doubleValue();
 
             List<UserInfoConfigEntity> vipList=userInfoConfigService.selectPage(new Page<UserInfoConfigEntity>(0,6)).getRecords();
@@ -142,7 +142,7 @@ public class ApiVipLevelController {
         }
         //BigDecimal类型的vip升级数量
         BigDecimal vip_number = new BigDecimal(vip_count);
-        UserAccountEntity userAccount = tradeFeign.selectById(uid);
+        UserAccountEntity userAccount = tradeUtils.selectById(uid);
         BigDecimal acacilNum = userAccount.getAvailableAssets();
         // 可用资产>=所需升级的vip数量
         if (acacilNum.compareTo(vip_number) == 1 || acacilNum.compareTo(vip_number) == 0) {
@@ -171,7 +171,7 @@ public class ApiVipLevelController {
             //2.1.4
             userAccount.setFrozenAssets(userAccount.getFrozenAssets().add(vip_number.add(new BigDecimal(giveRatio))));
             userAccount.setTotelAssets(userAccount.getPurchase().add(userAccount.getGiveAmount()));
-            tradeFeign.updateById(userAccount);
+            tradeUtils.updateById(userAccount);
             //更新会员等级
             userInfo.setIsVip(vip.getId().toString());
             userInfo.setVipCreateTime(new Date());

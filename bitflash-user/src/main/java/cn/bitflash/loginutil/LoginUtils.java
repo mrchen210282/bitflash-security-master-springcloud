@@ -1,6 +1,5 @@
-package cn.bitflash.feignInterface;
+package cn.bitflash.loginutil;
 
-import cn.bitflash.feignInterface.impl.loginFallback;
 import cn.bitflash.login.TokenEntity;
 import cn.bitflash.login.UserEntity;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.Map;
 
 @FeignClient(value = "bitflash-login",fallbackFactory = loginFallback.class)
-public interface LoginFeign {
+public interface LoginUtils {
 
     @PostMapping("/api/login/inner/selectToken")
     TokenEntity selectOne(@RequestBody Map<String,Object> map);

@@ -1,19 +1,15 @@
-package cn.bitflash.feignInterface;
+package cn.bitflash.userutil;
 
 
-import cn.bitflash.feignInterface.impl.UserFeignFallback;
 import cn.bitflash.user.UserInfoEntity;
 import cn.bitflash.user.UserInvitationCodeEntity;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Map;
-
 @FeignClient(value="bitflash-user",fallbackFactory = UserFeignFallback.class)
-public interface UserFeign {
+public interface UserUtils {
 
     /**
      * 查询邀请码

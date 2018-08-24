@@ -1,6 +1,5 @@
-package cn.bitflash.feignInterface;
+package cn.bitflash.userutil;
 
-import cn.bitflash.feignInterface.impl.UserFallback;
 import cn.bitflash.user.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @FeignClient(value = "bitflash-user",fallbackFactory = UserFallback.class)
-public interface UserFeign {
+public interface UserUtils {
 
     @PostMapping("/api/user/inner/selectUserInfoById")
     public UserInfoEntity selectUserInfoById(@RequestParam("uid") String uid);

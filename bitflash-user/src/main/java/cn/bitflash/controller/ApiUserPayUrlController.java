@@ -2,7 +2,7 @@ package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
-import cn.bitflash.feignInterface.TradeFeign;
+import cn.bitflash.tradeutil.TradeUtils;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserInfoService;
@@ -44,7 +44,7 @@ public class ApiUserPayUrlController {
     private UserPayPwdService userPayPwdService;
 
     @Autowired
-    private TradeFeign tradeFeign;
+    private TradeUtils tradeUtils;
 
     /**
      * 上传的图片
@@ -195,10 +195,10 @@ public class ApiUserPayUrlController {
     public R getPayMessage(@RequestParam("accountId") String accountId,@RequestParam("type") String type) {
         String uid = null;
         if(type. equals("1")){
-            UserTradeEntity tradeEntity = tradeFeign.selectOneTrade(new ModelMap("id", accountId));
+            UserTradeEntity tradeEntity = tradeUtils.selectOneTrade(new ModelMap("id", accountId));
             uid = tradeEntity.getUid();
         }else if(type.equals("2")){
-            UserBuyEntity userBuyEntity = tradeFeign.selectOneBuy(new ModelMap("id", accountId));
+            UserBuyEntity userBuyEntity = tradeUtils.selectOneBuy(new ModelMap("id", accountId));
             uid = userBuyEntity.getUid();
         }
         List<UserPayUrlEntity> payUrlEntities = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>()
@@ -248,6 +248,11 @@ public class ApiUserPayUrlController {
         return R.ok().put("url", payUrlEntity.getImgUrl());
     }
 
+    /**
+     * 身份认证完成接口
+     * @param uid
+     * @return
+     */
     @Login
     @PostMapping("successUpload")
     public R successUpload(@RequestAttribute(ApiLoginInterceptor.UID)String uid){

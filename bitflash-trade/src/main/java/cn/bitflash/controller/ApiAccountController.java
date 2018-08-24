@@ -2,8 +2,6 @@ package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.UserAccount;
-import cn.bitflash.feignInterface.UserFeign;
-import cn.bitflash.service.UserAccountService;
 import cn.bitflash.service.UserTradeHistoryService;
 import cn.bitflash.trade.UserAccountEntity;
 import cn.bitflash.trade.UserTradeHistoryEntity;

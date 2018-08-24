@@ -1,6 +1,5 @@
-package cn.bitflash.feignInterface.impl;
+package cn.bitflash.loginutil;
 
-import cn.bitflash.feignInterface.LoginFeign;
 import cn.bitflash.login.TokenEntity;
 import cn.bitflash.login.UserEntity;
 import feign.hystrix.FallbackFactory;
@@ -11,14 +10,14 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class loginFallback implements FallbackFactory<LoginFeign> {
+public class loginFallback implements FallbackFactory<LoginUtils> {
 
     private static final Logger log=LoggerFactory.getLogger(loginFallback.class);
 
 
     @Override
-    public LoginFeign create(Throwable throwable) {
-        return new LoginFeign() {
+    public LoginUtils create(Throwable throwable) {
+        return new LoginUtils() {
             @Override
             public TokenEntity selectOne(Map<String,Object> map) {
                 log.error("查询账户失败-----:"+throwable.getMessage());

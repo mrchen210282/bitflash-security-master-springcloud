@@ -17,9 +17,9 @@
 package cn.bitflash.resolver;
 
 import cn.bitflash.annotation.UserInvitationCode;
-import cn.bitflash.feignInterface.UserFeign;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.user.UserInvitationCodeEntity;
+import cn.bitflash.userutil.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -37,7 +37,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Component
 public class UserInvitationHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
     @Autowired
-    private UserFeign userFeign;
+    private UserUtils userUtils;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -55,7 +55,7 @@ public class UserInvitationHandlerMethodArgumentResolver implements HandlerMetho
         }
 
         // 获取用户信息
-        UserInvitationCodeEntity userInvitationCodeEntity = userFeign.selectUserInvitationCode((String)object);
+        UserInvitationCodeEntity userInvitationCodeEntity = userUtils.selectUserInvitationCode((String)object);
 
         return userInvitationCodeEntity;
     }

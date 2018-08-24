@@ -1,9 +1,9 @@
 package cn.bitflash.resolver;
 
 import cn.bitflash.annotation.PayPassword;
-import cn.bitflash.feignInterface.UserFeign;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.user.UserPayPwdEntity;
+import cn.bitflash.userutil.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 public class PayPasswordHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Autowired
-    private UserFeign userFeign;
+    private UserUtils userUtils;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -29,7 +29,7 @@ public class PayPasswordHandlerMethodArgumentResolver implements HandlerMethodAr
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest request, WebDataBinderFactory webDataBinderFactory) throws Exception {
         // 获取用户ID
         Object object = request.getAttribute(ApiLoginInterceptor.UID, RequestAttributes.SCOPE_REQUEST);
-        UserPayPwdEntity payPwd = userFeign.selectUserPayPwd(new ModelMap("uid", object.toString()));
+        UserPayPwdEntity payPwd = userUtils.selectUserPayPwd(new ModelMap("uid", object.toString()));
         return payPwd == null ? null : payPwd;
     }
 

@@ -1,6 +1,5 @@
-package cn.bitflash.feignInterface;
+package cn.bitflash.tradeutil;
 
-import cn.bitflash.feignInterface.impl.TradeFallback;
 import cn.bitflash.trade.UserAccountBean;
 import cn.bitflash.trade.UserAccountEntity;
 import cn.bitflash.trade.UserBuyEntity;
@@ -10,11 +9,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
 import java.util.Map;
 
 @FeignClient(value = "bitflash-trade",fallbackFactory = TradeFallback.class)
-public interface TradeFeign {
+public interface TradeUtils {
 
     @PostMapping("/api/trade/inner/selectTradeHistoryIncome")
     Map<String,Object> selectTradeHistoryIncome(@RequestBody  Map<String,Object> param);

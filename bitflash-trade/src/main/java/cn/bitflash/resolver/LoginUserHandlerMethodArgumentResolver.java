@@ -17,7 +17,7 @@
 package cn.bitflash.resolver;
 
 import cn.bitflash.annotation.LoginUser;
-import cn.bitflash.feignInterface.LoginFeign;
+import cn.bitflash.loginutil.LoginUtils;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.login.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Component
 public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
     @Autowired
-    private LoginFeign loginFeign;
+    private LoginUtils loginUtils;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -56,7 +56,7 @@ public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgu
         }
         // 获取用户信息
        // UserEntity user = new UserEntity();
-      UserEntity user = loginFeign.selectOneByUser(new ModelMap(ApiLoginInterceptor.UID, object));
+      UserEntity user = loginUtils.selectOneByUser(new ModelMap(ApiLoginInterceptor.UID, object));
         return user;
     }
 }

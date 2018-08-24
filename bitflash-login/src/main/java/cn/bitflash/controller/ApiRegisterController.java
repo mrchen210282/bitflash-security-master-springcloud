@@ -1,8 +1,8 @@
 package cn.bitflash.controller;
 
 import cn.bitflash.exception.RRException;
-import cn.bitflash.feignInterface.UserFeign;
-import cn.bitflash.feignInterface.UserTradeFeign;
+import cn.bitflash.userutil.UserUtils;
+import cn.bitflash.tradeutil.TradeUtils;
 import cn.bitflash.login.*;
 import cn.bitflash.service.AuthorityUserService;
 import cn.bitflash.service.TokenService;
@@ -14,7 +14,6 @@ import cn.bitflash.user.UserInvitationCodeEntity;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.sun.corba.se.spi.ior.ObjectKey;
 import common.utils.SmsUtils;
 import common.validator.ValidatorUtils;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -50,10 +49,10 @@ public class ApiRegisterController {
 	private TokenService tokenService;
 
 	@Autowired
-	private UserFeign userFeign;
+	private UserUtils userUtils;
 
 	@Autowired
-	private UserTradeFeign userTradeFeign;
+	private TradeUtils tradeUtils;
 	
 	private final Logger log = LoggerFactory.getLogger(ApiRegisterController.class);
 
@@ -84,7 +83,7 @@ public class ApiRegisterController {
 		UserAccountEntity userAccountEntity = new UserAccountEntity();
 		userAccountEntity.setCreateTime(new Date());
 		userAccountEntity.setUid(uid);
-		boolean flag=userTradeFeign.insert(userAccountEntity);
+		boolean flag= tradeUtils.insert(userAccountEntity);
 		if(!flag){
 			throw new RRException("初始化用户失败");
 		}
@@ -99,14 +98,14 @@ public class ApiRegisterController {
 		userinfo.setNickname(name);
 		if (StringUtils.isNotBlank(form.getInvitationCode())) {
 			// 校验验证码是否正确
-			UserInvitationCodeEntity userInvitationCodeEntity = userFeign.selectOne(form.getInvitationCode());
+			UserInvitationCodeEntity userInvitationCodeEntity = userUtils.selectOne(form.getInvitationCode());
 			if (userInvitationCodeEntity == null) {
 				return R.error("邀请码不正确");
 			}
 			userinfo.setInvitation(true);
 			userinfo.setInvitationCode(form.getInvitationCode());
 		}
-		userFeign.insert(userinfo);
+		userUtils.insert(userinfo);
 		log.info("手机号：" + form.getMobile() + ",注册成功，途径app，没有推广码");
 		return R.ok("注册成功");
 	}
@@ -133,7 +132,7 @@ public class ApiRegisterController {
 		UserAccountEntity userAccountEntity = new UserAccountEntity();
 		userAccountEntity.setCreateTime(new Date());
 		userAccountEntity.setUid(uid);
-		boolean flag=userTradeFeign.insert(userAccountEntity);
+		boolean flag= tradeUtils.insert(userAccountEntity);
 		if(!flag){
 			throw new RRException("初始化用户失败");
 		}
@@ -148,14 +147,14 @@ public class ApiRegisterController {
 		userinfo.setRealname(name);
 		if (StringUtils.isNotBlank(invitationCode)) {
 			// 校验验证码是否正确
-			UserInvitationCodeEntity userInvitationCodeEntity = userFeign.selectOne(invitationCode);
+			UserInvitationCodeEntity userInvitationCodeEntity = userUtils.selectOne(invitationCode);
 			if (userInvitationCodeEntity == null) {
 				return R.error("邀请码不正确");
 			}
 			userinfo.setInvitation(true);
 			userinfo.setInvitationCode(invitationCode);
 		}
-		userFeign.insert(userinfo);
+		userUtils.insert(userinfo);
 		log.info("手机号：" + mobile + ",注册成功，通过注册码注册");
 		return R.ok("注册成功");
 
@@ -219,7 +218,7 @@ public class ApiRegisterController {
 					if(null != authorityUserEntity) {
 						
 						BigDecimal availableAssets = null;
-						UserAccountEntity userAccountEntity = userTradeFeign.selectOne(new ModelMap("uid", authorityUserEntity.getUid()));
+						UserAccountEntity userAccountEntity = tradeUtils.selectOne(new ModelMap("uid", authorityUserEntity.getUid()));
 						if(null != userAccountEntity) {
 							availableAssets = userAccountEntity.getAvailableAssets();
 						} else {

@@ -3,17 +3,13 @@ package cn.bitflash.controller;
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.annotation.UserAccount;
-import cn.bitflash.feignInterface.LoginFeign;
-import cn.bitflash.feignInterface.SysFeign;
-import cn.bitflash.feignInterface.UserFeign;
 import cn.bitflash.login.UserEntity;
-import cn.bitflash.service.UserBuyService;
-import cn.bitflash.trade.UserAccountEntity;
-import cn.bitflash.trade.UserBuyEntity;
-import cn.bitflash.trade.UserBuyMessageBean;
+import cn.bitflash.loginutil.LoginUtils;
 import cn.bitflash.service.*;
+import cn.bitflash.sysutil.SysUtils;
 import cn.bitflash.trade.*;
 import cn.bitflash.user.UserPayPwdEntity;
+import cn.bitflash.userutil.UserUtils;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.GeTuiSendMessage;
@@ -72,13 +68,13 @@ public class ApiWanToBuyController {
     private TradePoundageService tradePoundageService;
 
     @Autowired
-    private UserFeign userFeign;
+    private UserUtils userUtils;
 
     @Autowired
-    private LoginFeign loginFeign;
+    private LoginUtils loginUtils;
 
     @Autowired
-    private SysFeign sysFeign;
+    private SysUtils sysUtils;
 
 
     /**-----------------------------------------------显示求购信息列表-----------------------------------------------------*/
@@ -374,9 +370,9 @@ public class ApiWanToBuyController {
 
         UserBuyHistoryEntity userBuyHistoryEntity = userBuyHistoryService.selectOne(new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id", id));
         //获取Cid
-        String cid = loginFeign.selectGT(new ModelMap("uid", userBuyHistoryEntity.getSellUid())).getCid();
+        String cid = loginUtils.selectGT(new ModelMap("uid", userBuyHistoryEntity.getSellUid())).getCid();
         //获取推送信息
-        String text = sysFeign.getVal("reminders");
+        String text = sysUtils.getVal("reminders");
 
         try {
             GeTuiSendMessage.sendSingleMessage(text, cid);
@@ -429,7 +425,7 @@ public class ApiWanToBuyController {
     public R payCoin(@RequestParam("id") String id, @RequestParam("pwd") String pwd, @LoginUser UserEntity user) {
 
         //判断交易密码是否正确
-        UserPayPwdEntity userPayPwdEntity = userFeign.selectUserPayPwd(new ModelMap("uid", user.getUid()));
+        UserPayPwdEntity userPayPwdEntity = userUtils.selectUserPayPwd(new ModelMap("uid", user.getUid()));
 
         //交易密码不正确
         if (!pwd.equals(userPayPwdEntity.getPayPassword())) {

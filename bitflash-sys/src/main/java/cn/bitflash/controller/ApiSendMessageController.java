@@ -1,7 +1,7 @@
 package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
-import cn.bitflash.feignInterface.UserLoginFeign;
+import cn.bitflash.tradeutil.UserUtils;
 import cn.bitflash.login.UserGTCidEntity;
 import cn.bitflash.service.PlatFormConfigService;
 import cn.bitflash.utils.Common;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApiSendMessageController {
 
     @Autowired
-    private UserLoginFeign userLoginFeign;
+    private UserUtils userUtils;
 
     @Autowired
     private PlatFormConfigService platFormConfigService;
@@ -39,7 +39,7 @@ public class ApiSendMessageController {
         String idVal = redisUtils.get(Common.ADD_LOCK+id);
         if (StringUtils.isBlank(idVal)) {
             try {
-                UserGTCidEntity gtCidEntity = userLoginFeign.selectGT(new ModelMap("uid", uid));
+                UserGTCidEntity gtCidEntity = userUtils.selectGT(new ModelMap("uid", uid));
                 String text = platFormConfigService.getVal(Common.MSG_TEXT);
                 GeTuiSendMessage.sendSingleMessage(text, gtCidEntity.getCid());
                 redisUtils.set(Common.ADD_LOCK+id, id, 60 * 60);

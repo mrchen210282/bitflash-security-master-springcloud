@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+
 @FeignClient(value = "bitflash-sys",fallbackFactory = SysFallback.class)
 public interface SysUtils {
 

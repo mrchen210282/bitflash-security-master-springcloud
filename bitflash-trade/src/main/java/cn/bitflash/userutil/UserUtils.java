@@ -2,12 +2,14 @@ package cn.bitflash.userutil;
 
 import cn.bitflash.user.*;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
+
 
 @FeignClient(value = "bitflash-user",fallbackFactory = UserFallback.class)
 public interface UserUtils {

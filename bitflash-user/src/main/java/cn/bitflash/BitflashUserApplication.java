@@ -15,6 +15,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @EnableFeignClients(basePackages = {"cn.bitflash.sysutils","cn.bitflash.tradeutil","cn.bitflash.loginutil"})
 @EnableCircuitBreaker
 @EnableRedisHttpSession
+
 @MapperScan(basePackages = {"cn.bitflash.dao"})
 public class BitflashUserApplication extends SpringBootServletInitializer {
 

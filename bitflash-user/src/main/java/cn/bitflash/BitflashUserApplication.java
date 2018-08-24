@@ -8,11 +8,13 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 @SpringBootApplication
 @EnableEurekaClient
 @EnableFeignClients(basePackages = {"cn.bitflash.sysutils","cn.bitflash.tradeutil","cn.bitflash.loginutil"})
+@ComponentScan({"cn.bitflash.sysutils","cn.bitflash.tradeutil","cn.bitflash.loginutil"})
 @EnableCircuitBreaker
 @EnableRedisHttpSession
 

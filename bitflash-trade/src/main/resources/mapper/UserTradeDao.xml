@@ -41,7 +41,7 @@
             </if>
             and a.state = '1'
         </where>
-        order by price asc limit #{pageNum},#{pageTotal}
+        order by price
     </select>
 
     <select id="selectTrade" resultType="cn.bitflash.trade.UserTradeEntity">

@@ -13,7 +13,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @SpringBootApplication
 @EnableEurekaClient
 @EnableFeignClients(basePackages = {"cn.bitflash.tradeutil"})
-@ComponentScan({"cn.bitflash.tradeutil"})
+@ComponentScan
 @EnableCircuitBreaker
 @EnableRedisHttpSession(redisFlushMode = RedisFlushMode.IMMEDIATE)
 @MapperScan("cn.bitflash.dao")

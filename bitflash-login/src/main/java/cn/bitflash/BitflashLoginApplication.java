@@ -13,7 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @EnableEurekaClient
 @EnableFeignClients(basePackages = {"cn.bitflash.userutil","cn.bitflash.tradeutil"})
-@ComponentScan({"cn.bitflash.userutil","cn.bitflash.tradeutil"})
+@ComponentScan
 @EnableCircuitBreaker
 @MapperScan(basePackages = {"cn.bitflash.dao"})
 public class BitflashLoginApplication extends SpringBootServletInitializer {

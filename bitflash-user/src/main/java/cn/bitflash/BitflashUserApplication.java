@@ -14,7 +14,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @SpringBootApplication
 @EnableEurekaClient
 @EnableFeignClients(basePackages = {"cn.bitflash.sysutils","cn.bitflash.tradeutil","cn.bitflash.loginutil"})
-@ComponentScan({"cn.bitflash.sysutils","cn.bitflash.tradeutil","cn.bitflash.loginutil"})
+@ComponentScan
 @EnableCircuitBreaker
 @EnableRedisHttpSession
 

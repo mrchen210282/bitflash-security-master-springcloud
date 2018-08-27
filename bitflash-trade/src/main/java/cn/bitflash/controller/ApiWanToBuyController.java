@@ -11,14 +11,18 @@ import cn.bitflash.trade.*;
 import cn.bitflash.user.UserPayPwdEntity;
 import cn.bitflash.userutil.UserUtils;
 import cn.bitflash.utils.R;
+import com.aliyuncs.http.HttpRequest;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.GeTuiSendMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.HttpSessionRequiredException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -133,9 +137,7 @@ public class ApiWanToBuyController {
             userBuyEntity.setState(state);
             userBuyEntitiesList.add(userBuyEntity);
         }
-
-
-        return R.ok().put("userBuyEntitiesList", userBuyEntitiesList);
+        return R.ok().put("userBuyEntitiesList", userBuyEntitiesList).put("count", userBuyEntitiesList.size());
     }
 
     /**--------------------------------------------------添加订单---------------------------------------------------------*/
@@ -305,7 +307,6 @@ public class ApiWanToBuyController {
             return R.error(TRADEMISS);
         }
 
-
         try {
             //设置支付时间
             userBuyEntity.setPayTime(new Date());
@@ -366,7 +367,7 @@ public class ApiWanToBuyController {
      * -------------点击催单(待收币)------------
      */
     @PostMapping("reminders")
-    public R reminders(@RequestParam("id") String id) {
+    public R reminders(@RequestParam("id") String id, HttpServletRequest request) {
 
         UserBuyHistoryEntity userBuyHistoryEntity = userBuyHistoryService.selectOne(new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id", id));
         //获取Cid
@@ -379,7 +380,31 @@ public class ApiWanToBuyController {
         } catch (Exception e) {
             return R.error("推送失败");
         }
+
+        HttpSession session = request.getSession();
+        session.setMaxInactiveInterval(60 * 60 * 24 * 7);
+        session.setAttribute("订单" + id, "0");
         return R.ok().put("code", SUCCESS);
+
+    }
+
+    /**
+     * ------------------4.1--------------------
+     * <p>
+     * -------------判定是否催单(待收币)------------
+     */
+    @PostMapping("checkReminders")
+    public R checkReminders(@RequestParam("id") String id, HttpServletRequest request) {
+
+        HttpSession session = request.getSession();
+
+        if (session.getAttribute("订单" + id) == null || "".equals(session.getAttribute("订单" + id))) {
+            return R.ok().put("state", "0");
+
+        } else {
+            return R.ok().put("state", "1");
+        }
+
     }
 
     /**

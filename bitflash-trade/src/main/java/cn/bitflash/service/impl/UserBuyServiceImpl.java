@@ -48,4 +48,14 @@ public class UserBuyServiceImpl extends ServiceImpl<UserBuyDao, UserBuyEntity> i
     public List<UserBuyBean> selectAppealList(String uid, Integer pages) {
         return baseMapper.selectAppealList(uid, pages);
     }
+
+    @Override
+    public Integer selectAppealCount(String uid) {
+        return baseMapper.selectAppealCount(uid);
+    }
+
+    @Override
+    public Integer selectUserBuyOwnCount(String uid){
+        return baseMapper.selectUserBuyOwnCount(uid);
+    }
 }

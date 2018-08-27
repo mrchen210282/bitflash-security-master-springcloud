@@ -20,4 +20,7 @@ public interface UserBuyDao extends BaseMapper<UserBuyEntity> {
 
     List<UserBuyBean> selectAppealList(@Param("uid") String uid, @Param("pages") Integer pages);
 
+    Integer selectAppealCount(String uid);
+
+    Integer selectUserBuyOwnCount(String uid);
 }

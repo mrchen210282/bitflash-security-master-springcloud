@@ -137,7 +137,9 @@ public class ApiWanToBuyController {
             userBuyEntity.setState(state);
             userBuyEntitiesList.add(userBuyEntity);
         }
-        return R.ok().put("userBuyEntitiesList", userBuyEntitiesList).put("count", userBuyEntitiesList.size());
+
+        Integer count = userBuyService.selectUserBuyOwnCount(user.getUid());
+        return R.ok().put("userBuyEntitiesList", userBuyEntitiesList).put("count", count);
     }
 
     /**--------------------------------------------------添加订单---------------------------------------------------------*/
@@ -404,7 +406,6 @@ public class ApiWanToBuyController {
         } else {
             return R.ok().put("state", "1");
         }
-
     }
 
     /**

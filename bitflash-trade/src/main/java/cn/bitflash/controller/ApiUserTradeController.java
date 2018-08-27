@@ -8,13 +8,17 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 
+import cn.bitflash.loginutil.LoginUtils;
 import cn.bitflash.service.*;
+import cn.bitflash.sysutil.SysUtils;
 import cn.bitflash.trade.*;
+import common.utils.GeTuiSendMessage;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,6 +36,11 @@ import cn.bitflash.utils.BigDecimalUtils;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
 import cn.bitflash.utils.RedisUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import static cn.bitflash.utils.Common.SUCCESS;
 
 /**
  * 获取用户交易接口
@@ -65,6 +74,12 @@ public class ApiUserTradeController {
 
     @Autowired
     private TradePoundageService tradePoundageService;
+
+    @Autowired
+    private LoginUtils loginUtils;
+
+    @Autowired
+    private SysUtils sysUtils;
 
     /**
      * 交易列表(卖入)
@@ -707,9 +722,10 @@ public class ApiUserTradeController {
         map.put("pageNum", new Integer(pageNum));
         map.put("pageTotal", new Integer(pageTotal));
         List<UserTradeJoinBuyEntity> list = userTradeService.selectFinishOrder(map);
-        return R.ok().put("list", list);
-    }
 
+        Integer count = userTradeService.selectFinishOrderCount(map);
+        return R.ok().put("list", list).put("count",count);
+    }
 
     public static void main(String[] args) throws UnsupportedEncodingException {
 //        String time = String.valueOf(System.currentTimeMillis());

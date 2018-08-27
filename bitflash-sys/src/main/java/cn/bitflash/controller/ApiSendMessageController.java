@@ -51,7 +51,20 @@ public class ApiSendMessageController {
 
         }
         return R.error(501, "未超时" );
+    }
 
-
+    /**
+     * @param id 订单id
+     * @return
+     */
+    @Login
+    @PostMapping("validateSendMessage" )
+    public R validateSendMessage(@RequestParam String id) throws Exception {
+        String idVal = redisUtils.get(Common.ADD_LOCK+id);
+        if (StringUtils.isBlank(idVal)) {
+            return R.ok().put("state", "0");
+        } else {
+            return R.ok().put("state", "1");
+        }
     }
 }

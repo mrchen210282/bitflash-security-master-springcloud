@@ -707,7 +707,9 @@ public class ApiUserTradeController {
         map.put("pageNum", new Integer(pageNum));
         map.put("pageTotal", new Integer(pageTotal));
         List<UserTradeJoinBuyEntity> list = userTradeService.selectFinishOrder(map);
-        return R.ok().put("list", list);
+
+        Integer count = userTradeService.selectFinishOrderCount(map);
+        return R.ok().put("list", list).put("count",count);
     }
 
 

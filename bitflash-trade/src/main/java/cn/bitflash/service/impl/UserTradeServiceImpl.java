@@ -166,5 +166,11 @@ public class UserTradeServiceImpl extends ServiceImpl<UserTradeDao, UserTradeEnt
         return baseMapper.selectFinishOrder(map);
     }
 
+    //查询已完成订单
+    @Override
+    public Integer selectFinishOrderCount(Map<String, Object> map) {
+        return baseMapper.selectFinishOrderCount(map);
+    }
+
 }
 

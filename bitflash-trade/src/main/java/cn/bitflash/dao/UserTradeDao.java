@@ -64,4 +64,7 @@ public interface UserTradeDao extends BaseMapper<UserTradeEntity> {
 
     //查询已完成订单
     List<UserTradeJoinBuyEntity> selectFinishOrder(Map<String,Object> map);
+
+    //查询已完成订单
+    Integer selectFinishOrderCount(Map<String,Object> map);
 }

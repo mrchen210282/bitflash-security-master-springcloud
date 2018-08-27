@@ -71,11 +71,11 @@ public class ApiSystemController {
         Long time = Long.valueOf(str);*/
         Date now = new DateTime().withTimeAtStartOfDay().toDate();
         Date after = DateUtils.addDateDays(now,-7);
+        Date yesterday = DateUtils.addDateDays(now,-1);
         DateTimeFormatter dt=DateTimeFormatter.ofPattern("MM-dd");
-        List<PriceLinechartEntity> list=priceLinechartService.selectList(new EntityWrapper<PriceLinechartEntity>().between("rate_time",after,now).orderBy("rate_time"));
+        List<PriceLinechartEntity> list=priceLinechartService.selectList(new EntityWrapper<PriceLinechartEntity>().between("rate_time",after,yesterday).orderBy("rate_time"));
         List<String> date=list.stream().map(u->u.getRateTime().format(dt)).collect(Collectors.toList());
         List<Float> price=list.stream().map(PriceLinechartEntity::getPrice).collect(Collectors.toList());
-        Date yesterday = DateUtils.addDateDays(now,-1);
         PriceLinechartEntity yestPrice = priceLinechartService.selectById(yesterday);
         if(yestPrice==null){
             yestPrice=list.get(list.size()-1);

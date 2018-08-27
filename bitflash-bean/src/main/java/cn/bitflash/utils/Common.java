@@ -86,6 +86,9 @@ public class Common {
 	// redis缓存订单号key
 	public final static String ADD_LOCK = "userTrade_";
 
+	// redis缓存订单号key
+	public final static String ADD_LOCKNUM = "userBuy_";
+
 	// redis统计锁定订单数量
 	public final static String COUNT_LOCK = "countLock_";
 

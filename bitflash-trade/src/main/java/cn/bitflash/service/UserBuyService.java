@@ -22,4 +22,7 @@ public interface UserBuyService extends IService<UserBuyEntity> {
 
     List<UserBuyBean> selectAppealList(@RequestParam("uid") String uid, @RequestParam("pages") Integer pages);
 
+    Integer selectAppealCount(@RequestParam("uid")String uid);
+
+    Integer selectUserBuyOwnCount(String uid);
 }

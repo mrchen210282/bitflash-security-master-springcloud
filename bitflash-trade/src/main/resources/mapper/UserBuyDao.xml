@@ -61,4 +61,23 @@
 
     </select>
 
+    <select id="selectAppealCount" resultType="java.lang.Integer">
+        SELECT
+            count(0)
+        FROM
+            user_complaint uc
+        WHERE
+            uc.complaint_uid = #{uid}
+            OR uc.contacts_uid = #{uid}
+    </select>
+
+    <select id="selectUserBuyOwnCount" resultType="java.lang.Integer">
+        SELECT
+            count(0)
+        FROM
+            user_buy ub
+        WHERE
+            ub.uid = #{uid} and ub.state != "0" and ub.state != "6" and ub.state != "9"
+    </select>
+
 </mapper>

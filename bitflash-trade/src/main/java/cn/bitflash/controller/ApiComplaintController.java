@@ -51,9 +51,9 @@ public class ApiComplaintController {
         String uid = user.getUid();
         List<UserBuyBean> ub = userBuyService.selectAppealList(uid, Integer.valueOf(pages));
         if (ub == null || ub.size() < 0) {
-            return R.error("暂时没有求购信息");
+            return R.error("暂时没有申诉信息");
         }
-        Integer count = userBuyService.getNumToPaging();
+        Integer count = userBuyService.selectAppealCount(user.getUid());
         return R.ok().put("count", count).put("list", ub).put("availableAssets", userAccount.getAvailableAssets());
     }
 

@@ -157,13 +157,21 @@
 
     <!-- add by wangjun 2018.6.23 查看订单明细 -->
     <select id="queryDetail" resultType="cn.bitflash.trade.UserTradeBean">
-        select b.realname,a.id,a.price,a.quantity,a.uid,a.create_time,tp.poundage,b.mobile,
-        (select b.nickname from user_trade_history uth where uth.purchase_uid = a.uid and a.id = uth.user_trade_id) purchaseName,
-        (select b.mobile from user_trade_history uth where uth.purchase_uid = a.uid and a.id = uth.user_trade_id) purchaseMobile
+        select
+        (select b.nickname from user_info b where a.uid = b.uid) nickname,
+        (select b.mobile from user_info b where a.uid = b.uid) mobile,
+        a.id,
+        a.price,
+        a.quantity,
+        a.uid,
+        a.create_time,
+        tp.poundage,
+        (select b.mobile from user_info b where b.uid = uth.purchase_uid) purchaseMobile,
+        (select b.nickname  from user_info b where b.uid = uth.purchase_uid) purchaseName
         from
         user_trade a
         left join trade_poundage tp on tp.user_trade_id = a.id
-        left join user_info b on a.uid = b.uid
+        left join user_trade_history uth on a.id = uth.user_trade_id
         <where>
             1 = 1
             <if test="id != null and id != ''">

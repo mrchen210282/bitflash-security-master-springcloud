@@ -421,7 +421,6 @@ public class ApiWanToBuyController {
         } else {
             return R.ok().put("state", "1");
         }
-
     }
 
     /**

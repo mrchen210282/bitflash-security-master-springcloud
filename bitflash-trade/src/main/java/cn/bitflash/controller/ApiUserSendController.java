@@ -171,6 +171,18 @@ public class ApiUserSendController {
     }
 
     /**
+     * 手续费
+     *
+     * @author
+     */
+    @PostMapping("handingFee")
+    public R handingFee() {
+        //手续费
+        UserTradeConfigEntity userTradeConfig = userTradeConfigService.selectOne(new EntityWrapper<UserTradeConfigEntity>().eq("remark", "发送手续费"));
+        Float poundage = userTradeConfig.getPoundage();
+        return R.ok().put("poundage",poundage);
+    }
+    /**
      * 交易记录
      *
      * @author
@@ -182,12 +194,12 @@ public class ApiUserSendController {
         //state = 1 :发送
         if (state == 1) {
             List<UserSendEntity> usersendList = userSendService.selectaccount(user.getUid());
-            return R.ok().put("usersendList", usersendList);
+            return R.ok().put("usersendList", usersendList).put("count",usersendList.size());
         }
         //state = 2 :接收
         else if (state == 2) {
             List<UserSendEntity> useracceptList = userSendService.selectaccept(user.getUid());
-            return R.ok().put("useracceptList", useracceptList);
+            return R.ok().put("useracceptList", useracceptList).put("count",useracceptList.size());
         }
         return null;
     }

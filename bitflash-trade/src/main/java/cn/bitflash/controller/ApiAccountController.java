@@ -48,6 +48,9 @@ public class ApiAccountController {
             Double money = u.getSellQuantity().doubleValue();
             return money;
         }).sum();
+        if(yesterdayBkc==null){
+            yesterdayBkc=0.0d;
+        }
 
         /**
          * yesterDayIncome 昨日收入

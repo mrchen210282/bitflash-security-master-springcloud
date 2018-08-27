@@ -77,6 +77,9 @@ public class ApiSystemController {
         List<Float> price=list.stream().map(PriceLinechartEntity::getPrice).collect(Collectors.toList());
         Date yesterday = DateUtils.addDateDays(now,-1);
         PriceLinechartEntity yestPrice = priceLinechartService.selectById(yesterday);
+        if(yestPrice==null){
+            yestPrice=list.get(list.size()-1);
+        }
         return R.ok().put("date",date).put("price",price).put("yesterday",yestPrice);
     }
 

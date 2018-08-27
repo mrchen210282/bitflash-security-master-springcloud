@@ -4,6 +4,7 @@ import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.annotation.UserAccount;
 import cn.bitflash.annotation.UserInvitationCode;
+import cn.bitflash.service.UserPayUrlService;
 import cn.bitflash.sysutils.SysUtils;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.login.UserEntity;
@@ -11,18 +12,17 @@ import cn.bitflash.service.UserInfoService;
 import cn.bitflash.service.UserPayPwdService;
 import cn.bitflash.service.UserRelationService;
 import cn.bitflash.trade.UserAccountEntity;
-import cn.bitflash.user.UserInfoEntity;
-import cn.bitflash.user.UserInvitationCodeEntity;
-import cn.bitflash.user.UserPayPwdEntity;
-import cn.bitflash.user.UserRelationEntity;
+import cn.bitflash.user.*;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,6 +45,9 @@ public class ApiUserInfoController {
 
     @Autowired
     private UserPayPwdService userPayPwdService;
+
+    @Autowired
+    private UserPayUrlService userPayUrlService;
 
     /**
      * 获取用户体系信息
@@ -158,7 +161,7 @@ public class ApiUserInfoController {
     }
 
     /**
-     * 验证用户是否设置交易密码
+     * 验证用户是否设置交易密码,上传收款码
      * @param uid
      * @return
      */
@@ -166,9 +169,18 @@ public class ApiUserInfoController {
     @PostMapping("validatePwd")
     public R validatePwd(@RequestAttribute(ApiLoginInterceptor.UID) String uid){
         UserPayPwdEntity payPwdEntity = userPayPwdService.selectOne(new EntityWrapper<UserPayPwdEntity>().eq("uid",uid));
-        if(payPwdEntity!=null && StringUtils.isNotBlank(payPwdEntity.getPayPassword())){
-            return R.ok();
+        if(payPwdEntity==null || StringUtil.isNullOrEmpty(payPwdEntity.getPayPassword())){
+            //如果没有交易密码
+            return R.ok().put("msg","1");
         }
-        return R.error();
+        List<UserPayUrlEntity> urlEntity = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>().eq("uid",uid));
+        if(urlEntity.size()<3){
+            return R.ok().put("msg","2");
+        }
+        UserInfoEntity infoEntity = userInfoService.selectById(uid);
+        if(!infoEntity.getIsAuthentication().equals("2")){
+            return R.ok().put("msg","3");
+        }
+        return R.ok().put("msg","0");
     }
 }

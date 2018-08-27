@@ -194,12 +194,12 @@ public class ApiUserSendController {
         //state = 1 :发送
         if (state == 1) {
             List<UserSendEntity> usersendList = userSendService.selectaccount(user.getUid());
-            return R.ok().put("usersendList", usersendList);
+            return R.ok().put("usersendList", usersendList).put("count",usersendList.size());
         }
         //state = 2 :接收
         else if (state == 2) {
             List<UserSendEntity> useracceptList = userSendService.selectaccept(user.getUid());
-            return R.ok().put("useracceptList", useracceptList);
+            return R.ok().put("useracceptList", useracceptList).put("count",useracceptList.size());
         }
         return null;
     }

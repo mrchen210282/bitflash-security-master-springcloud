@@ -10,13 +10,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.session.data.redis.RedisFlushMode;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
-@SpringBootApplication
-@EnableEurekaClient
 @EnableFeignClients(basePackages = {"cn.bitflash.tradeutil"})
-@ComponentScan
 @EnableCircuitBreaker
+@EnableEurekaClient
 @EnableRedisHttpSession(redisFlushMode = RedisFlushMode.IMMEDIATE)
 @MapperScan("cn.bitflash.dao")
+@SpringBootApplication
 public class BitflashSysApplication {
 
     public static void main(String[] args) {

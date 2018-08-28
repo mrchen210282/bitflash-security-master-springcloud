@@ -145,8 +145,8 @@ public class ApiUserPayUrlController {
                 .and().eq("img_type", imgType));
         String imgName = imgType.equals("3") ? MD5Util.stringToMD5(user.getMobile() + System.currentTimeMillis()) + "_z" : MD5Util.stringToMD5(user.getMobile() + System.currentTimeMillis()) + "_f";
         String imgUrl = "";
-        //String path = "/home/statics/idnumber/" + imgName + ".png";
-        String path = "D://" + imgName + ".png";
+        String path = "/home/statics/idnumber/" + imgName + ".png";
+        //String path = "D://" + imgName + ".png";
         imgUrl = "http://www.bitflash.vip/auth/" + imgName + ".png";
         BASE64Decoder decoder = new BASE64Decoder();
         try {
@@ -178,10 +178,6 @@ public class ApiUserPayUrlController {
             userPay.setImgUrl(imgUrl);
             userPayUrlService.updateById(userPay);
         }
-        /*UserInfoEntity userinfo = new UserInfoEntity();
-        //userinfo.setIsAuthentication("1");
-        userinfo.setUid(user.getUid());
-        userInfoService.updateById(userinfo);*/
         return R.ok();
     }
 
@@ -199,7 +195,7 @@ public class ApiUserPayUrlController {
             UserTradeEntity tradeEntity = tradeUtils.selectOneTrade(new ModelMap("id", accountId));
             uid = tradeEntity.getUid();
         }else if(type.equals("2")){
-            UserBuyHistoryEntity userBuyEntity = tradeUtils.selectOneBuy(new ModelMap("id", accountId));
+            UserBuyHistoryEntity userBuyEntity = tradeUtils.selectOneBuy(new ModelMap("user_buy_id", accountId));
             uid = userBuyEntity.getSellUid();
         }
         List<UserPayUrlEntity> payUrlEntities = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>()

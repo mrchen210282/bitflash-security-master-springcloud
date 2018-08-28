@@ -28,10 +28,6 @@ public class BitflashZuulApplication {
         return new TokenFilter();
     }
 
-    @Bean
-    public IPFilter getIPFilter() {
-        return new IPFilter();
-    }
 
     @Bean
     public CorsFilter corsFilter() {

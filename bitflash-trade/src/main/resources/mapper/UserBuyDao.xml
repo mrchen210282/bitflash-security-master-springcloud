@@ -8,6 +8,7 @@
         ub.* ,ui.nickname
         from user_buy ub left join user_info ui on(ub.uid=ui.uid)
         where ub.uid!=#{uid} and state ='1'
+        order by ub.price desc
         limit #{pages},6
     </select>
 

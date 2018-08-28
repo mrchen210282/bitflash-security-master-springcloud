@@ -2,6 +2,7 @@ package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
+import cn.bitflash.trade.UserBuyHistoryEntity;
 import cn.bitflash.tradeutil.TradeUtils;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.login.UserEntity;
@@ -198,8 +199,8 @@ public class ApiUserPayUrlController {
             UserTradeEntity tradeEntity = tradeUtils.selectOneTrade(new ModelMap("id", accountId));
             uid = tradeEntity.getUid();
         }else if(type.equals("2")){
-            UserBuyEntity userBuyEntity = tradeUtils.selectOneBuy(new ModelMap("id", accountId));
-            uid = userBuyEntity.getUid();
+            UserBuyHistoryEntity userBuyEntity = tradeUtils.selectOneBuy(new ModelMap("id", accountId));
+            uid = userBuyEntity.getSellUid();
         }
         List<UserPayUrlEntity> payUrlEntities = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>()
                 .eq("uid", uid).eq("img_type", 1)

@@ -1,9 +1,6 @@
 package cn.bitflash.tradeutil;
 
-import cn.bitflash.trade.UserAccountBean;
-import cn.bitflash.trade.UserAccountEntity;
-import cn.bitflash.trade.UserBuyEntity;
-import cn.bitflash.trade.UserTradeEntity;
+import cn.bitflash.trade.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,7 +31,7 @@ public interface TradeUtils {
     public UserTradeEntity selectOneTrade(@RequestBody Map<String ,Object> map);
 
     @PostMapping("/api/trade/inner/selectOneBuy")
-    public UserBuyEntity selectOneBuy(@RequestBody Map<String ,Object> map);
+    public UserBuyHistoryEntity selectOneBuy(@RequestBody Map<String ,Object> map);
 
 
 }

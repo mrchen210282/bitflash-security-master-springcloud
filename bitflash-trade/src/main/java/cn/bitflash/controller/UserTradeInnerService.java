@@ -1,14 +1,8 @@
 package cn.bitflash.controller;
 
 import cn.bitflash.login.UserGTCidEntity;
-import cn.bitflash.service.UserAccountService;
-import cn.bitflash.service.UserBuyService;
-import cn.bitflash.service.UserTradeHistoryService;
-import cn.bitflash.service.UserTradeService;
-import cn.bitflash.trade.UserAccountBean;
-import cn.bitflash.trade.UserAccountEntity;
-import cn.bitflash.trade.UserBuyEntity;
-import cn.bitflash.trade.UserTradeEntity;
+import cn.bitflash.service.*;
+import cn.bitflash.trade.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,14 +13,19 @@ import java.util.Map;
 @RequestMapping("/api/trade/inner")
 public class UserTradeInnerService {
     @Autowired
-    UserTradeService userTradeService;
-    @Autowired
-    UserTradeHistoryService userTradeHistoryService;
-    @Autowired
-    UserAccountService userAccountService;
+    private UserTradeService userTradeService;
 
     @Autowired
-    UserBuyService userBuyService;
+    private UserTradeHistoryService userTradeHistoryService;
+
+    @Autowired
+    private UserAccountService userAccountService;
+
+    @Autowired
+    private UserBuyService userBuyService;
+
+    @Autowired
+    private UserBuyHistoryService userBuyHistoryService;
 
     @PostMapping("/selectTradeHistoryIncome")
     public Map<String, Object> selectTradeHistoryIncome(@RequestBody Map<String, Object> map) {
@@ -69,8 +68,8 @@ public class UserTradeInnerService {
     }
 
     @PostMapping("selectOneBuy")
-    public UserBuyEntity selectOneBuy(@RequestBody Map<String ,Object> map){
-        List<UserBuyEntity> buys = userBuyService.selectByMap(map);
+    public UserBuyHistoryEntity selectOneBuy(@RequestBody Map<String ,Object> map){
+        List<UserBuyHistoryEntity> buys = userBuyHistoryService.selectByMap(map);
         if(buys !=null && buys.size()>0){
             return buys.get(0);
         }

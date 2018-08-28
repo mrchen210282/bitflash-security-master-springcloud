@@ -10,12 +10,13 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
-@SpringBootApplication
-@EnableEurekaClient
+
+
 @EnableFeignClients(basePackages = {"cn.bitflash.userutil","cn.bitflash.tradeutil"})
-@ComponentScan
 @EnableCircuitBreaker
+@EnableEurekaClient
 @MapperScan(basePackages = {"cn.bitflash.dao"})
+@SpringBootApplication
 public class BitflashLoginApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {

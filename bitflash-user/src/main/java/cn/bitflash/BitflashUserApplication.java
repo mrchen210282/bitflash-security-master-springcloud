@@ -12,12 +12,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 @EnableFeignClients(basePackages = {"cn.bitflash.sysutils","cn.bitflash.tradeutil","cn.bitflash.loginutil"})
-@SpringBootApplication
 @EnableEurekaClient
-@ComponentScan
 @EnableCircuitBreaker
 @EnableRedisHttpSession
 @MapperScan(basePackages = {"cn.bitflash.dao"})
+@SpringBootApplication
 public class BitflashUserApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {

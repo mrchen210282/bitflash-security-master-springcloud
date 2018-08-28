@@ -18,7 +18,7 @@ package cn.bitflash.dao;
 
 import cn.bitflash.trade.UserSendEntity;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
-import org.springframework.stereotype.Repository;
+import feign.Param;
 
 import java.util.List;
 
@@ -28,11 +28,14 @@ import java.util.List;
  *
  * @author eric
  */
-@Repository
 public interface UserSendDao extends BaseMapper<UserSendEntity> {
 
-    public List<UserSendEntity> selectaccount(String send_uid);
+    List<UserSendEntity> selectaccount(@Param("send_uid") String send_uid, @Param("pages") Integer pages);
 
-    public List<UserSendEntity> selectaccept(String send_uid);
+    List<UserSendEntity> selectaccept(@Param("send_uid") String send_uid, @Param("pages") Integer pages);
+
+    Integer selectaccountcount(String send_uid);
+
+    Integer selectacceptcount(String send_uid);
 
 }

@@ -180,8 +180,9 @@ public class ApiUserSendController {
         //手续费
         UserTradeConfigEntity userTradeConfig = userTradeConfigService.selectOne(new EntityWrapper<UserTradeConfigEntity>().eq("remark", "发送手续费"));
         Float poundage = userTradeConfig.getPoundage();
-        return R.ok().put("poundage",poundage);
+        return R.ok().put("poundage", poundage);
     }
+
     /**
      * 交易记录
      *
@@ -189,17 +190,19 @@ public class ApiUserSendController {
      */
     @Login
     @PostMapping("record")
-    public R record(@LoginUser UserEntity user, @RequestParam int state) {
+    public R record(@LoginUser UserEntity user, @RequestParam int state, @RequestParam("pages") String pages) {
 
         //state = 1 :发送
         if (state == 1) {
-            List<UserSendEntity> usersendList = userSendService.selectaccount(user.getUid());
-            return R.ok().put("usersendList", usersendList).put("count",usersendList.size());
+            List<UserSendEntity> usersendList = userSendService.selectaccount(user.getUid(), Integer.valueOf(pages));
+            Integer count = userSendService.selectaccountcount(user.getUid());
+            return R.ok().put("usersendList", usersendList).put("count", count);
         }
         //state = 2 :接收
         else if (state == 2) {
-            List<UserSendEntity> useracceptList = userSendService.selectaccept(user.getUid());
-            return R.ok().put("useracceptList", useracceptList).put("count",useracceptList.size());
+            List<UserSendEntity> useracceptList = userSendService.selectaccept(user.getUid(), Integer.valueOf(pages));
+            Integer count = userSendService.selectacceptcount(user.getUid());
+            return R.ok().put("useracceptList", useracceptList).put("count", count);
         }
         return null;
     }

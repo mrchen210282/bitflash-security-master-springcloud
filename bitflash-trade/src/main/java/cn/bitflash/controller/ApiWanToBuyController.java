@@ -13,7 +13,6 @@ import cn.bitflash.userutil.UserUtils;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
 import cn.bitflash.utils.RedisUtils;
-import com.aliyuncs.http.HttpRequest;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.GeTuiSendMessage;
 import org.apache.commons.lang.StringUtils;
@@ -21,11 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.HttpSessionRequiredException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -111,8 +108,8 @@ public class ApiWanToBuyController {
      */
     @Login
     @PostMapping("showBuyMessageOwn")
-    public R showUserBuyMessage(@LoginUser UserEntity user) {
-        List<UserBuyBean> userBuyEntities = userBuyService.selectBuyList(user.getUid());
+    public R showUserBuyMessage(@LoginUser UserEntity user, @RequestParam("pages") String pages) {
+        List<UserBuyBean> userBuyEntities = userBuyService.selectBuyList(user.getUid(), Integer.valueOf(pages));
         List<UserBuyBean> userBuyEntitiesList = new LinkedList<UserBuyBean>();
         String state = null;
 
@@ -384,7 +381,7 @@ public class ApiWanToBuyController {
         //获取推送信息
         String text = null;
 
-        if(STATE_BUY_PAYMONEY.equals(userBuyHistoryEntity.getPurchaseState())){
+        if (STATE_BUY_PAYMONEY.equals(userBuyHistoryEntity.getPurchaseState())) {
             cid = loginUtils.selectGT(new ModelMap("uid", userBuyHistoryEntity.getPurchaseUid())).getCid();
             text = sysUtils.getVal("paymoney");
         }

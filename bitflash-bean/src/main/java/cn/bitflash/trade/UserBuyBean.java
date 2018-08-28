@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 /**
  * 用户
  *
- * @author eric
+ * @author gaoyuguo
  */
 public class UserBuyBean extends UserBuyEntity implements Serializable {
 

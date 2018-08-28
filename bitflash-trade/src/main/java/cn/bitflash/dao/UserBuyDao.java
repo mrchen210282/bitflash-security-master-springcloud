@@ -8,12 +8,16 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+/**
+ * 求购
+ *
+ * @author gaoyuguo
+ * @date 2018-8-28 15:22:06
+ */
 public interface UserBuyDao extends BaseMapper<UserBuyEntity> {
 
-    //获取求购信息
     List<UserBuyMessageBean> getBuyMessage(@Param("uid") String uid, @Param("pages") Integer pages);
 
-    //获取求购信息数量
     Integer getNumToPaging();
 
     List<UserBuyBean> selectBuyList(@Param("uid") String uid, @Param("pages") Integer pages);

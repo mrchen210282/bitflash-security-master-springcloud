@@ -8,9 +8,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 
 /**
- * 申拆表
+ * 申诉
  *
- * @author wangjun
+ * @author gaoyuguo
  */
 @TableName("user_complaint")
 public class UserComplaintEntity {

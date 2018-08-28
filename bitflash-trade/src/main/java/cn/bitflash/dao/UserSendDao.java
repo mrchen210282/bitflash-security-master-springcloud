@@ -24,9 +24,10 @@ import java.util.List;
 
 
 /**
- * 用户发送
+ * 发送
  *
- * @author eric
+ * @author gaoyuguo
+ * @date 2018-8-28 15:22:06
  */
 public interface UserSendDao extends BaseMapper<UserSendEntity> {
 

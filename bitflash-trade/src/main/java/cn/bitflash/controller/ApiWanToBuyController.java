@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -32,19 +31,11 @@ import static cn.bitflash.utils.Common.*;
 /**
  * 求购
  *
- * @author chenchengyi
- * <p>
+ * @author gaoyuguo
+ * @date 2018-8-28 15:22:06
  * 求购状态：
- * 求购者：‘1’：可撤销； ‘2’：待收款； ‘4’：待确认   ‘6’完成
- * 卖出者：    -     ； ‘3’：待付款； ‘5’：待收币   ‘6’完成  ‘9’申诉
- * 订单状态：
- * 已撤销：‘0’
- * 可撤销：‘1’
- * ‘2’：待收款
- * ‘3’：待付款
- * ‘4’：待确认
- * ‘5’：待收币
- * ‘6’完成
+ * 求购者：‘1’：可撤销； ‘2’：待付款； ‘4’：待收币   ‘6’完成  ‘0’已撤销   ‘9’申诉
+ * 卖出者：    -     ； ‘3’：待收款； ‘5’：待确认
  */
 @RestController
 @RequestMapping("/api/need")
@@ -89,8 +80,9 @@ public class ApiWanToBuyController {
     /**
      * ----------------交易页-----------------
      *
-     * @param user
-     * @return
+     * @param user  用户信息
+     * @param pages 分页
+     * @return 除用户所有求购信息
      */
     @Login
     @PostMapping("showBuyMessage")
@@ -105,6 +97,10 @@ public class ApiWanToBuyController {
 
     /**
      * ---------------订单页----------------
+     *
+     * @param user  用户信息
+     * @param pages 分页
+     * @return 用户的所有交易信息
      */
     @Login
     @PostMapping("showBuyMessageOwn")
@@ -124,17 +120,13 @@ public class ApiWanToBuyController {
 
             if (STATE_BUY_CANCEL.equals(state)) {
                 state = "可撤销";
-            }
-            if (STATE_BUY_ACCMONEY.equals(state)) {
+            }else if (STATE_BUY_ACCMONEY.equals(state)) {
                 state = "待收款";
-            }
-            if (STATE_BUY_PAYMONEY.equals(state)) {
+            }else if (STATE_BUY_PAYMONEY.equals(state)) {
                 state = "待付款";
-            }
-            if (STATE_BUY_PAYCOIN.equals(state)) {
+            }else if (STATE_BUY_PAYCOIN.equals(state)) {
                 state = "待确认";
-            }
-            if (STATE_BUY_ACCCOIN.equals(state)) {
+            }else if (STATE_BUY_ACCCOIN.equals(state)) {
                 state = "待收币";
             }
             userBuyEntity.setState(state);
@@ -150,9 +142,9 @@ public class ApiWanToBuyController {
     /**
      * 添加求购信息
      *
-     * @param userBuyEntity
-     * @param user
-     * @return
+     * @param userBuyEntity 订单信息
+     * @param user          用户信息
+     * @return 交易状态
      */
     @Login
     @PostMapping("addBuyMessage")
@@ -165,13 +157,18 @@ public class ApiWanToBuyController {
             return R.error(502, "求购数量最低为100，且为100的倍数");
         }
         userBuyService.addBuyMessage(userBuyEntity, user.getUid());
-        return R.ok();
+        return R.ok().put("code", SUCCESS);
     }
 
     /**-----------------------------------------------------下单---------------------------------------------------------*/
 
     /**
      * 下单
+     *
+     * @param id   订单id
+     * @param user 用户信息
+     * @return 交易状态
+     * <p>
      * 1.查询手续费，并从卖出者账号中扣除。如资金不足抛出错误
      * 2.添加手续费到trade_poundage
      * 3.修改user_buy中state为‘1’交易中状态
@@ -182,11 +179,12 @@ public class ApiWanToBuyController {
     @PostMapping("addBuyMessageHistory")
     public R addBuyMessageHistory(@RequestParam("id") String id, @LoginUser UserEntity user) {
 
-        //交易状态:'1'资金不足,'2'订单不存在
+        //交易状态:'1'资金不足,'2'订单不存在,'3'订单已锁定
         String code = "0";
 
         UserBuyEntity userBuy = userBuyService.selectOne(new EntityWrapper<UserBuyEntity>().eq("id", id));
-        if (userBuy == null || !userBuy.getState().equals(STATE_BUY_CANCEL)) {
+        UserBuyHistoryEntity userBuyHistoryEntity = userBuyHistoryService.selectOne(new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id", id));
+        if (userBuy == null || "".equals(userBuy) || userBuyHistoryEntity != null || !"".equals(userBuyHistoryEntity) || !userBuy.getState().equals(STATE_BUY_CANCEL)) {
             return R.ok().put("code", "2");
         }
 
@@ -231,6 +229,9 @@ public class ApiWanToBuyController {
 
     /**
      * 查看交易详情
+     *
+     * @param id 订单id
+     * @return 订单详情
      */
     @PostMapping("showBuyMessagePage")
     public R showBuyMessagePage(@RequestParam("id") String id) {
@@ -242,7 +243,6 @@ public class ApiWanToBuyController {
         }
         //获取手续费
         Map<String, Float> map = poundage(id);
-
         return R.ok().put("userBuy", userBuy).put("poundage", map.get("poundage") * 100).put("totalMoney", map.get("totalMoney")).put("totalQuantity", map.get("totalQuantity"));
     }
 
@@ -250,23 +250,24 @@ public class ApiWanToBuyController {
 
     /**
      * 订单页
+     *
+     * @param id 订单id
+     * @return 订单详情
      */
     @PostMapping("checkOrder")
     public R checkOrder(@RequestParam("id") String id) {
         Object userBean = new Object();
 
         UserBuyHistoryBean userBuyHistoryBean = userBuyHistoryService.selectBuyHistory(id);
-
-        //判定订单不存在
-        if (userBuyHistoryBean == null) {
-            //订单详情
+        if(userBuyHistoryBean == null || "".equals(userBuyHistoryBean)){
             UserBuyEntity userBuy = userBuyService.selectOne(new EntityWrapper<UserBuyEntity>().eq("id", id));
-            userBean = userBuy;
             if (userBuy == null) {
                 return R.ok().put("code", "订单不存在");
             }
+            userBean = userBuy;
+        }else {
+            userBean = userBuyHistoryBean;
         }
-        userBean = userBuyHistoryBean;
         Map<String, Float> map = this.poundage(id);
 
         return R.ok().put("userBean", userBean).put("totalQuantity", map.get("totalQuantity")).put("price", map.get("price")).put("buyQuantity", map.get("buyQuantity")).put("totalMoney", map.get("totalMoney"));
@@ -305,19 +306,14 @@ public class ApiWanToBuyController {
     @PostMapping("payMoney")
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
     public R payMoney(@RequestParam("id") String id) {
-
         UserBuyEntity userBuyEntity = userBuyService.selectById(Integer.parseInt(id));
-
         if (userBuyEntity == null) {
             return R.error(TRADEMISS);
         }
-
-
         try {
             //设置支付时间
             userBuyEntity.setPayTime(new Date());
             userBuyService.update(userBuyEntity, new EntityWrapper<UserBuyEntity>().eq("id", id));
-
             //修改user_buy订单状态
             UserBuyEntity userBuy = userBuyService.selectById(Integer.parseInt(id));
             userBuy.setState(STATE_BUY_ACCCOIN);
@@ -345,7 +341,6 @@ public class ApiWanToBuyController {
         try {
             //查询uid
             UserBuyHistoryEntity userBuyHistoryEntity = userBuyHistoryService.selectOne(new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id", id));
-
             //获取trade_poundage手续费，并返还，删除该信息
             TradePoundageEntity tradePoundageEntity = tradePoundageService.selectOne(new EntityWrapper<TradePoundageEntity>().eq("uid", userBuyHistoryEntity.getSellUid()));
             UserAccountEntity userAccountEntity = userAccountService.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", userBuyHistoryEntity.getSellUid()));
@@ -374,13 +369,11 @@ public class ApiWanToBuyController {
      */
     @PostMapping("reminders")
     public R reminders(@RequestParam("id") String id) {
-
         UserBuyHistoryEntity userBuyHistoryEntity = userBuyHistoryService.selectOne(new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id", id));
         //获取Cid
         String cid = null;
         //获取推送信息
         String text = null;
-
         if (STATE_BUY_PAYMONEY.equals(userBuyHistoryEntity.getPurchaseState())) {
             cid = loginUtils.selectGT(new ModelMap("uid", userBuyHistoryEntity.getPurchaseUid())).getCid();
             text = sysUtils.getVal("paymoney");
@@ -389,9 +382,7 @@ public class ApiWanToBuyController {
             cid = loginUtils.selectGT(new ModelMap("uid", userBuyHistoryEntity.getSellUid())).getCid();
             text = sysUtils.getVal("reminders");
         }
-
         String idVal = redisUtils.get(Common.ADD_LOCKNUM + id);
-
         if (StringUtils.isBlank(idVal)) {
             try {
                 GeTuiSendMessage.sendSingleMessage(text, cid);
@@ -400,9 +391,7 @@ public class ApiWanToBuyController {
                 return R.error("推送失败");
             }
         }
-
         return R.ok().put("code", SUCCESS);
-
     }
 
     /**
@@ -411,8 +400,7 @@ public class ApiWanToBuyController {
      * -------------判定是否催单(待收币)------------
      */
     @PostMapping("checkReminders")
-    public R checkReminders(@RequestParam("id") String id, HttpServletRequest request) {
-
+    public R checkReminders(@RequestParam("id") String id) {
         if (redisUtils.get(Common.ADD_LOCKNUM + id) == null || "".equals(redisUtils.get(Common.ADD_LOCKNUM + id))) {
             return R.ok().put("state", "0");
         } else {
@@ -429,13 +417,11 @@ public class ApiWanToBuyController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
     public R appeal(@RequestParam("id") String id) {
         try {
-
             UserBuyHistoryEntity userBuyHistoryEntity = userBuyHistoryService.selectOne(new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id", id));
             //修改订单状态
             UserBuyEntity userBuyEntity = userBuyService.selectById(Integer.parseInt(id));
             userBuyEntity.setState(STATE_BUY_APPEAL);
             userBuyService.updateById(userBuyEntity);
-
             //添加订单到申诉表中
             UserComplaintEntity userComplaintEntity = new UserComplaintEntity();
             userComplaintEntity.setComplaintState("1");
@@ -464,21 +450,17 @@ public class ApiWanToBuyController {
 
         //判断交易密码是否正确
         UserPayPwdEntity userPayPwdEntity = userUtils.selectUserPayPwd(new ModelMap("uid", user.getUid()));
-
         //交易密码不正确
         if (!pwd.equals(userPayPwdEntity.getPayPassword())) {
             return R.ok().put("code", "3");
         }
-
         //手续费
         Map<String, Float> map = this.poundage(id);
         BigDecimal buyQuantity = new BigDecimal(map.get("buyQuantity"));
         BigDecimal totalPoundage = new BigDecimal(map.get("totalPoundage"));
-
         try {
             //扣款
             deduct(buyQuantity, user.getUid());
-
             //充值
             UserBuyHistoryEntity userBuyHistoryEntity = userBuyHistoryService.selectOne(new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id", id));
             UserAccountEntity userAccountEntity = userAccountService.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", userBuyHistoryEntity.getPurchaseUid()));
@@ -510,7 +492,6 @@ public class ApiWanToBuyController {
             e.printStackTrace();
             return R.error(FAIL);
         }
-
         return R.ok().put("code", SUCCESS);
     }
 
@@ -524,7 +505,6 @@ public class ApiWanToBuyController {
         if (userBuy == null) {
             return null;
         }
-
         DecimalFormat df = new DecimalFormat("#########.##");
         //交易数量
         Float buyQuantity = Float.parseFloat(df.format(userBuy.getQuantity()));
@@ -555,7 +535,6 @@ public class ApiWanToBuyController {
      */
     public R deduct(BigDecimal money, String uid) {
         UserAccountEntity userAccountEntity = userAccountService.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", uid));
-
         if (userAccountEntity.getAvailableAssets().compareTo(money) != -1) {
             if (userAccountEntity.getRegulateRelease().compareTo(money) != -1) {
                 userAccountEntity.setRegulateRelease(userAccountEntity.getRegulateRelease().subtract(money));
@@ -570,7 +549,5 @@ public class ApiWanToBuyController {
             return R.ok();
         }
         return R.error("资金不足，扣款失败");
-
     }
-
 }

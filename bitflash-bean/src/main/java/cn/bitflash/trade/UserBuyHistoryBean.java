@@ -19,9 +19,9 @@ package cn.bitflash.trade;
 import java.io.Serializable;
 
 /**
- * 用户
+ * 求购记录
  *
- * @author eric
+ * @author gaoyuguo
  */
 public class UserBuyHistoryBean extends UserBuyHistoryEntity implements Serializable {
 

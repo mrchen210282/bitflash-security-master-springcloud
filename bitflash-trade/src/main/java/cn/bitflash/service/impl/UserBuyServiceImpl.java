@@ -14,9 +14,15 @@ import java.util.List;
 
 import static cn.bitflash.utils.Common.STATE_BUY_CANCEL;
 
+
+/**
+ * 求购
+ *
+ * @author gaoyuguo
+ * @date 2018-8-28 15:22:06
+ */
 @Service("userBuyService")
 public class UserBuyServiceImpl extends ServiceImpl<UserBuyDao, UserBuyEntity> implements UserBuyService {
-
 
     @Override
     public List<UserBuyMessageBean> getBuyMessage(String uid, Integer pages) {
@@ -36,7 +42,6 @@ public class UserBuyServiceImpl extends ServiceImpl<UserBuyDao, UserBuyEntity> i
         userBuyEntity.setCreateTime(new Date());
         userBuyEntity.setState(STATE_BUY_CANCEL);
         baseMapper.insert(userBuyEntity);
-
     }
 
     @Override

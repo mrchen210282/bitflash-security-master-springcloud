@@ -26,7 +26,7 @@ import java.util.Date;
 /**
  * 用户发送
  *
- * @author eric
+ * @author gaoyuguo
  */
 @TableName("user_send")
 public class UserSendEntity implements Serializable {

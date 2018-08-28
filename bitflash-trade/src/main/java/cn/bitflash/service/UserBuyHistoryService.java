@@ -6,5 +6,5 @@ import com.baomidou.mybatisplus.service.IService;
 
 public interface UserBuyHistoryService extends IService<UserBuyHistoryEntity> {
 
-    public UserBuyHistoryBean selectBuyHistory(String id);
+    UserBuyHistoryBean selectBuyHistory(String id);
 }

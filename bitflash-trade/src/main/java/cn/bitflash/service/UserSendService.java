@@ -30,11 +30,11 @@ import java.util.List;
  * @date 2017-03-23 15:22:06
  */
 public interface UserSendService extends IService<UserSendEntity> {
-    public List<UserSendEntity> selectaccount(String send_uid, Integer pages);
+    List<UserSendEntity> selectaccount(String send_uid, Integer pages);
 
-    public List<UserSendEntity> selectaccept(String send_uid, Integer pages);
+    List<UserSendEntity> selectaccept(String send_uid, Integer pages);
 
-    public Integer selectaccountcount(String send_uid);
+    Integer selectaccountcount(String send_uid);
 
-    public Integer selectacceptcount(String send_uid);
+    Integer selectacceptcount(String send_uid);
 }

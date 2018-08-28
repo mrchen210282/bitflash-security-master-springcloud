@@ -342,7 +342,7 @@ public class ApiWanToBuyController {
             tradePoundageService.delete(new EntityWrapper<TradePoundageEntity>().eq("user_trade_id", id));
             //删除求购历史订单
             userBuyHistoryService.delete(new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id", id));
-            userBuyService.deleteById(id);
+            userBuyService.delete(new EntityWrapper<UserBuyEntity>().eq("id", id));
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(FAIL);

@@ -398,6 +398,11 @@ public class ApiUserTradeController {
                         map.put("state", Common.STATE_CANCEL);
                         userTradeService.updateTrade(map);
 
+                        //删除手续费记录
+                        map.clear();
+                        map.put("user_trade_id",orderId);
+                        tradePoundageService.deleteByMap(map);
+
                     } else {
                         logger.info("根据订单id:" + orderId + ",查询不到交易记录");
                         return R.error();

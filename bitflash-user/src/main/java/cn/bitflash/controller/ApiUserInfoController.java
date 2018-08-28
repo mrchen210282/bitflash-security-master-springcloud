@@ -168,6 +168,10 @@ public class ApiUserInfoController {
     @Login
     @PostMapping("validatePwd")
     public R validatePwd(@RequestAttribute(ApiLoginInterceptor.UID) String uid){
+        UserInfoEntity infoEntity = userInfoService.selectById(uid);
+        if(!infoEntity.getIsAuthentication().equals("2")){
+            return R.ok().put("msg","3");
+        }
         UserPayPwdEntity payPwdEntity = userPayPwdService.selectOne(new EntityWrapper<UserPayPwdEntity>().eq("uid",uid));
         if(payPwdEntity==null || StringUtil.isNullOrEmpty(payPwdEntity.getPayPassword())){
             //如果没有交易密码
@@ -177,10 +181,7 @@ public class ApiUserInfoController {
         if(urlEntity.size()<3){
             return R.ok().put("msg","2");
         }
-        UserInfoEntity infoEntity = userInfoService.selectById(uid);
-        if(!infoEntity.getIsAuthentication().equals("2")){
-            return R.ok().put("msg","3");
-        }
+
         return R.ok().put("msg","0");
     }
 }

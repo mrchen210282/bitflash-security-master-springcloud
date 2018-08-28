@@ -29,15 +29,23 @@ import java.util.List;
 public class UserSendServiceImpl extends ServiceImpl<UserSendDao, UserSendEntity> implements UserSendService {
 
     @Override
-    public List<UserSendEntity> selectaccount(String send_uid) {
-
-        return baseMapper.selectaccount(send_uid);
+    public List<UserSendEntity> selectaccount(String send_uid, Integer pages) {
+        return baseMapper.selectaccount(send_uid, pages);
     }
 
     @Override
-    public List<UserSendEntity> selectaccept(String send_uid) {
+    public List<UserSendEntity> selectaccept(String send_uid, Integer pages) {
+        return baseMapper.selectaccept(send_uid, pages);
+    }
 
-        return baseMapper.selectaccept(send_uid);
+    @Override
+    public Integer selectaccountcount(String send_uid) {
+        return baseMapper.selectaccountcount(send_uid);
+    }
+
+    @Override
+    public Integer selectacceptcount(String send_uid) {
+        return baseMapper.selectacceptcount(send_uid);
     }
 
 }

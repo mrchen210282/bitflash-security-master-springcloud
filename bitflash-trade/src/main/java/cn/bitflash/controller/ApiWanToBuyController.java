@@ -10,19 +10,19 @@ import cn.bitflash.sysutil.SysUtils;
 import cn.bitflash.trade.*;
 import cn.bitflash.user.UserPayPwdEntity;
 import cn.bitflash.userutil.UserUtils;
+import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
-import com.aliyuncs.http.HttpRequest;
+import cn.bitflash.utils.RedisUtils;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.GeTuiSendMessage;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.HttpSessionRequiredException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -80,6 +80,9 @@ public class ApiWanToBuyController {
     @Autowired
     private SysUtils sysUtils;
 
+    @Autowired
+    private RedisUtils redisUtils;
+
 
     /**-----------------------------------------------显示求购信息列表-----------------------------------------------------*/
 
@@ -105,8 +108,8 @@ public class ApiWanToBuyController {
      */
     @Login
     @PostMapping("showBuyMessageOwn")
-    public R showUserBuyMessage(@LoginUser UserEntity user) {
-        List<UserBuyBean> userBuyEntities = userBuyService.selectBuyList(user.getUid());
+    public R showUserBuyMessage(@LoginUser UserEntity user, @RequestParam("pages") String pages) {
+        List<UserBuyBean> userBuyEntities = userBuyService.selectBuyList(user.getUid(), Integer.valueOf(pages));
         List<UserBuyBean> userBuyEntitiesList = new LinkedList<UserBuyBean>();
         String state = null;
 
@@ -137,8 +140,8 @@ public class ApiWanToBuyController {
             userBuyEntity.setState(state);
             userBuyEntitiesList.add(userBuyEntity);
         }
-
         Integer count = userBuyService.selectUserBuyOwnCount(user.getUid());
+
         return R.ok().put("userBuyEntitiesList", userBuyEntitiesList).put("count", count);
     }
 
@@ -309,6 +312,7 @@ public class ApiWanToBuyController {
             return R.error(TRADEMISS);
         }
 
+
         try {
             //设置支付时间
             userBuyEntity.setPayTime(new Date());
@@ -366,26 +370,37 @@ public class ApiWanToBuyController {
     /**
      * ------------------4--------------------
      * <p>
-     * -------------点击催单(待收币)------------
+     * -------------点击催单(待收款/待收币)------------
      */
     @PostMapping("reminders")
-    public R reminders(@RequestParam("id") String id, HttpServletRequest request) {
+    public R reminders(@RequestParam("id") String id) {
 
         UserBuyHistoryEntity userBuyHistoryEntity = userBuyHistoryService.selectOne(new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id", id));
         //获取Cid
-        String cid = loginUtils.selectGT(new ModelMap("uid", userBuyHistoryEntity.getSellUid())).getCid();
+        String cid = null;
         //获取推送信息
-        String text = sysUtils.getVal("reminders");
+        String text = null;
 
-        try {
-            GeTuiSendMessage.sendSingleMessage(text, cid);
-        } catch (Exception e) {
-            return R.error("推送失败");
+        if (STATE_BUY_PAYMONEY.equals(userBuyHistoryEntity.getPurchaseState())) {
+            cid = loginUtils.selectGT(new ModelMap("uid", userBuyHistoryEntity.getPurchaseUid())).getCid();
+            text = sysUtils.getVal("paymoney");
+        }
+        if (STATE_BUY_ACCCOIN.equals(userBuyHistoryEntity.getPurchaseState())) {
+            cid = loginUtils.selectGT(new ModelMap("uid", userBuyHistoryEntity.getSellUid())).getCid();
+            text = sysUtils.getVal("reminders");
         }
 
-        HttpSession session = request.getSession();
-        session.setMaxInactiveInterval(60 * 60 * 24 * 7);
-        session.setAttribute("订单" + id, "0");
+        String idVal = redisUtils.get(Common.ADD_LOCKNUM + id);
+
+        if (StringUtils.isBlank(idVal)) {
+            try {
+                GeTuiSendMessage.sendSingleMessage(text, cid);
+                redisUtils.set(Common.ADD_LOCKNUM + id, id, 60 * 60);
+            } catch (Exception e) {
+                return R.error("推送失败");
+            }
+        }
+
         return R.ok().put("code", SUCCESS);
 
     }
@@ -398,11 +413,8 @@ public class ApiWanToBuyController {
     @PostMapping("checkReminders")
     public R checkReminders(@RequestParam("id") String id, HttpServletRequest request) {
 
-        HttpSession session = request.getSession();
-
-        if (session.getAttribute("订单" + id) == null || "".equals(session.getAttribute("订单" + id))) {
+        if (redisUtils.get(Common.ADD_LOCKNUM + id) == null || "".equals(redisUtils.get(Common.ADD_LOCKNUM + id))) {
             return R.ok().put("state", "0");
-
         } else {
             return R.ok().put("state", "1");
         }

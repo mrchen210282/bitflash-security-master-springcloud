@@ -6,6 +6,6 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
 
 public interface UserBuyHistoryDao extends BaseMapper<UserBuyHistoryEntity> {
 
-    public UserBuyHistoryBean selectBuyHistory(String id);
+    UserBuyHistoryBean selectBuyHistory(String id);
 
 }

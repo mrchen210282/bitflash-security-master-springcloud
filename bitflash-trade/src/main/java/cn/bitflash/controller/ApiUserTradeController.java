@@ -693,7 +693,7 @@ public class ApiUserTradeController {
      */
     @Login
     @PostMapping("updateTradeState")
-    public R updateTradeState(@LoginUser UserEntity user) {
+    public R updateTradeState() {
         List<UserTradeEntity> trades = userTradeService.getByState("5");
         trades.stream().forEach((t) -> {
             String[] str = redisUtils.get(t.getId().toString(), String[].class);

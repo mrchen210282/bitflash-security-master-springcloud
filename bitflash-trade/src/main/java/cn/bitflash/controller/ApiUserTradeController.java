@@ -456,7 +456,8 @@ public class ApiUserTradeController {
                 // 查询订单状态为已锁定(state:5)
                 Map<String, Object> param = new HashMap<String, Object>();
                 param.put("id", orderId);
-                UserTradeBean userTradeBean = userTradeService.queryDetail(param);
+                UserTradeEntity userTradeBean = userTradeService.selectById(orderId);
+
                 if (null != userTradeBean) {
                     // 订单状态变为已付款
                     userTradeBean.setState(Common.STATE_PAY);

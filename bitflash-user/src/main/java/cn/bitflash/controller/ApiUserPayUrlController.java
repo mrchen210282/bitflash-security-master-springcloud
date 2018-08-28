@@ -195,7 +195,7 @@ public class ApiUserPayUrlController {
             UserTradeEntity tradeEntity = tradeUtils.selectOneTrade(new ModelMap("id", accountId));
             uid = tradeEntity.getUid();
         }else if(type.equals("2")){
-            UserBuyHistoryEntity userBuyEntity = tradeUtils.selectOneBuy(new ModelMap("id", accountId));
+            UserBuyHistoryEntity userBuyEntity = tradeUtils.selectOneBuy(new ModelMap("user_buy_id", accountId));
             uid = userBuyEntity.getSellUid();
         }
         List<UserPayUrlEntity> payUrlEntities = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>()

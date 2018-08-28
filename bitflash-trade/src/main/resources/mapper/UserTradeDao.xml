@@ -158,7 +158,7 @@
     <!-- add by wangjun 2018.6.23 查看订单明细 -->
     <select id="queryDetail" resultType="cn.bitflash.trade.UserTradeBean">
         select
-        (select b.nickname from user_info b where a.uid = b.uid) nickname,
+        distinct (select b.nickname from user_info b where a.uid = b.uid) nickname,
         (select b.mobile from user_info b where a.uid = b.uid) mobile,
         a.id,
         a.price,
@@ -269,7 +269,7 @@
 
     <select id="selectById" resultType="cn.bitflash.trade.UserTradeEntity">
         select
-        id,uid,state
+        id,uid,state,price,quantity
         from
         user_trade
         where

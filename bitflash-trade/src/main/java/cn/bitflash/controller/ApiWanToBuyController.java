@@ -109,6 +109,8 @@ public class ApiWanToBuyController {
         List<UserBuyBean> userBuyEntitiesList = new LinkedList<UserBuyBean>();
         String state = null;
 
+        Integer count = userBuyService.selectUserBuyOwnCount(user.getUid());
+
         for (UserBuyBean userBuyEntity : userBuyEntities) {
             if (userBuyEntity.getUid().equals(user.getUid())) {
                 state = userBuyEntity.getState();
@@ -120,19 +122,19 @@ public class ApiWanToBuyController {
 
             if (STATE_BUY_CANCEL.equals(state)) {
                 state = "可撤销";
-            }else if (STATE_BUY_ACCMONEY.equals(state)) {
+            } else if (STATE_BUY_ACCMONEY.equals(state)) {
                 state = "待收款";
-            }else if (STATE_BUY_PAYMONEY.equals(state)) {
+            } else if (STATE_BUY_PAYMONEY.equals(state)) {
                 state = "待付款";
-            }else if (STATE_BUY_PAYCOIN.equals(state)) {
+            } else if (STATE_BUY_PAYCOIN.equals(state)) {
                 state = "待确认";
-            }else if (STATE_BUY_ACCCOIN.equals(state)) {
+            } else if (STATE_BUY_ACCCOIN.equals(state)) {
                 state = "待收币";
             }
             userBuyEntity.setState(state);
             userBuyEntitiesList.add(userBuyEntity);
         }
-        Integer count = userBuyService.selectUserBuyOwnCount(user.getUid());
+
 
         return R.ok().put("userBuyEntitiesList", userBuyEntitiesList).put("count", count);
     }
@@ -195,7 +197,7 @@ public class ApiWanToBuyController {
         if (new BigDecimal(map.get("totalQuantity")).compareTo(userAccountEntity.getAvailableAssets()) == 1) {
             return R.ok().put("code", FAIL);
         }
-        deduct(new BigDecimal(map.get("totalPoundage")), user.getUid());
+        deduct(new BigDecimal(map.get("totalQuantity")), user.getUid());
 
         //添加手续费记录
         TradePoundageEntity tradePoundageEntity = new TradePoundageEntity();
@@ -203,6 +205,7 @@ public class ApiWanToBuyController {
         tradePoundageEntity.setPoundage(new BigDecimal(map.get("totalPoundage")));
         tradePoundageEntity.setUid(user.getUid());
         tradePoundageEntity.setUserTradeId(Integer.parseInt(id));
+        tradePoundageEntity.setQuantity(new BigDecimal(map.get("buyQuantity")));
         tradePoundageService.insert(tradePoundageEntity);
 
         //修改user_buy订单状态
@@ -257,13 +260,13 @@ public class ApiWanToBuyController {
         Object userBean = new Object();
 
         UserBuyHistoryBean userBuyHistoryBean = userBuyHistoryService.selectBuyHistory(id);
-        if(userBuyHistoryBean == null || "".equals(userBuyHistoryBean)){
+        if (userBuyHistoryBean == null || "".equals(userBuyHistoryBean)) {
             UserBuyEntity userBuy = userBuyService.selectOne(new EntityWrapper<UserBuyEntity>().eq("id", id));
             if (userBuy == null) {
                 return R.ok().put("code", "订单不存在");
             }
             userBean = userBuy;
-        }else {
+        } else {
             userBean = userBuyHistoryBean;
         }
         Map<String, Float> map = this.poundage(id);
@@ -282,7 +285,7 @@ public class ApiWanToBuyController {
     public R cancelBuyMessage(@RequestParam String id) {
         UserBuyEntity ub = userBuyService.selectById(id);
         if (ub == null || STATE_BUY_CANCELFIISH.equals(ub.getState())) {
-            return R.ok().put("code",FAIL);
+            return R.ok().put("code", FAIL);
         }
         if (ub.getState().equals(STATE_BUY_CANCEL)) {
             ub.setState(STATE_BUY_CANCELFIISH);
@@ -317,7 +320,7 @@ public class ApiWanToBuyController {
             userBuyHistoryService.update(userBuyHistoryEntity, new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id", id));
         } catch (Exception e) {
             e.printStackTrace();
-            return R.ok().put("code",FAIL);
+            return R.ok().put("code", FAIL);
         }
         return R.ok().put("code", SUCCESS);
     }
@@ -336,8 +339,8 @@ public class ApiWanToBuyController {
             //获取trade_poundage手续费，并返还，删除该信息
             TradePoundageEntity tradePoundageEntity = tradePoundageService.selectOne(new EntityWrapper<TradePoundageEntity>().eq("user_trade_id", id));
             UserAccountEntity userAccountEntity = userAccountService.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", userBuyHistoryEntity.getSellUid()));
-            userAccountEntity.setRegulateIncome(tradePoundageEntity.getPoundage().add(userAccountEntity.getRegulateIncome()));
-            userAccountEntity.setAvailableAssets(tradePoundageEntity.getPoundage().add(userAccountEntity.getAvailableAssets()));
+            userAccountEntity.setRegulateIncome(tradePoundageEntity.getPoundage().add(tradePoundageEntity.getQuantity()).add(userAccountEntity.getRegulateIncome()));
+            userAccountEntity.setAvailableAssets(tradePoundageEntity.getPoundage().add(tradePoundageEntity.getQuantity()).add(userAccountEntity.getAvailableAssets()));
             userAccountService.update(userAccountEntity, new EntityWrapper<UserAccountEntity>().eq("uid", userBuyHistoryEntity.getSellUid()));
             tradePoundageService.delete(new EntityWrapper<TradePoundageEntity>().eq("user_trade_id", id));
             //删除求购历史订单
@@ -448,13 +451,11 @@ public class ApiWanToBuyController {
         BigDecimal buyQuantity = new BigDecimal(map.get("buyQuantity"));
         BigDecimal totalPoundage = new BigDecimal(map.get("totalPoundage"));
         try {
-            //扣款
-            deduct(buyQuantity, user.getUid());
             //充值
             UserBuyHistoryEntity userBuyHistoryEntity = userBuyHistoryService.selectOne(new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id", id));
             UserAccountEntity userAccountEntity = userAccountService.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", userBuyHistoryEntity.getPurchaseUid()));
-            userAccountEntity.setRegulateRelease(buyQuantity);
-            userAccountEntity.setAvailableAssets(buyQuantity);
+            userAccountEntity.setRegulateIncome(userAccountEntity.getRegulateIncome().add(buyQuantity));
+            userAccountEntity.setAvailableAssets(userAccountEntity.getAvailableAssets().add(buyQuantity));
             userAccountService.updateById(userAccountEntity);
 
             //添加手续费到user_brokerage中

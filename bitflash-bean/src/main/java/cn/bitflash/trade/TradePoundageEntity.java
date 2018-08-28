@@ -41,6 +41,8 @@ public class TradePoundageEntity implements Serializable  {
 
     private BigDecimal poundage;
 
+    private BigDecimal quantity;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
     private Date createTime;
 
@@ -74,5 +76,13 @@ public class TradePoundageEntity implements Serializable  {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public BigDecimal getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
     }
 }

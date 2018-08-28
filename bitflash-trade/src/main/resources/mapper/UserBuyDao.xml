@@ -77,8 +77,20 @@
             count(0)
         FROM
             user_buy ub
+        LEFT JOIN user_buy_history uh ON ub.id = uh.user_buy_id
         WHERE
-            ub.uid = #{uid} and ub.state != "0" and ub.state != "6" and ub.state != "9"
+            uh.purchase_uid = #{uid}
+        AND ub.state != '0'
+        AND ub.state != '6'
+        AND ub.state != '9'
+        OR uh.sell_uid = #{uid}
+        AND ub.state != '0'
+        AND ub.state != '6'
+        AND ub.state != '9'
+        or ub.uid = #{uid}
+        AND ub.state != '0'
+        AND ub.state != '6'
+        AND ub.state != '9'
     </select>
 
 </mapper>

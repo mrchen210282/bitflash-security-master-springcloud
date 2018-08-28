@@ -26,5 +26,5 @@ public interface UserBuyDao extends BaseMapper<UserBuyEntity> {
 
     Integer selectAppealCount(String uid);
 
-    Integer selectUserBuyOwnCount(String uid);
+    Integer selectUserBuyOwnCount(@Param("uid") String uid);
 }

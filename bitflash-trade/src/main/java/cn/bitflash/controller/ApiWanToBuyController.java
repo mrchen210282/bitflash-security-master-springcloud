@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -32,19 +31,11 @@ import static cn.bitflash.utils.Common.*;
 /**
  * 求购
  *
- * @author chenchengyi
- * <p>
+ * @author gaoyuguo
+ * @date 2018-8-28 15:22:06
  * 求购状态：
- * 求购者：‘1’：可撤销； ‘2’：待收款； ‘4’：待确认   ‘6’完成
- * 卖出者：    -     ； ‘3’：待付款； ‘5’：待收币   ‘6’完成  ‘9’申诉
- * 订单状态：
- * 已撤销：‘0’
- * 可撤销：‘1’
- * ‘2’：待收款
- * ‘3’：待付款
- * ‘4’：待确认
- * ‘5’：待收币
- * ‘6’完成
+ * 求购者：‘1’：可撤销； ‘2’：待付款； ‘4’：待收币   ‘6’完成  ‘0’已撤销   ‘9’申诉
+ * 卖出者：    -     ； ‘3’：待收款； ‘5’：待确认
  */
 @RestController
 @RequestMapping("/api/need")
@@ -89,8 +80,9 @@ public class ApiWanToBuyController {
     /**
      * ----------------交易页-----------------
      *
-     * @param user
-     * @return
+     * @param user  用户信息
+     * @param pages 分页
+     * @return 除用户所有求购信息
      */
     @Login
     @PostMapping("showBuyMessage")
@@ -105,6 +97,10 @@ public class ApiWanToBuyController {
 
     /**
      * ---------------订单页----------------
+     *
+     * @param user  用户信息
+     * @param pages 分页
+     * @return 用户的所有交易信息
      */
     @Login
     @PostMapping("showBuyMessageOwn")
@@ -150,9 +146,9 @@ public class ApiWanToBuyController {
     /**
      * 添加求购信息
      *
-     * @param userBuyEntity
-     * @param user
-     * @return
+     * @param userBuyEntity 订单信息
+     * @param user          用户信息
+     * @return 交易状态
      */
     @Login
     @PostMapping("addBuyMessage")
@@ -165,13 +161,18 @@ public class ApiWanToBuyController {
             return R.error(502, "求购数量最低为100，且为100的倍数");
         }
         userBuyService.addBuyMessage(userBuyEntity, user.getUid());
-        return R.ok();
+        return R.ok().put("code", SUCCESS);
     }
 
     /**-----------------------------------------------------下单---------------------------------------------------------*/
 
     /**
      * 下单
+     *
+     * @param id   订单id
+     * @param user 用户信息
+     * @return 交易状态
+     * <p>
      * 1.查询手续费，并从卖出者账号中扣除。如资金不足抛出错误
      * 2.添加手续费到trade_poundage
      * 3.修改user_buy中state为‘1’交易中状态
@@ -182,11 +183,12 @@ public class ApiWanToBuyController {
     @PostMapping("addBuyMessageHistory")
     public R addBuyMessageHistory(@RequestParam("id") String id, @LoginUser UserEntity user) {
 
-        //交易状态:'1'资金不足,'2'订单不存在
+        //交易状态:'1'资金不足,'2'订单不存在,'3'订单已锁定
         String code = "0";
 
         UserBuyEntity userBuy = userBuyService.selectOne(new EntityWrapper<UserBuyEntity>().eq("id", id));
-        if (userBuy == null || !userBuy.getState().equals(STATE_BUY_CANCEL)) {
+        UserBuyHistoryEntity userBuyHistoryEntity = userBuyHistoryService.selectOne(new EntityWrapper<UserBuyHistoryEntity>().eq("user_buy_id", id));
+        if (userBuy == null || "".equals(userBuy) || userBuyHistoryEntity != null || !"".equals(userBuyHistoryEntity) || !userBuy.getState().equals(STATE_BUY_CANCEL)) {
             return R.ok().put("code", "2");
         }
 
@@ -231,6 +233,9 @@ public class ApiWanToBuyController {
 
     /**
      * 查看交易详情
+     *
+     * @param id 订单id
+     * @return 订单详情
      */
     @PostMapping("showBuyMessagePage")
     public R showBuyMessagePage(@RequestParam("id") String id) {
@@ -250,6 +255,9 @@ public class ApiWanToBuyController {
 
     /**
      * 订单页
+     *
+     * @param id 订单id
+     * @return 订单详情
      */
     @PostMapping("checkOrder")
     public R checkOrder(@RequestParam("id") String id) {
@@ -411,7 +419,7 @@ public class ApiWanToBuyController {
      * -------------判定是否催单(待收币)------------
      */
     @PostMapping("checkReminders")
-    public R checkReminders(@RequestParam("id") String id, HttpServletRequest request) {
+    public R checkReminders(@RequestParam("id") String id) {
 
         if (redisUtils.get(Common.ADD_LOCKNUM + id) == null || "".equals(redisUtils.get(Common.ADD_LOCKNUM + id))) {
             return R.ok().put("state", "0");

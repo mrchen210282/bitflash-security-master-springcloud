@@ -5,10 +5,11 @@ import cn.bitflash.trade.UserComplaintEntity;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 
 /**
- * @author wangjun
- * @date 2018年8月16日 下午4:45:51
+ * 申诉
+ *
+ * @author gaoyuguo
+ * @date 2018-8-28 15:22:06
  */
 public interface UserComplaintDao extends BaseMapper<UserComplaintEntity> {
-    public UserComplaintBean getComplaintMessage(String id);
-
+    UserComplaintBean getComplaintMessage(String id);
 }

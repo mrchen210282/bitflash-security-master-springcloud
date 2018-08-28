@@ -29,7 +29,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author gao
+ * 发送
+ *
+ * @author gaoyuguo
+ * @date 2018-8-28 15:22:06
  */
 @RestController
 @RequestMapping("/api")
@@ -54,7 +57,10 @@ public class ApiUserSendController {
     private UserTradeConfigService userTradeConfigService;
 
     /**
-     * @param quantity 发送
+     * @param quantity 发送数量
+     * @param uuid     接收人钱包地址
+     * @param user_pwd 交易密码
+     * @param user     用户信息
      * @author 1.查询赠送对象是否存在，若不存在返回code=1错误
      * 2.向user_account表中，扣除发送用户的余额，并向接收者添加余额
      * 3.向user_send表中添加赠送记录
@@ -68,7 +74,6 @@ public class ApiUserSendController {
         int code = 2;
         //业务状态
         boolean relation = false;
-
 
         //如果用户不存在,返回‘用户不存在’错误。
         UserEntity Sendee = loginFeign.selectOneByUser(new ModelMap("uuid", uuid));
@@ -171,22 +176,12 @@ public class ApiUserSendController {
     }
 
     /**
-     * 手续费
-     *
-     * @author
-     */
-    @PostMapping("handingFee")
-    public R handingFee() {
-        //手续费
-        UserTradeConfigEntity userTradeConfig = userTradeConfigService.selectOne(new EntityWrapper<UserTradeConfigEntity>().eq("remark", "发送手续费"));
-        Float poundage = userTradeConfig.getPoundage();
-        return R.ok().put("poundage", poundage);
-    }
-
-    /**
      * 交易记录
      *
-     * @author
+     * @param user  用户信息
+     * @param state 接收/发送
+     * @param pages 分页
+     * @return count 记录数量  usersendList 发送记录   useracceptList 接收数量
      */
     @Login
     @PostMapping("record")
@@ -204,7 +199,20 @@ public class ApiUserSendController {
             Integer count = userSendService.selectacceptcount(user.getUid());
             return R.ok().put("useracceptList", useracceptList).put("count", count);
         }
-        return null;
+        return R.ok();
+    }
+
+    /**
+     * 查看手续费
+     *
+     * @return 发送手续费
+     */
+    @PostMapping("handingFee")
+    public R handingFee() {
+        //手续费
+        UserTradeConfigEntity userTradeConfig = userTradeConfigService.selectOne(new EntityWrapper<UserTradeConfigEntity>().eq("remark", "发送手续费"));
+        Float poundage = userTradeConfig.getPoundage();
+        return R.ok().put("poundage", poundage);
     }
 
 }

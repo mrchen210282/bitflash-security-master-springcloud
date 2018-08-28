@@ -25,9 +25,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 用户
+ * 求购记录
  *
- * @author eric
+ * @author gaoyuguo
  */
 @TableName("user_buy_history")
 public class UserBuyHistoryEntity implements Serializable {

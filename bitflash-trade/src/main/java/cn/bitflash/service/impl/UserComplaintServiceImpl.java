@@ -8,10 +8,10 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
- * 申拆
+ * 申诉
  *
- * @author wangjun
- * @date 2018年8月16日 下午4:48:48
+ * @author gaoyuguo
+ * @date 2018-8-28 15:22:06
  */
 @Service("userComplaintService")
 public class UserComplaintServiceImpl extends ServiceImpl<UserComplaintDao, UserComplaintEntity> implements UserComplaintService {

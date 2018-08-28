@@ -38,4 +38,5 @@
         WHERE
             us.sendee_uid = #{send_uid}
     </select>
+
 </mapper>

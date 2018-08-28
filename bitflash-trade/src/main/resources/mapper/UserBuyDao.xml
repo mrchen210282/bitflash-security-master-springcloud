@@ -25,7 +25,6 @@
         limit #{pages},6
     </select>
 
-
     <select id="selectAppealList" resultType="cn.bitflash.trade.UserBuyBean">
         SELECT
             ui.nickname as nickname,

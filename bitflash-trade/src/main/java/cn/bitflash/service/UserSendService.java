@@ -25,16 +25,42 @@ import java.util.List;
 /**
  * 用户发送
  *
- * @author chenshun
- * @email sunlightcs@gmail.com
- * @date 2017-03-23 15:22:06
+ * @author gaoyuguo
+ * @date 2018-8-28 15:22:06
  */
 public interface UserSendService extends IService<UserSendEntity> {
+
+    /**
+     * 查询发送记录
+     *
+     * @param send_uid 发送人id
+     * @param pages    分页
+     * @return
+     */
     List<UserSendEntity> selectaccount(String send_uid, Integer pages);
 
+    /**
+     * 查询接收记录
+     *
+     * @param send_uid 接收人id
+     * @param pages    分页
+     * @return
+     */
     List<UserSendEntity> selectaccept(String send_uid, Integer pages);
 
+    /**
+     * 查询发送记录数量
+     *
+     * @param send_uid 发送人id
+     * @return
+     */
     Integer selectaccountcount(String send_uid);
 
+    /**
+     * 查询接收记录数量
+     *
+     * @param send_uid 接收人id
+     * @return
+     */
     Integer selectacceptcount(String send_uid);
 }

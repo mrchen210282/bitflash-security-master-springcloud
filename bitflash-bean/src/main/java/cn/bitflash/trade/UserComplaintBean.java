@@ -3,13 +3,14 @@ package cn.bitflash.trade;
 import java.io.Serializable;
 
 /**
- * 申拆表
+ * 申诉
  *
- * @author wangjun
+ * @author gaoyuguo
  */
 public class UserComplaintBean extends UserComplaintEntity implements Serializable {
 
     private String contactsUname;
+
     private String contactsMobile;
 
     public String getContactsUname() {

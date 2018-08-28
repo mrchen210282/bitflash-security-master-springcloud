@@ -8,6 +8,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * 求购
+ *
+ * @author gaoyuguo
+ */
 @TableName("user_buy")
 public class UserBuyEntity implements Serializable {
 

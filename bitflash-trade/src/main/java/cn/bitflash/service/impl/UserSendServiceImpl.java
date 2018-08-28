@@ -25,6 +25,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * 发送
+ *
+ * @author gaoyuguo
+ * @date 2018-8-28 15:22:06
+ */
 @Service("userSendService")
 public class UserSendServiceImpl extends ServiceImpl<UserSendDao, UserSendEntity> implements UserSendService {
 

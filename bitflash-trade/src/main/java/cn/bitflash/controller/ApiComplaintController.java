@@ -20,7 +20,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author gao
+ * 申诉
+ *
+ * @author gaoyuguo
+ * @date 2018-8-28 15:22:06
  */
 @RestController
 @RequestMapping("/api/appeal")
@@ -34,16 +37,17 @@ public class ApiComplaintController {
 
     @Autowired
     private UserTradeConfigService userTradeConfigService;
+
     @Autowired
     private UserTradeService userTradeService;
 
     /**
      * 申诉列表
      *
-     * @param user
-     * @param pages
-     * @param userAccount
-     * @return
+     * @param user        用户
+     * @param pages       分页
+     * @param userAccount 账号信息
+     * @return count信息数量   list申诉列表    availableAssets可用资产
      */
     @Login
     @PostMapping("/List")
@@ -60,12 +64,11 @@ public class ApiComplaintController {
     /**
      * 申诉详情
      *
-     * @param id
-     * @return
+     * @param id 订单id
+     * @return userComplaintBean 订单详情
      */
     @PostMapping("/check")
     public R checkAppeal(@RequestParam("id") String id) {
-        System.out.println(id);
         UserComplaintBean userComplaintBean = userComplaintService.getComplaintMessage(id);
 
         //判定订单不存在
@@ -79,7 +82,11 @@ public class ApiComplaintController {
     }
 
     /**
-     * ----------------------------手续费------------------------
+     * 手续费
+     *
+     * @param id    订单id
+     * @param state 买入/卖出
+     * @return 手续费详情
      */
     public Map<String, Float> poundage(String id, String state) {
 

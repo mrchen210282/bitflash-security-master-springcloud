@@ -40,8 +40,8 @@ public class UserBuyServiceImpl extends ServiceImpl<UserBuyDao, UserBuyEntity> i
     }
 
     @Override
-    public List<UserBuyBean> selectBuyList(String uid) {
-        return baseMapper.selectBuyList(uid);
+    public List<UserBuyBean> selectBuyList(String uid, Integer pages) {
+        return baseMapper.selectBuyList(uid, pages);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class UserBuyServiceImpl extends ServiceImpl<UserBuyDao, UserBuyEntity> i
     }
 
     @Override
-    public Integer selectUserBuyOwnCount(String uid){
+    public Integer selectUserBuyOwnCount(String uid) {
         return baseMapper.selectUserBuyOwnCount(uid);
     }
 }

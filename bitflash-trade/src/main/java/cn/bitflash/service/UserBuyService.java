@@ -18,11 +18,11 @@ public interface UserBuyService extends IService<UserBuyEntity> {
 
     void addBuyMessage(UserBuyEntity userBuyEntity, String uid);
 
-    List<UserBuyBean> selectBuyList(String uid);
+    List<UserBuyBean> selectBuyList(String uid, Integer pages);
 
     List<UserBuyBean> selectAppealList(@RequestParam("uid") String uid, @RequestParam("pages") Integer pages);
 
-    Integer selectAppealCount(@RequestParam("uid")String uid);
+    Integer selectAppealCount(@RequestParam("uid") String uid);
 
     Integer selectUserBuyOwnCount(String uid);
 }

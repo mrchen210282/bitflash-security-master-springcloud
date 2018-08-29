@@ -103,7 +103,7 @@
         LEFT JOIN user_info b ON a.uid = b.uid
         LEFT JOIN user_trade_history uth ON uth.user_trade_id = a.id
         WHERE 1 = 1
-        AND <![CDATA[ uth.purchase_uid = #{uid} ]]> AND a.state = '6' OR a.state = '5'
+        AND <![CDATA[ uth.purchase_uid = #{uid} ]]> and <![CDATA[ ut.state <>'9']]> AND a.state = '6' OR a.state = '5'
         ) t
         where 1 ORDER BY price asc,state desc,isMyself desc limit
         #{pageNum},#{pageTotal}
@@ -127,7 +127,7 @@
         LEFT JOIN user_info b ON a.uid = b.uid
         LEFT JOIN user_trade_history uth ON uth.user_trade_id = a.id
         WHERE 1 = 1
-        AND <![CDATA[ uth.purchase_uid = #{uid} ]]> AND a.state = '6' OR a.state = '5'
+        AND <![CDATA[ uth.purchase_uid = #{uid} ]]> and <![CDATA[ ut.state <>'9']]> AND a.state = '6' OR a.state = '5'
         ) t where 1 ORDER BY price asc
     </select>
 

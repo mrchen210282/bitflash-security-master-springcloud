@@ -15,6 +15,8 @@ import cn.bitflash.user.UserPayPwdEntity;
 import cn.bitflash.usertradeutil.UserUtils;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import io.micrometer.core.instrument.util.MathUtils;
+import io.netty.util.internal.MathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -83,6 +85,14 @@ public class ApiUserSendController {
         if (!user_pwd.equals(pwd.getPayPassword())) {
             // 交易密码不正确
             code = 4;
+            return R.ok().put("code", code);
+        }
+
+        BigDecimal quantite = new BigDecimal(quantity);
+        BigDecimal num = quantite.divide(new BigDecimal(100),0,BigDecimal.ROUND_DOWN);
+        BigDecimal result = num.subtract(quantite.divide(new BigDecimal(100)));
+        if (quantite.compareTo(new BigDecimal(100)) == -1 || result.compareTo(new BigDecimal(0)) == -1) {
+            code = 3;
             return R.ok().put("code", code);
         }
 

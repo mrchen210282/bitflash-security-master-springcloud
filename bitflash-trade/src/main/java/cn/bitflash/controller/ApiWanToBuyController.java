@@ -77,12 +77,13 @@ public class ApiWanToBuyController {
 
     /**
      * ----------------交易页-----------------
+     *
      * @param pages 分页
      * @return 除用户所有求购信息
      */
     @Login
     @PostMapping("showBuyMessage")
-    public R showNeedMessage(@RequestAttribute("uid")String uid, @RequestParam("pages") String pages, @UserAccount UserAccountEntity userAccount) {
+    public R showNeedMessage(@RequestAttribute("uid") String uid, @RequestParam("pages") String pages, @UserAccount UserAccountEntity userAccount) {
         List<UserBuyMessageBean> ub = userBuyService.getBuyMessage(uid, Integer.valueOf(pages));
         if (ub == null || ub.size() < 0) {
             return R.error("暂时没有求购信息");
@@ -100,7 +101,7 @@ public class ApiWanToBuyController {
      */
     @Login
     @PostMapping("showBuyMessageOwn")
-    public R showUserBuyMessage(@RequestAttribute("uid")String uid, @RequestParam("pages") String pages) {
+    public R showUserBuyMessage(@RequestAttribute("uid") String uid, @RequestParam("pages") String pages) {
         List<UserBuyBean> userBuyEntities = userBuyService.selectBuyList(uid, Integer.valueOf(pages));
         List<UserBuyBean> userBuyEntitiesList = new LinkedList<UserBuyBean>();
         String state = null;
@@ -146,7 +147,7 @@ public class ApiWanToBuyController {
      */
     @Login
     @PostMapping("addBuyMessage")
-    public R addBuyMessage(@RequestBody UserBuyEntity userBuyEntity,@RequestAttribute("uid")String uid) {
+    public R addBuyMessage(@RequestBody UserBuyEntity userBuyEntity, @RequestAttribute("uid") String uid) {
         if (userBuyEntity == null) {
             return R.error(501, "求购信息为空");
         }
@@ -175,7 +176,7 @@ public class ApiWanToBuyController {
      */
     @Login
     @PostMapping("addBuyMessageHistory")
-    public R addBuyMessageHistory(@RequestParam("id") String id, @RequestAttribute("uid")String uid) {
+    public R addBuyMessageHistory(@RequestParam("id") String id, @RequestAttribute("uid") String uid) {
 
         //交易状态:'1'资金不足,'2'订单不存在
 
@@ -434,10 +435,10 @@ public class ApiWanToBuyController {
     @Login
     @PostMapping("PayCoin")
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
-    public R payCoin(@RequestParam("id") String id, @RequestParam("pwd") String pwd, @RequestAttribute("uid")String uid) {
+    public R payCoin(@RequestParam("id") String id, @RequestParam("pwd") String pwd, @RequestAttribute("uid") String uid) {
 
         //判断交易密码是否正确
-        UserPayPwdEntity userPayPwdEntity = userUtils.selectUserPayPwd(new ModelMap("uid",uid));
+        UserPayPwdEntity userPayPwdEntity = userUtils.selectUserPayPwd(new ModelMap("uid", uid));
         //交易密码不正确
         if (!pwd.equals(userPayPwdEntity.getPayPassword())) {
             return R.ok().put("code", "3");

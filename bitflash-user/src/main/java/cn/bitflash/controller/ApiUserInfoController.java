@@ -47,7 +47,7 @@ public class ApiUserInfoController {
     @Autowired
     private LoginUtils loginUtils;
 
-   @Autowired
+    @Autowired
     private UserPayPwdService userPayPwdService;
 
     @Autowired
@@ -59,12 +59,13 @@ public class ApiUserInfoController {
 
     /**
      * 获取用户体系信息
+     *
      * @param userInvitationCode
      * @return
      */
     @Login
     @PostMapping("getRelation")
-    public R getRelation(@RequestAttribute("uid")String uid, @UserInvitationCode UserInvitationCodeEntity userInvitationCode) {
+    public R getRelation(@RequestAttribute("uid") String uid, @UserInvitationCode UserInvitationCodeEntity userInvitationCode) {
         UserAccountEntity userAccount = tradeUtils.selectOne(new ModelMap(ApiLoginInterceptor.UID, uid));
         UserInfoEntity infoEntity = userInfoService.selectById(userAccount.getUid());
         if (Integer.valueOf(infoEntity.getIsVip()) < 0) {
@@ -77,11 +78,11 @@ public class ApiUserInfoController {
             Double right = userAccount.getRgtAchievement().doubleValue();
             String leftRate = "10%";
             if (left != 0) {
-                leftRate = Math.round(left / (left + right) * 100) + "%";
+                leftRate = (((Math.round(left / (left + right))*0.6)+0.1) * 100) + "%";
             }
             String rightRate = "10%";
             if (right != 0) {
-                rightRate = Math.round(right / (left + right) * 100) + "%";
+                rightRate = (((Math.round(right / (left + right))*0.6)+0.1) * 100) + "%";
             }
             map.put("leftRate", leftRate);
             map.put("rightRate", rightRate);
@@ -109,7 +110,7 @@ public class ApiUserInfoController {
      */
     @Login
     @PostMapping("updateNickName")
-    public R updateNickName(@RequestParam String nickname,@RequestAttribute("uid")String uid) {
+    public R updateNickName(@RequestParam String nickname, @RequestAttribute("uid") String uid) {
         if (StringUtils.isNotBlank(nickname)) {
             if (nickname.length() <= 6) {
                 UserInfoEntity userInfoEntity = userInfoService.selectOne(new EntityWrapper<UserInfoEntity>().eq("nickname", nickname));
@@ -134,66 +135,69 @@ public class ApiUserInfoController {
 
     /**
      * 获取用户信息判断
+     *
      * @param uid
      * @return
      */
     @Login
     @PostMapping("getUserPower")
-    public R getUserPower(@RequestAttribute(ApiLoginInterceptor.UID) String uid){
+    public R getUserPower(@RequestAttribute(ApiLoginInterceptor.UID) String uid) {
         UserInfoEntity infoEntity = userInfoService.selectById(uid);
-        Map<String,Object> map =new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         //是否是vip
-        map.put("isVip",infoEntity.getIsVip());
+        map.put("isVip", infoEntity.getIsVip());
         //是否是实名认证的
-        map.put("isAuthentication",infoEntity.getIsAuthentication());
+        map.put("isAuthentication", infoEntity.getIsAuthentication());
         //是否是体系内的
-        map.put("isInvitation",infoEntity.getIsInvitation());
+        map.put("isInvitation", infoEntity.getIsInvitation());
         //用户昵称
-        map.put("nickName",infoEntity.getNickname());
+        map.put("nickName", infoEntity.getNickname());
         //是否修改过昵称
-        map.put("nicklock",infoEntity.getNicklock());
+        map.put("nicklock", infoEntity.getNicklock());
         return R.ok(map);
     }
 
     /**
      * 获取钱包地址
+     *
      * @param
      * @return
      */
     @Login
     @PostMapping("getWalletToken")
-    public R getWalletToken(@RequestAttribute(ApiLoginInterceptor.UID) String uid){
-        UserEntity userEntity = loginUtils.selectOneByUser(new ModelMap("uid",uid));
+    public R getWalletToken(@RequestAttribute(ApiLoginInterceptor.UID) String uid) {
+        UserEntity userEntity = loginUtils.selectOneByUser(new ModelMap("uid", uid));
         return R.ok(userEntity.getUuid());
     }
 
     /**
      * 验证用户是否设置交易密码,上传收款码
+     *
      * @param uid
      * @return
      */
     @Login
     @PostMapping("validatePwd")
-    public R validatePwd(@RequestAttribute(ApiLoginInterceptor.UID) String uid){
+    public R validatePwd(@RequestAttribute(ApiLoginInterceptor.UID) String uid) {
         UserInfoEntity infoEntity = userInfoService.selectById(uid);
         //未进行实名认证
-        if(infoEntity.getIsAuthentication().equals("0") || infoEntity.getIsAuthentication().equals("-1")){
-            return R.ok().put("msg","3");
+        if (infoEntity.getIsAuthentication().equals("0") || infoEntity.getIsAuthentication().equals("-1")) {
+            return R.ok().put("msg", "3");
         }
         //实名认证中
-        if(infoEntity.getIsAuthentication().equals("1")){
-            return R.ok().put("msg","4");
+        if (infoEntity.getIsAuthentication().equals("1")) {
+            return R.ok().put("msg", "4");
         }
-        UserPayPwdEntity payPwdEntity = userPayPwdService.selectOne(new EntityWrapper<UserPayPwdEntity>().eq("uid",uid));
-        if(payPwdEntity==null || StringUtil.isNullOrEmpty(payPwdEntity.getPayPassword())){
+        UserPayPwdEntity payPwdEntity = userPayPwdService.selectOne(new EntityWrapper<UserPayPwdEntity>().eq("uid", uid));
+        if (payPwdEntity == null || StringUtil.isNullOrEmpty(payPwdEntity.getPayPassword())) {
             //如果没有交易密码
-            return R.ok().put("msg","1");
+            return R.ok().put("msg", "1");
         }
-        List<UserPayUrlEntity> urlEntity = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>().eq("uid",uid));
-        if(urlEntity.size()<3){
-            return R.ok().put("msg","2");
+        List<UserPayUrlEntity> urlEntity = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>().eq("uid", uid));
+        if (urlEntity.size() < 3) {
+            return R.ok().put("msg", "2");
         }
 
-        return R.ok().put("msg","0");
+        return R.ok().put("msg", "0");
     }
 }

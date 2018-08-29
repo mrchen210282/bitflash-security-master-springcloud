@@ -61,6 +61,9 @@ public class UserTradeEntity implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date finishTime;
+
     public String getState() {
         return state;
     }
@@ -109,4 +112,11 @@ public class UserTradeEntity implements Serializable {
         this.createTime = createTime;
     }
 
+    public Date getFinishTime() {
+        return finishTime;
+    }
+
+    public void setFinishTime(Date finishTime) {
+        this.finishTime = finishTime;
+    }
 }

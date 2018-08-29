@@ -6,7 +6,7 @@
     <update id="updateUserTradeHistory" parameterType="cn.bitflash.trade.UserTradeHistoryEntity">
         update
         user_trade_history set sell_uid = #{sellUid},sell_quantity = #{sellQuantity},price=#{price},state =
-        #{state},create_time=#{createTime} where user_trade_id =
+        #{state},create_time=#{createTime},finish_time=#{finishTime} where user_trade_id =
         #{userTradeId}
     </update>
 

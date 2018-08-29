@@ -151,7 +151,7 @@
     </select>
 
     <select id="updateTrade">
-        update user_trade set state = ${state} where id =
+        update user_trade set state = ${state},finish_time = ${finishTime} where id =
         ${id}
     </select>
 

@@ -510,7 +510,7 @@ public class ApiUserTradeController {
                                     userTradeHistory.setSellQuantity(quantity);
                                     userTradeHistory.setState(Common.STATE_PAY);
                                     userTradeHistory.setPrice(userTradeBean.getPrice());
-                                    userTradeHistory.setCreateTime(new Date());
+                                    userTradeHistory.setFinishTime(new Date());
                                     userTradeHistoryService.updateUserTradeHistory(userTradeHistory);
                                 }
                             } else {

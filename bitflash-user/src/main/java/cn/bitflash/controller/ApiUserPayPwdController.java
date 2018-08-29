@@ -1,18 +1,12 @@
 package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
-import cn.bitflash.annotation.LoginUser;
-import cn.bitflash.annotation.PayPassword;
-import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserPayPwdService;
 import cn.bitflash.user.UserPayPwdEntity;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
@@ -34,8 +28,7 @@ public class ApiUserPayPwdController {
      */
     @Login
     @PostMapping("addPayPwd" )
-    public R addPayPassword(@RequestParam String payPassword, @LoginUser UserEntity user) {
-        String uid = user.getUid();
+    public R addPayPassword(@RequestParam String payPassword, @RequestAttribute("uid")String uid) {
         UserPayPwdEntity userPayPwdEntity = userPayPwdService.selectOne(new EntityWrapper<UserPayPwdEntity>().eq("uid", uid));
         if (userPayPwdEntity == null) {
             userPayPwdEntity = new UserPayPwdEntity();

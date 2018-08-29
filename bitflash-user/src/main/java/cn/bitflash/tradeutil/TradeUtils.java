@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
-@FeignClient(value = "bitflash-trade",fallbackFactory = TradeFallback.class)
+@FeignClient(name = "bitflash-trade",fallbackFactory = TradeFallback.class)
 public interface TradeUtils {
 
     @PostMapping("/api/trade/inner/selectTradeHistoryIncome")

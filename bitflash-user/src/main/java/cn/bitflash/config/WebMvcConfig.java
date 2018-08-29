@@ -21,8 +21,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Autowired
     ApiLoginInterceptor apiLoginInterceptor;
 
-    @Autowired
-    LoginUserHandlerMethodArgumentResolver loginUserHandlerMethodArgumentResolver;
 
     @Autowired
     PayPasswordHandlerMethodArgumentResolver payPasswordHandlerMethodArgumentResolver;
@@ -40,7 +38,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        argumentResolvers.add(loginUserHandlerMethodArgumentResolver);
         argumentResolvers.add(payPasswordHandlerMethodArgumentResolver);
         argumentResolvers.add(userAccountHandlerMethodArgumentResolver);
         argumentResolvers.add(userInvitationHandlerMethodArgumentResolver);

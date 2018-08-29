@@ -81,6 +81,12 @@ public class TokenFilter extends ZuulFilter {
         if (url.indexOf("bitflash-login/api/login/changePassword2" )!= -1) {
             return false;
         }
+        if(url.indexOf("bitflash-sys/api/getBitflash")!=-1){
+            return false;
+        }
+        if(url.indexOf("/api/update")!=-1){
+            return false;
+        }
         return true;
     }
 
@@ -99,7 +105,8 @@ public class TokenFilter extends ZuulFilter {
         }
         //token为空
         if (StringUtils.isBlank(secretTime) || StringUtils.isBlank(secretToken)) {
-            throw new RRException("token不能为空");
+            String url = request.getRequestURI();
+            throw new RRException("token不能为空,请求接口为："+url);
         }
         try {
             HttpSession session = request.getSession();

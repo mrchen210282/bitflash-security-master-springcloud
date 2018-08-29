@@ -88,4 +88,10 @@ public class ApiSystemController {
         return R.ok(String.valueOf(System.currentTimeMillis()));
     }
 
+    @PostMapping("getBitflash")
+    public R getBitflash(){
+        String value = platFormConfigService.getVal("bitflush_url");
+        return R.ok(value);
+    }
+
 }

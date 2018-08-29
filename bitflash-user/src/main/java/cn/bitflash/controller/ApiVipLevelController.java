@@ -1,14 +1,12 @@
 package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
-import cn.bitflash.annotation.LoginUser;
-import cn.bitflash.tradeutil.TradeUtils;
-import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.UserInfoConfigService;
 import cn.bitflash.service.UserInfoService;
 import cn.bitflash.service.UserInvitationCodeService;
 import cn.bitflash.service.UserRelationService;
 import cn.bitflash.trade.UserAccountEntity;
+import cn.bitflash.tradeutil.TradeUtils;
 import cn.bitflash.user.UserInfoConfigEntity;
 import cn.bitflash.user.UserInfoEntity;
 import cn.bitflash.user.UserInvitationCodeEntity;
@@ -24,10 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -68,8 +63,7 @@ public class ApiVipLevelController {
      */
     @Login
     @PostMapping("getVipLevel")
-    public R getVipLevel(@LoginUser UserEntity user) {
-        String uid = user.getUid();
+    public R getVipLevel(@RequestAttribute("uid")String uid) {
         UserInfoEntity userEntity = userInfoService.selectOne(new EntityWrapper<UserInfoEntity>().eq("uid", uid));
         if (userEntity != null) {
             String vipLevel = userEntity.getIsVip();
@@ -103,7 +97,7 @@ public class ApiVipLevelController {
     @Login
     @Transactional
     @PostMapping("updateVipLevel")
-    public R updateVipLevel(@LoginUser UserEntity user, @RequestParam("vipLevel") Integer vipLevel) {
+    public R updateVipLevel(@RequestAttribute("uid")String uid, @RequestParam("vipLevel") Integer vipLevel) {
         /**
          *  1.查询是否是vip
          *		只有vip等级为0的用户才能有机会赠送贝壳
@@ -115,7 +109,6 @@ public class ApiVipLevelController {
          *          2.1.4 冻结数量+=20000+赠送数量
          *      2.2 return 金额不足
          */
-        String uid = user.getUid();
         UserInfoEntity userInfo = userInfoService.selectById(uid);
         String invitationCode = userInfo.getInvitationCode();
         if (StringUtils.isBlank(invitationCode)) {

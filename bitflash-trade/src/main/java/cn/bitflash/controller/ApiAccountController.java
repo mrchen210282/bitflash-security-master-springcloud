@@ -51,7 +51,7 @@ public class ApiAccountController {
     public R accountInfo(@UserAccount UserAccountEntity account) {
         String uid = account.getUid();
         UserInfoEntity infoEntity = userUtils.selectUserInfoById(uid);
-        if (!infoEntity.getIsVip().equals(0)) {
+        if (!infoEntity.getIsVip().equals("0")) {
             /**
              * yesterDayIncome 昨日收入
              * totelAssets   总收入

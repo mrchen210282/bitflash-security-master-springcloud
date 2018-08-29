@@ -2,6 +2,7 @@ package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
+import cn.bitflash.loginutil.LoginUtils;
 import cn.bitflash.trade.UserBuyHistoryEntity;
 import cn.bitflash.tradeutil.TradeUtils;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
@@ -47,6 +48,9 @@ public class ApiUserPayUrlController {
     @Autowired
     private TradeUtils tradeUtils;
 
+    @Autowired
+    private LoginUtils loginUtils;
+
     /**
      * 上传的图片
      *
@@ -56,7 +60,8 @@ public class ApiUserPayUrlController {
      */
     @Login
     @PostMapping("upload")
-    public R upload(@RequestBody ImgForm imgForm, @LoginUser UserEntity user) {
+    public R upload(@RequestBody ImgForm imgForm, @RequestAttribute("uid")String uid) {
+        UserEntity user = loginUtils.selectOneByUser(new ModelMap("uid", uid));
         ValidatorUtils.validateEntity(imgForm);
         //验证交易密码
         String password = imgForm.getPassword();
@@ -140,7 +145,8 @@ public class ApiUserPayUrlController {
     @Login
     @PostMapping("uploadImg")
     public R uploadImgMessage(@RequestParam String img, @RequestParam String imgType,
-                              @LoginUser UserEntity user) {
+                              @RequestAttribute("uid")String uid) {
+        UserEntity user = loginUtils.selectOneByUser(new ModelMap("uid", uid));
         UserPayUrlEntity userPay = userPayUrlService.selectOne(new EntityWrapper<UserPayUrlEntity>().eq("uid", user.getUid())
                 .and().eq("img_type", imgType));
         String imgName = imgType.equals("3") ? MD5Util.stringToMD5(user.getMobile() + System.currentTimeMillis()) + "_z" : MD5Util.stringToMD5(user.getMobile() + System.currentTimeMillis()) + "_f";
@@ -222,17 +228,17 @@ public class ApiUserPayUrlController {
     }
 
     /**
-     * @param user    登录人的uid
+     * @param myuid    登录人的uid
      * @param uid     别人的uid
      * @param imgType 图片类型
      * @return
      */
     @Login
     @PostMapping("getPayUrl")
-    public R getPayUrl(@LoginUser UserEntity user, @RequestParam(value = "uid", required = false) String uid, @RequestParam("imgType") String imgType) {
+    public R getPayUrl(@RequestAttribute("uid")String myuid, @RequestParam(value = "uid", required = false) String uid, @RequestParam("imgType") String imgType) {
         UserPayUrlEntity payUrlEntity = null;
         if (uid == null) {
-            payUrlEntity = userPayUrlService.selectOne(new EntityWrapper<UserPayUrlEntity>().eq("uid", user.getUid()).eq("img_type", imgType));
+            payUrlEntity = userPayUrlService.selectOne(new EntityWrapper<UserPayUrlEntity>().eq("uid",myuid).eq("img_type", imgType));
         } else {
             payUrlEntity = userPayUrlService.selectOne(new EntityWrapper<UserPayUrlEntity>().eq("uid", uid).eq("img_type", imgType));
         }

@@ -4,7 +4,10 @@ import cn.bitflash.user.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+<<<<<<< HEAD
 import org.springframework.stereotype.Service;
+=======
+>>>>>>> 87fca1fe3677c191e918738ace84e7fdbebb5ea3
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +17,7 @@ import java.util.Map;
 
 @Service
 @FeignClient(name = "bitflash-user",fallbackFactory = UserFallback.class)
+@Component
 public interface UserUtils {
 
     @PostMapping("/api/user/inner/selectUserInfoById")

@@ -150,10 +150,18 @@
         order by img_type asc
     </select>
 
-    <select id="updateTrade">
-        update user_trade set state = ${state},finish_time = ${finishTime} where id =
-        ${id}
-    </select>
+    <update id="updateTrade">
+        update user_trade
+          <set>
+              <if test="state != null and state != ''">
+                  state = ${state},
+              </if>
+              <if test="finishTime != null and finishTime != ''">
+                  finish_time = ${finishTime},
+              </if>
+          </set>
+          where id = ${id}
+    </update>
 
     <!-- add by wangjun 2018.6.23 查看订单明细 -->
     <select id="queryDetail" resultType="cn.bitflash.trade.UserTradeBean">

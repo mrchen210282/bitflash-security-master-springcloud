@@ -169,8 +169,13 @@ public class ApiUserInfoController {
     @PostMapping("validatePwd")
     public R validatePwd(@RequestAttribute(ApiLoginInterceptor.UID) String uid){
         UserInfoEntity infoEntity = userInfoService.selectById(uid);
-        if(!infoEntity.getIsAuthentication().equals("2")){
+        //未进行实名认证
+        if(infoEntity.getIsAuthentication().equals("0") || infoEntity.getIsAuthentication().equals("-1")){
             return R.ok().put("msg","3");
+        }
+        //实名认证中
+        if(infoEntity.getIsAuthentication().equals("1")){
+            return R.ok().put("msg","4");
         }
         UserPayPwdEntity payPwdEntity = userPayPwdService.selectOne(new EntityWrapper<UserPayPwdEntity>().eq("uid",uid));
         if(payPwdEntity==null || StringUtil.isNullOrEmpty(payPwdEntity.getPayPassword())){

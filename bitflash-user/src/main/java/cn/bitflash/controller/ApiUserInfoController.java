@@ -78,11 +78,11 @@ public class ApiUserInfoController {
             Double right = userAccount.getRgtAchievement().doubleValue();
             String leftRate = "10%";
             if (left != 0) {
-                leftRate = Math.round(left / (left + right) * 100) + "%";
+                leftRate = (((Math.round(left / (left + right))*0.6)+0.1) * 100) + "%";
             }
             String rightRate = "10%";
             if (right != 0) {
-                rightRate = Math.round(right / (left + right) * 100) + "%";
+                rightRate = (((Math.round(right / (left + right))*0.6)+0.1) * 100) + "%";
             }
             map.put("leftRate", leftRate);
             map.put("rightRate", rightRate);

@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -128,7 +129,7 @@ public class ApiVipLevelController {
         }
         //BigDecimal类型的vip升级数量
         BigDecimal vip_number = new BigDecimal(vip_count);
-        UserAccountEntity userAccount = tradeUtils.selectById(uid);
+        UserAccountEntity userAccount = tradeUtils.selectById(new ModelMap("uid",uid));
         BigDecimal acacilNum = userAccount.getAvailableAssets();
         // 可用资产>=所需升级的vip数量
         if (acacilNum.compareTo(vip_number) == 1 || acacilNum.compareTo(vip_number) == 0) {

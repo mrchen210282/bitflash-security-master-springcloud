@@ -73,4 +73,9 @@ public class UserTradeInnerService {
         return null;
     }
 
+    @PostMapping("updateById")
+    public boolean updateById(@RequestBody UserAccountEntity userAccountEntity){
+        return userAccountService.updateById(userAccountEntity);
+    }
+
 }

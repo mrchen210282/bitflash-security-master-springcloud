@@ -95,7 +95,6 @@ public class ApiWanToBuyController {
     /**
      * ---------------订单页----------------
      *
-     * @param user  用户信息
      * @param pages 分页
      * @return 用户的所有交易信息
      */
@@ -111,9 +110,9 @@ public class ApiWanToBuyController {
         for (UserBuyBean userBuyEntity : userBuyEntities) {
             if (userBuyEntity.getUid().equals(uid)) {
                 state = userBuyEntity.getState();
-            } else if (userBuyEntity.getSellUid().equals(uid)) {
+            } else if (uid.equals(userBuyEntity.getSellUid())) {
                 state = userBuyEntity.getSellState();
-            } else if (userBuyEntity.getPurchaseUid().equals(uid)) {
+            } else if (uid.equals(userBuyEntity.getPurchaseUid())) {
                 state = userBuyEntity.getPurchaseState();
             }
 
@@ -142,7 +141,6 @@ public class ApiWanToBuyController {
      * 添加求购信息
      *
      * @param userBuyEntity 订单信息
-     * @param user          用户信息
      * @return 交易状态
      */
     @Login
@@ -165,7 +163,6 @@ public class ApiWanToBuyController {
      * 下单
      *
      * @param id   订单id
-     * @param user 用户信息
      * @return 交易状态
      * <p>
      * 1.查询手续费，并从卖出者账号中扣除。如资金不足抛出错误

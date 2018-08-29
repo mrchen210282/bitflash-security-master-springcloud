@@ -21,8 +21,8 @@ public interface TradeUtils {
     @PostMapping("/api/trade/inner/selectOne")
     UserAccountEntity selectOne(@RequestBody Map<String,Object> map);
 
-    @PostMapping("/api/trade/inner/selectById")
-    UserAccountEntity selectById(@RequestParam("uid") String uid);
+    @PostMapping("/api/trade/inner/selectOne")
+    UserAccountEntity selectById(@RequestBody Map<String, Object> map);
 
     @PostMapping("/api/trade/inner/updateById")
     boolean updateById(@RequestBody UserAccountEntity userAccountEntity);

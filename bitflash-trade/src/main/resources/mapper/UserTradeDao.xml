@@ -93,7 +93,7 @@
         b.realname,b.nickname,ut.id,ut.price,ut.quantity,ut.uid,ut.create_time,ut.state,"1"
         AS isMySelf FROM user_trade ut
         LEFT JOIN user_info b ON ut.uid = b.uid WHERE 1 = 1
-        AND <![CDATA[ut.state <> '3']]> and <![CDATA[ ut.state <>'4']]>
+        AND <![CDATA[ut.state <> '3']]> and <![CDATA[ ut.state <>'4']]> and <![CDATA[ ut.state <>'9']]>
         AND <![CDATA[ut.uid = #{uid}]]>
         UNION
         -- 查询我买别人的订单
@@ -117,7 +117,7 @@
         b.realname,b.nickname,ut.id,ut.price,ut.quantity,ut.uid,ut.create_time,ut.state,"1"
         AS isMySelf FROM user_trade ut
         LEFT JOIN user_info b ON ut.uid = b.uid WHERE 1 = 1
-        AND <![CDATA[ut.state <> '3']]> and <![CDATA[ ut.state <>'4']]> OR ut.state = '6'
+        AND <![CDATA[ut.state <> '3']]> and <![CDATA[ ut.state <>'4']]> and <![CDATA[ ut.state <>'9']]>
         AND <![CDATA[ut.uid = #{uid}]]>
         UNION
         -- 查询我买别人的订单

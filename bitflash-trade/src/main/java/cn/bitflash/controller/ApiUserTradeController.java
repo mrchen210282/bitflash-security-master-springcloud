@@ -11,6 +11,7 @@ import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
 import cn.bitflash.utils.RedisUtils;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -230,12 +231,15 @@ public class ApiUserTradeController {
         // 先校验出售数量是否大于已有数量
         BigDecimal total = userAccount.getAvailableAssets();
         logger.info("uid:" + userAccount.getUid() + ",卖出数量:" + quantity + ",价格:" + price);
-        if (StringUtils.isNotBlank(price)) {
+        if (StringUtils.isNotBlank(price) && StringUtils.isNotBlank(quantity)) {
 
             BigDecimal priceB = new BigDecimal(price);
             BigDecimal minPrice = new BigDecimal(Common.MIN_PRICE);
             if (priceB.compareTo(minPrice) <= -1) {
                 return R.error("最低价格为0.33!");
+            }
+            if(Integer.valueOf(quantity) <= 0) {
+                return R.error("发布数量最小为100!");
             }
             BigDecimal quantityB = new BigDecimal(quantity);
 

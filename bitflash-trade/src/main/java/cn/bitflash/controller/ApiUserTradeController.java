@@ -379,8 +379,10 @@ public class ApiUserTradeController {
                         userAccountService.updateById(userAccountEntity);
 
                         // 更新状态为撤消
-                        map.put("state", Common.STATE_CANCEL);
-                        userTradeService.updateTrade(map);
+                        UserTradeEntity userTradeEntity = new UserTradeEntity();
+                        userTradeEntity.setId(Integer.valueOf(orderId));
+                        userTradeEntity.setState(Common.STATE_CANCEL);
+                        userTradeService.updateById(userTradeEntity);
 
                         //删除手续费记录
                         map.clear();
@@ -450,7 +452,11 @@ public class ApiUserTradeController {
                     userTradeBean.setId(new Integer(orderId));
                     param.put("state", Common.STATE_PAY);
                     param.put("finishTime", new Date());
-                    userTradeService.updateTrade(param);
+                    UserTradeEntity userTradeEntity = new UserTradeEntity();
+                    userTradeEntity.setState(Common.STATE_PAY);
+                    userTradeEntity.setFinishTime(new Date());
+                    userTradeEntity.setId(Integer.valueOf(orderId));
+                    userTradeService.updateById(userTradeEntity);
 
                     // 更新购买者收益
                     BigDecimal quantity = userTradeBean.getQuantity();
@@ -590,9 +596,14 @@ public class ApiUserTradeController {
             logger.info("订单号:" + orderId + ",付款人:" + uesrTradeBean.getRealname() + ",数量:" + uesrTradeBean.getQuantity() + ",价格:" + uesrTradeBean.getPrice());
 
             if (null != uesrTradeBean) {
-                map.put("state", Common.STATE_CONFIRM);
+
                 // 更新为已购买
-                userTradeService.updateTrade(map);
+                UserTradeEntity userTradeEntity = new UserTradeEntity();
+                userTradeEntity.setId(Integer.valueOf(orderId));
+                userTradeEntity.setState(Common.STATE_CONFIRM);
+                userTradeService.updateById(userTradeEntity);
+
+
                 UserTradeHistoryEntity userTradeHistory = new UserTradeHistoryEntity();
                 userTradeHistory.setUserTradeId(new Integer(orderId));
                 userTradeHistory.setSellUid(uesrTradeBean.getUid());

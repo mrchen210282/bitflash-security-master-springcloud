@@ -1,15 +1,13 @@
 package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
-import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.annotation.UserAccount;
-import cn.bitflash.login.UserEntity;
 import cn.bitflash.loginutil.LoginUtils;
 import cn.bitflash.service.*;
 import cn.bitflash.sysutil.SysUtils;
 import cn.bitflash.trade.*;
 import cn.bitflash.user.UserPayPwdEntity;
-import cn.bitflash.userutil.UserUtils;
+import cn.bitflash.usertradeutil.UserUtils;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
 import cn.bitflash.utils.RedisUtils;
@@ -79,15 +77,13 @@ public class ApiWanToBuyController {
 
     /**
      * ----------------交易页-----------------
-     *
-     * @param user  用户信息
      * @param pages 分页
      * @return 除用户所有求购信息
      */
     @Login
     @PostMapping("showBuyMessage")
-    public R showNeedMessage(@LoginUser UserEntity user, @RequestParam("pages") String pages, @UserAccount UserAccountEntity userAccount) {
-        List<UserBuyMessageBean> ub = userBuyService.getBuyMessage(user.getUid(), Integer.valueOf(pages));
+    public R showNeedMessage(@RequestAttribute("uid")String uid, @RequestParam("pages") String pages, @UserAccount UserAccountEntity userAccount) {
+        List<UserBuyMessageBean> ub = userBuyService.getBuyMessage(uid, Integer.valueOf(pages));
         if (ub == null || ub.size() < 0) {
             return R.error("暂时没有求购信息");
         }
@@ -104,19 +100,19 @@ public class ApiWanToBuyController {
      */
     @Login
     @PostMapping("showBuyMessageOwn")
-    public R showUserBuyMessage(@LoginUser UserEntity user, @RequestParam("pages") String pages) {
-        List<UserBuyBean> userBuyEntities = userBuyService.selectBuyList(user.getUid(), Integer.valueOf(pages));
+    public R showUserBuyMessage(@RequestAttribute("uid")String uid, @RequestParam("pages") String pages) {
+        List<UserBuyBean> userBuyEntities = userBuyService.selectBuyList(uid, Integer.valueOf(pages));
         List<UserBuyBean> userBuyEntitiesList = new LinkedList<UserBuyBean>();
         String state = null;
 
-        Integer count = userBuyService.selectUserBuyOwnCount(user.getUid());
+        Integer count = userBuyService.selectUserBuyOwnCount(uid);
 
         for (UserBuyBean userBuyEntity : userBuyEntities) {
-            if (userBuyEntity.getUid().equals(user.getUid())) {
+            if (userBuyEntity.getUid().equals(uid)) {
                 state = userBuyEntity.getState();
-            } else if (userBuyEntity.getSellUid().equals(user.getUid())) {
+            } else if (userBuyEntity.getSellUid().equals(uid)) {
                 state = userBuyEntity.getSellState();
-            } else if (userBuyEntity.getPurchaseUid().equals(user.getUid())) {
+            } else if (userBuyEntity.getPurchaseUid().equals(uid)) {
                 state = userBuyEntity.getPurchaseState();
             }
 
@@ -150,7 +146,7 @@ public class ApiWanToBuyController {
      */
     @Login
     @PostMapping("addBuyMessage")
-    public R addBuyMessage(@RequestBody UserBuyEntity userBuyEntity, @LoginUser UserEntity user) {
+    public R addBuyMessage(@RequestBody UserBuyEntity userBuyEntity,@RequestAttribute("uid")String uid) {
         if (userBuyEntity == null) {
             return R.error(501, "求购信息为空");
         }
@@ -158,7 +154,7 @@ public class ApiWanToBuyController {
         if (num % 100 != 0 || num < 100) {
             return R.error(502, "求购数量最低为100，且为100的倍数");
         }
-        userBuyService.addBuyMessage(userBuyEntity, user.getUid());
+        userBuyService.addBuyMessage(userBuyEntity, uid);
         return R.ok().put("code", SUCCESS);
     }
 
@@ -179,7 +175,7 @@ public class ApiWanToBuyController {
      */
     @Login
     @PostMapping("addBuyMessageHistory")
-    public R addBuyMessageHistory(@RequestParam("id") String id, @LoginUser UserEntity user) {
+    public R addBuyMessageHistory(@RequestParam("id") String id, @RequestAttribute("uid")String uid) {
 
         //交易状态:'1'资金不足,'2'订单不存在
 
@@ -192,18 +188,18 @@ public class ApiWanToBuyController {
         Map<String, Float> map = poundage(id);
 
         //扣除手续费
-        UserAccountEntity userAccountEntity = userAccountService.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", user.getUid()));
+        UserAccountEntity userAccountEntity = userAccountService.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", uid));
         //不足支付扣款
         if (new BigDecimal(map.get("totalQuantity")).compareTo(userAccountEntity.getAvailableAssets()) == 1) {
             return R.ok().put("code", FAIL);
         }
-        deduct(new BigDecimal(map.get("totalQuantity")), user.getUid());
+        deduct(new BigDecimal(map.get("totalQuantity")), uid);
 
         //添加手续费记录
         TradePoundageEntity tradePoundageEntity = new TradePoundageEntity();
         tradePoundageEntity.setCreateTime(new Date());
         tradePoundageEntity.setPoundage(new BigDecimal(map.get("totalPoundage")));
-        tradePoundageEntity.setUid(user.getUid());
+        tradePoundageEntity.setUid(uid);
         tradePoundageEntity.setUserTradeId(Integer.parseInt(id));
         tradePoundageEntity.setQuantity(new BigDecimal(map.get("buyQuantity")));
         tradePoundageService.insert(tradePoundageEntity);
@@ -219,7 +215,7 @@ public class ApiWanToBuyController {
         buyHistory.setPurchaseUid(userBuy.getUid());
         buyHistory.setQuantity(new BigDecimal(userBuy.getQuantity()));
         buyHistory.setSellState(STATE_BUY_ACCMONEY);
-        buyHistory.setSellUid(user.getUid());
+        buyHistory.setSellUid(uid);
         buyHistory.setUserBuyId(Integer.parseInt(id));
         userBuyHistoryService.insert(buyHistory);
 
@@ -438,10 +434,10 @@ public class ApiWanToBuyController {
     @Login
     @PostMapping("PayCoin")
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Throwable.class)
-    public R payCoin(@RequestParam("id") String id, @RequestParam("pwd") String pwd, @LoginUser UserEntity user) {
+    public R payCoin(@RequestParam("id") String id, @RequestParam("pwd") String pwd, @RequestAttribute("uid")String uid) {
 
         //判断交易密码是否正确
-        UserPayPwdEntity userPayPwdEntity = userUtils.selectUserPayPwd(new ModelMap("uid", user.getUid()));
+        UserPayPwdEntity userPayPwdEntity = userUtils.selectUserPayPwd(new ModelMap("uid",uid));
         //交易密码不正确
         if (!pwd.equals(userPayPwdEntity.getPayPassword())) {
             return R.ok().put("code", "3");

@@ -1,17 +1,15 @@
 package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
-import cn.bitflash.annotation.LoginUser;
-import cn.bitflash.loginutil.LoginUtils;
-import cn.bitflash.trade.UserBuyHistoryEntity;
-import cn.bitflash.tradeutil.TradeUtils;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.login.UserEntity;
+import cn.bitflash.loginutil.LoginUtils;
 import cn.bitflash.service.UserInfoService;
 import cn.bitflash.service.UserPayPwdService;
 import cn.bitflash.service.UserPayUrlService;
-import cn.bitflash.trade.UserBuyEntity;
+import cn.bitflash.trade.UserBuyHistoryEntity;
 import cn.bitflash.trade.UserTradeEntity;
+import cn.bitflash.tradeutil.TradeUtils;
 import cn.bitflash.user.ImgForm;
 import cn.bitflash.user.UserInfoEntity;
 import cn.bitflash.user.UserPayPwdEntity;

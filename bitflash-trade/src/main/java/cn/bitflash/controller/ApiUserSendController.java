@@ -1,7 +1,6 @@
 package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
-import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.login.UserEntity;
 import cn.bitflash.loginutil.LoginUtils;
 import cn.bitflash.service.UserAccountService;
@@ -13,15 +12,12 @@ import cn.bitflash.trade.UserBrokerageEntity;
 import cn.bitflash.trade.UserSendEntity;
 import cn.bitflash.trade.UserTradeConfigEntity;
 import cn.bitflash.user.UserPayPwdEntity;
-import cn.bitflash.userutil.UserUtils;
+import cn.bitflash.usertradeutil.UserUtils;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -60,7 +56,6 @@ public class ApiUserSendController {
      * @param quantity 发送数量
      * @param uuid     接收人钱包地址
      * @param user_pwd 交易密码
-     * @param user     用户信息
      * @author 1.查询赠送对象是否存在，若不存在返回code=1错误
      * 2.向user_account表中，扣除发送用户的余额，并向接收者添加余额
      * 3.向user_send表中添加赠送记录
@@ -68,7 +63,7 @@ public class ApiUserSendController {
      */
     @Login
     @PostMapping("userSend")
-    public R userSend(@RequestParam String quantity, @RequestParam String uuid, @RequestParam String user_pwd, @LoginUser UserEntity user) {
+    public R userSend(@RequestParam String quantity, @RequestParam String uuid, @RequestParam String user_pwd, @RequestAttribute("uid")String uid) {
 
         //交易状态：‘-1’余额不足错误；‘0’操作成功；‘1’用户不存在；‘2’其他错误；‘3’交易数量错误；‘4’交易密码错误
         int code = 2;
@@ -84,7 +79,7 @@ public class ApiUserSendController {
         }
 
         //如果交易密码不正确,返回错误
-        UserPayPwdEntity pwd = userUtils.selectUserPayPwd(new ModelMap("uid", user.getUid()));
+        UserPayPwdEntity pwd = userUtils.selectUserPayPwd(new ModelMap("uid",uid));
         if (!user_pwd.equals(pwd.getPayPassword())) {
             // 交易密码不正确
             code = 4;
@@ -107,7 +102,7 @@ public class ApiUserSendController {
         BigDecimal user_brokerage = new BigDecimal(quantitys * poundage);
 
         //Send在user——account中修改
-        UserAccountEntity send_account = userAccountService.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", user.getUid()));
+        UserAccountEntity send_account = userAccountService.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", uid));
         //扣款数量
         BigDecimal user_quantitys = user_quantity.add(user_brokerage);
         //账号总额大于扣款
@@ -120,7 +115,7 @@ public class ApiUserSendController {
                 send_account.setRegulateRelease(regulateRelease);
                 send_account.setAvailableAssets(availableAssets);
                 //更新数据
-                userAccountService.update(send_account, new EntityWrapper<UserAccountEntity>().eq("uid", user.getUid()));
+                userAccountService.update(send_account, new EntityWrapper<UserAccountEntity>().eq("uid", uid));
                 relation = true;
             } else {//如果regulateRelease数量不足够扣款
                 //查询regulate_income
@@ -131,7 +126,7 @@ public class ApiUserSendController {
                 send_account.setAvailableAssets(availableAssets);
                 send_account.setRegulateIncome(regulate_income);
                 //更新数据
-                userAccountService.update(send_account, new EntityWrapper<UserAccountEntity>().eq("uid", user.getUid()));
+                userAccountService.update(send_account, new EntityWrapper<UserAccountEntity>().eq("uid", uid));
                 relation = true;
             }
             //Sendee在user——account中修改
@@ -159,7 +154,7 @@ public class ApiUserSendController {
             us.setQuantity(quantitys);
             Date day = new Date();
             us.setSendTime(day);
-            us.setSendUid(user.getUid());
+            us.setSendUid(uid);
             us.setSendeeUid(Sendee.getUid());
             userSendService.insert(us);
         }
@@ -178,25 +173,24 @@ public class ApiUserSendController {
     /**
      * 交易记录
      *
-     * @param user  用户信息
      * @param state 接收/发送
      * @param pages 分页
      * @return count 记录数量  usersendList 发送记录   useracceptList 接收数量
      */
     @Login
     @PostMapping("record")
-    public R record(@LoginUser UserEntity user, @RequestParam int state, @RequestParam("pages") String pages) {
+    public R record(@RequestAttribute("uid")String uid, @RequestParam int state, @RequestParam("pages") String pages) {
 
         //state = 1 :发送
         if (state == 1) {
-            List<UserSendEntity> usersendList = userSendService.selectaccount(user.getUid(), Integer.valueOf(pages));
-            Integer count = userSendService.selectaccountcount(user.getUid());
+            List<UserSendEntity> usersendList = userSendService.selectaccount(uid, Integer.valueOf(pages));
+            Integer count = userSendService.selectaccountcount(uid);
             return R.ok().put("usersendList", usersendList).put("count", count);
         }
         //state = 2 :接收
         else if (state == 2) {
-            List<UserSendEntity> useracceptList = userSendService.selectaccept(user.getUid(), Integer.valueOf(pages));
-            Integer count = userSendService.selectacceptcount(user.getUid());
+            List<UserSendEntity> useracceptList = userSendService.selectaccept(uid, Integer.valueOf(pages));
+            Integer count = userSendService.selectacceptcount(uid);
             return R.ok().put("useracceptList", useracceptList).put("count", count);
         }
         return R.ok();

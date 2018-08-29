@@ -1,46 +1,34 @@
 package cn.bitflash.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.*;
-
-import cn.bitflash.loginutil.LoginUtils;
+import cn.bitflash.annotation.Login;
+import cn.bitflash.annotation.UserAccount;
 import cn.bitflash.service.*;
-import cn.bitflash.sysutil.SysUtils;
 import cn.bitflash.trade.*;
-import common.utils.GeTuiSendMessage;
+import cn.bitflash.user.UserPayPwdEntity;
+import cn.bitflash.usertradeutil.UserUtils;
+import cn.bitflash.utils.BigDecimalUtils;
+import cn.bitflash.utils.Common;
+import cn.bitflash.utils.R;
+import cn.bitflash.utils.RedisUtils;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-
-import cn.bitflash.annotation.Login;
-import cn.bitflash.annotation.LoginUser;
-import cn.bitflash.annotation.PayPassword;
-import cn.bitflash.annotation.UserAccount;
-import cn.bitflash.login.UserEntity;
-import cn.bitflash.user.UserPayPwdEntity;
-import cn.bitflash.utils.BigDecimalUtils;
-import cn.bitflash.utils.Common;
-import cn.bitflash.utils.R;
-import cn.bitflash.utils.RedisUtils;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import static cn.bitflash.utils.Common.SUCCESS;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 获取用户交易接口
@@ -76,10 +64,7 @@ public class ApiUserTradeController {
     private TradePoundageService tradePoundageService;
 
     @Autowired
-    private LoginUtils loginUtils;
-
-    @Autowired
-    private SysUtils sysUtils;
+    private UserUtils userUtils;
 
     /**
      * 交易列表(卖入)
@@ -339,17 +324,16 @@ public class ApiUserTradeController {
     /**
      * 查询卖出购买记录
      *
-     * @param user
      * @param state
      * @return
      */
     @Login
     @PostMapping("listTrade")
-    public R listTrade(@LoginUser UserEntity user, @RequestParam String state) {
+    public R listTrade(@RequestAttribute("uid")String uid, @RequestParam String state) {
         Map<String, Object> param = new HashMap<String, Object>();
         List<UserTradeBean> list = null;
         if (StringUtils.isNotBlank(state)) {
-            param.put("uid", user.getUid());
+            param.put("uid", uid);
             if (state.equals("1")) {
                 param.put("state", Common.STATE_PAY);
             } else {
@@ -448,11 +432,13 @@ public class ApiUserTradeController {
     @Login
     @PostMapping("purchase")
     @Transactional
-    public R purchase(@LoginUser UserEntity user, @RequestParam String orderId, @RequestParam String payPwd, @PayPassword UserPayPwdEntity userPayPwd) {
+    public R purchase(@RequestAttribute("uid")String uid, @RequestParam String orderId, @RequestParam String payPwd) {
+
+        UserPayPwdEntity userPayPwd = userUtils.selectUserPayPwd(new ModelMap("uid",uid));
         if (userPayPwd.getPayPassword().equals(payPwd)) {
             if (StringUtils.isNotBlank(orderId)) {
 
-                logger.info("购买人:" + user.getUid() + ",订单号:" + orderId);
+                logger.info("购买人:" + uid+ ",订单号:" + orderId);
                 // 查询订单状态为已锁定(state:5)
                 Map<String, Object> param = new HashMap<String, Object>();
                 param.put("id", orderId);
@@ -505,7 +491,7 @@ public class ApiUserTradeController {
                                     // 添加购买记录
                                     UserTradeHistoryEntity userTradeHistory = new UserTradeHistoryEntity();
                                     userTradeHistory.setUserTradeId(userTradeBean.getId());
-                                    userTradeHistory.setSellUid(user.getUid());
+                                    userTradeHistory.setSellUid(uid);
                                     userTradeHistory.setCreateTime(new Date());
                                     userTradeHistory.setSellQuantity(quantity);
                                     userTradeHistory.setState(Common.STATE_PAY);
@@ -635,8 +621,7 @@ public class ApiUserTradeController {
      */
     @Login
     @PostMapping("provingState")
-    public R provingState(@RequestParam String orderId, @LoginUser UserEntity user) {
-        String uid = user.getUid();
+    public R provingState(@RequestParam String orderId, @RequestAttribute("uid")String uid) {
         String[] str = redisUtils.get(orderId, String[].class);
         if (str == null || str.length == 0) {
             return R.ok().put("code", 200);
@@ -654,12 +639,11 @@ public class ApiUserTradeController {
      */
     @Login
     @PostMapping("addLock")
-    public R addLock(@RequestParam String orderId, @LoginUser UserEntity user) throws ParseException {
+    public R addLock(@RequestParam String orderId, @RequestAttribute("uid")String uid) throws ParseException {
         UserTradeEntity userTradeEntity = userTradeService.selectById(orderId);
         if (userTradeEntity.getState().equals(Common.STATE_CANCEL)) {
             return R.error(501, "订单已经被撤销,无法锁定");
         }
-        String uid = user.getUid();
         String countKey = Common.COUNT_LOCK + uid;
         logger.debug("当前锁定订单的数量为：" + redisUtils.get(countKey));
         Integer count = redisUtils.get(countKey, Integer.class) == null ? 0 : redisUtils.get(countKey, Integer.class);

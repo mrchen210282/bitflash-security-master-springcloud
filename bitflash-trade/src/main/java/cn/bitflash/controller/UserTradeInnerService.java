@@ -22,9 +22,6 @@ public class UserTradeInnerService {
     private UserAccountService userAccountService;
 
     @Autowired
-    private UserBuyService userBuyService;
-
-    @Autowired
     private UserBuyHistoryService userBuyHistoryService;
 
     @PostMapping("/selectTradeHistoryIncome")

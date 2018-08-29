@@ -9,7 +9,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
-@EnableFeignClients(basePackages = {"cn.bitflash.sysutil","cn.bitflash.userutil","cn.bitflash.loginutil"})
+@EnableFeignClients(basePackages = {"cn.bitflash.sysutil","cn.bitflash.usertradeutil","cn.bitflash.loginutil"})
 @EnableEurekaClient
 @EnableRedisHttpSession
 @MapperScan(basePackages = {"cn.bitflash.dao"})

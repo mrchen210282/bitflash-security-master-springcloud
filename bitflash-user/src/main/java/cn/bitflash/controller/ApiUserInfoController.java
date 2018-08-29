@@ -1,18 +1,17 @@
 package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
-import cn.bitflash.annotation.LoginUser;
-import cn.bitflash.annotation.UserAccount;
 import cn.bitflash.annotation.UserInvitationCode;
-import cn.bitflash.loginutil.LoginUtils;
-import cn.bitflash.service.UserPayUrlService;
-import cn.bitflash.sysutils.SysUtils;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
 import cn.bitflash.login.UserEntity;
+import cn.bitflash.loginutil.LoginUtils;
 import cn.bitflash.service.UserInfoService;
 import cn.bitflash.service.UserPayPwdService;
+import cn.bitflash.service.UserPayUrlService;
 import cn.bitflash.service.UserRelationService;
+import cn.bitflash.sysutils.SysUtils;
 import cn.bitflash.trade.UserAccountEntity;
+import cn.bitflash.tradeutil.TradeUtils;
 import cn.bitflash.user.*;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
@@ -48,22 +47,25 @@ public class ApiUserInfoController {
     @Autowired
     private LoginUtils loginUtils;
 
-    @Autowired
+   @Autowired
     private UserPayPwdService userPayPwdService;
 
     @Autowired
     private UserPayUrlService userPayUrlService;
 
+    @Autowired
+    private TradeUtils tradeUtils;
+
+
     /**
      * 获取用户体系信息
-     *
-     * @param userAccount
      * @param userInvitationCode
      * @return
      */
     @Login
     @PostMapping("getRelation")
-    public R getRelation(@UserAccount UserAccountEntity userAccount, @UserInvitationCode UserInvitationCodeEntity userInvitationCode) {
+    public R getRelation(@RequestAttribute("uid")String uid, @UserInvitationCode UserInvitationCodeEntity userInvitationCode) {
+        UserAccountEntity userAccount = tradeUtils.selectOne(new ModelMap(ApiLoginInterceptor.UID, uid));
         UserInfoEntity infoEntity = userInfoService.selectById(userAccount.getUid());
         if (Integer.valueOf(infoEntity.getIsVip()) < 0) {
             return R.error("没有加入社区");
@@ -102,13 +104,12 @@ public class ApiUserInfoController {
     /**
      * 修改昵称
      *
-     * @param user
      * @param nickname
      * @return
      */
     @Login
     @PostMapping("updateNickName")
-    public R updateNickName(@RequestParam String nickname, @LoginUser UserEntity user) {
+    public R updateNickName(@RequestParam String nickname,@RequestAttribute("uid")String uid) {
         if (StringUtils.isNotBlank(nickname)) {
             if (nickname.length() <= 6) {
                 UserInfoEntity userInfoEntity = userInfoService.selectOne(new EntityWrapper<UserInfoEntity>().eq("nickname", nickname));
@@ -118,7 +119,7 @@ public class ApiUserInfoController {
                 } else {
                     UserInfoEntity userInfoBean = new UserInfoEntity();
                     userInfoBean.setNickname(nickname);
-                    userInfoBean.setUid(user.getUid());
+                    userInfoBean.setUid(uid);
                     userInfoBean.setNicklock("1");
                     userInfoService.updateById(userInfoBean);
                     return R.ok();

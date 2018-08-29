@@ -1,18 +1,16 @@
 package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
-import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.annotation.UserAccount;
-import cn.bitflash.login.UserEntity;
-import cn.bitflash.service.*;
+import cn.bitflash.service.UserBuyService;
+import cn.bitflash.service.UserComplaintService;
+import cn.bitflash.service.UserTradeConfigService;
+import cn.bitflash.service.UserTradeService;
 import cn.bitflash.trade.*;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -44,20 +42,18 @@ public class ApiComplaintController {
     /**
      * 申诉列表
      *
-     * @param user        用户
      * @param pages       分页
      * @param userAccount 账号信息
      * @return count信息数量   list申诉列表    availableAssets可用资产
      */
     @Login
     @PostMapping("/List")
-    public R selectAppealList(@LoginUser UserEntity user, @RequestParam("pages") String pages, @UserAccount UserAccountEntity userAccount) {
-        String uid = user.getUid();
+    public R selectAppealList(@RequestAttribute("uid")String uid, @RequestParam("pages") String pages, @UserAccount UserAccountEntity userAccount) {
         List<UserBuyBean> ub = userBuyService.selectAppealList(uid, Integer.valueOf(pages));
         if (ub == null || ub.size() < 0) {
             return R.error("暂时没有申诉信息");
         }
-        Integer count = userBuyService.selectAppealCount(user.getUid());
+        Integer count = userBuyService.selectAppealCount(uid);
         return R.ok().put("count", count).put("list", ub).put("availableAssets", userAccount.getAvailableAssets());
     }
 

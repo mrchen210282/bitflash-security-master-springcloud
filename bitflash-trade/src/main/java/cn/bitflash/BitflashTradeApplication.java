@@ -10,10 +10,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 @EnableFeignClients(basePackages = {"cn.bitflash.sysutil","cn.bitflash.userutil","cn.bitflash.loginutil"})
-@SpringBootApplication
 @EnableEurekaClient
 @EnableRedisHttpSession
 @MapperScan(basePackages = {"cn.bitflash.dao"})
+@SpringBootApplication
 public class BitflashTradeApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {

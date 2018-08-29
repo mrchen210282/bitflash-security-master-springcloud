@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
-@FeignClient(value = "bitflash-sys",fallbackFactory = SysFallback.class)
+@FeignClient(name = "bitflash-sys",fallbackFactory = SysFallback.class)
 public interface SysUtils {
 
     @PostMapping("/api/sys/inner/getval")

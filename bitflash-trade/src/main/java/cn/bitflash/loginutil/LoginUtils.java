@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.Map;
 
-@FeignClient(value = "bitflash-login",fallbackFactory = LoginFallback.class)
+@FeignClient(name = "bitflash-login",fallbackFactory = LoginFallback.class)
 public interface LoginUtils {
 
     @PostMapping("/api/user/inner/selectUserOne")

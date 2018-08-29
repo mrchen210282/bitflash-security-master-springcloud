@@ -81,6 +81,9 @@ public class TokenFilter extends ZuulFilter {
         if (url.indexOf("bitflash-login/api/login/changePassword2" )!= -1) {
             return false;
         }
+        if(url.indexOf("bitflash-sys/api/getBitflash")!=-1){
+            return false;
+        }
         return true;
     }
 

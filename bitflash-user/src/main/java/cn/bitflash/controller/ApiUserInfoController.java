@@ -4,6 +4,7 @@ import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.LoginUser;
 import cn.bitflash.annotation.UserAccount;
 import cn.bitflash.annotation.UserInvitationCode;
+import cn.bitflash.loginutil.LoginUtils;
 import cn.bitflash.service.UserPayUrlService;
 import cn.bitflash.sysutils.SysUtils;
 import cn.bitflash.interceptor.ApiLoginInterceptor;
@@ -19,6 +20,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -42,6 +44,9 @@ public class ApiUserInfoController {
 
     @Autowired
     private SysUtils sysfeign;
+
+    @Autowired
+    private LoginUtils loginUtils;
 
     @Autowired
     private UserPayPwdService userPayPwdService;
@@ -151,12 +156,13 @@ public class ApiUserInfoController {
 
     /**
      * 获取钱包地址
-     * @param userEntity
+     * @param
      * @return
      */
     @Login
     @PostMapping("getWalletToken")
-    public R getWalletToken(@LoginUser UserEntity userEntity){
+    public R getWalletToken(@RequestAttribute(ApiLoginInterceptor.UID) String uid){
+        UserEntity userEntity = loginUtils.selectOneByUser(new ModelMap("uid",uid));
         return R.ok(userEntity.getUuid());
     }
 

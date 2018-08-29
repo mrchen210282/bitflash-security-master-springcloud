@@ -35,7 +35,7 @@ public class TradeFallback implements FallbackFactory<TradeUtils> {
             }
 
             @Override
-            public UserAccountEntity selectById(String uid) {
+            public UserAccountEntity selectById(Map<String,Object> map) {
                 log.error("获取账号失败-----:"+throwable.getMessage());
                 return new UserAccountEntity();
             }

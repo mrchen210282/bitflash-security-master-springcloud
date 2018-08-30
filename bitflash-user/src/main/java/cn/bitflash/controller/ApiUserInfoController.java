@@ -179,15 +179,17 @@ public class ApiUserInfoController {
      */
     @Login
     @PostMapping("validatePwd")
-    public R validatePwd(@RequestAttribute(ApiLoginInterceptor.UID) String uid) {
-        UserInfoEntity infoEntity = userInfoService.selectById(uid);
-        //未进行实名认证
-        if (infoEntity.getIsAuthentication().equals("0") || infoEntity.getIsAuthentication().equals("-1")) {
-            return R.ok().put("msg", "3");
-        }
-        //实名认证中
-        if (infoEntity.getIsAuthentication().equals("1")) {
-            return R.ok().put("msg", "4");
+    public R validatePwd(@RequestAttribute(ApiLoginInterceptor.UID) String uid,@RequestParam(value="key",required = false)String key) {
+        if(key==null){
+            UserInfoEntity infoEntity = userInfoService.selectById(uid);
+            //未进行实名认证
+            if (infoEntity.getIsAuthentication().equals("0") || infoEntity.getIsAuthentication().equals("-1")) {
+                return R.ok().put("msg", "3");
+            }
+            //实名认证中
+            if (infoEntity.getIsAuthentication().equals("1")) {
+                return R.ok().put("msg", "4");
+            }
         }
         UserPayPwdEntity payPwdEntity = userPayPwdService.selectOne(new EntityWrapper<UserPayPwdEntity>().eq("uid", uid));
         if (payPwdEntity == null || StringUtil.isNullOrEmpty(payPwdEntity.getPayPassword())) {
@@ -196,10 +198,11 @@ public class ApiUserInfoController {
         }
         List<UserPayUrlEntity> urlEntity = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>().eq("uid", uid));
         if (urlEntity.size() < 3) {
-            UserPayUrlEntity userPayUrlEntity = urlEntity.stream()
+            List<UserPayUrlEntity> userPayUrlEntity = urlEntity.stream()
                     .filter(u->u.getImgType().equals("1") || u.getImgType().equals("2") || u.getImgType().equals("5"))
-                    .findFirst().get();
-            if(userPayUrlEntity ==null){
+                    .collect(Collectors.toList());
+            if(userPayUrlEntity ==null || userPayUrlEntity.size()<1){
+                //未上传收款码
                 return R.ok().put("msg", "2");
             }
         }

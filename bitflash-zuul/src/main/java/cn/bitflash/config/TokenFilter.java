@@ -9,6 +9,7 @@ import cn.bitflash.utils.RedisUtils;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
+import com.netflix.zuul.http.HttpServletRequestWrapper;
 import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -35,7 +36,6 @@ public class TokenFilter extends ZuulFilter {
 
     public static final String TIME = "time";
     public static final String TOKEN = "token";
-    public static final Long DIFFERENCE = 1000 * 10L;
 
     /**
      * filterType：过滤器的类型，它决定过滤器在请求的哪个生命周期中执行。
@@ -96,6 +96,7 @@ public class TokenFilter extends ZuulFilter {
         HttpServletRequest request = ctx.getRequest();
         String secretTime = request.getHeader(TIME);
         String secretToken = request.getHeader(TOKEN);
+        String url = request.getRequestURI();
         //如果header中不存在token，则从参数中获取token
         if (StringUtils.isBlank(secretTime)) {
             secretTime = request.getParameter(TIME);
@@ -105,9 +106,9 @@ public class TokenFilter extends ZuulFilter {
         }
         //token为空
         if (StringUtils.isBlank(secretTime) || StringUtils.isBlank(secretToken)) {
-            String url = request.getRequestURI();
             ctx.setSendZuulResponse(false); //不进行路由
-            throw new RRException("token不能为空,请求接口为："+url);
+            logger.info("token不能为空,请求接口为:"+url);
+            throw new RRException("token不能为空,请求接口为:"+url);
         }
         try {
             HttpSession session = request.getSession();
@@ -115,19 +116,20 @@ public class TokenFilter extends ZuulFilter {
             if (!request.isRequestedSessionIdValid()) {
                 String sessionBase64 = Base64.getEncoder().encodeToString(session.getId().getBytes());
                 ctx.addZuulRequestHeader("Cookie", "SESSION=" + sessionBase64);
-                logger.info("Session Base64:{}", sessionBase64);
             }
 
             String token = AESTokenUtil.getToken(secretTime, secretToken);
             TokenEntity tokenEntity = redisUtils.get(token, TokenEntity.class);
             if (tokenEntity == null) {
                 ctx.setSendZuulResponse(false); //不进行路由
-                throw new RRException("token错误/失效");
+                logger.info("token错误/失效,请求接口为:"+url);
+                throw new RRException("token错误/失效,请求接口为:"+url);
             }
             session.setAttribute(TOKEN, token);
         } catch (Exception e) {
             ctx.setSendZuulResponse(false); //不进行路由
-            throw new RRException("token错误/失效");
+            logger.info("token解密失败,请求接口为:"+url);
+            throw new RRException("token解密失败,请求接口为:"+url);
         }
         return null;
     }

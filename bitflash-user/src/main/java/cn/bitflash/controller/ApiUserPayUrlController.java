@@ -244,7 +244,7 @@ public class ApiUserPayUrlController {
             return R.error("未上传收款信息");
         }
         if (payUrlEntity.getName() != null && payUrlEntity.getAccount() != null) {
-            return R.ok().put("url", payUrlEntity.getImgUrl()).put("name", payUrlEntity.getName()).put("account", payUrlEntity.getAccount());
+            return R.ok().put("url", payUrlEntity.getImgUrl()).put("name", payUrlEntity.getName()==null?"对方暂未设置":payUrlEntity.getName()).put("account", payUrlEntity.getAccount()==null?"对方暂未设置":payUrlEntity.getAccount());
         }
         return R.ok().put("url", payUrlEntity.getImgUrl());
     }

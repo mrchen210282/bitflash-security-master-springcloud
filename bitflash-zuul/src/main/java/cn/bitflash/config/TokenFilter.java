@@ -9,6 +9,7 @@ import cn.bitflash.utils.RedisUtils;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
+import com.netflix.zuul.http.HttpServletRequestWrapper;
 import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -121,14 +122,14 @@ public class TokenFilter extends ZuulFilter {
             TokenEntity tokenEntity = redisUtils.get(token, TokenEntity.class);
             if (tokenEntity == null) {
                 ctx.setSendZuulResponse(false); //不进行路由
-                logger.info("token不能为空,请求接口为:"+url);
+                logger.info("token错误/失效,请求接口为:"+url);
                 throw new RRException("token错误/失效,请求接口为:"+url);
             }
             session.setAttribute(TOKEN, token);
         } catch (Exception e) {
             ctx.setSendZuulResponse(false); //不进行路由
-            logger.info("token不能为空,请求接口为:"+url);
-            throw new RRException("token错误/失效,请求接口为:"+url);
+            logger.info("token解密失败,请求接口为:"+url);
+            throw new RRException("token解密失败,请求接口为:"+url);
         }
         return null;
     }

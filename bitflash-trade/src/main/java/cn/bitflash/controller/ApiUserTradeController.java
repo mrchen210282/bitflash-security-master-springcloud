@@ -658,7 +658,7 @@ public class ApiUserTradeController {
         String countKey = Common.COUNT_LOCK + uid;
         logger.debug("当前锁定订单的数量为：" + redisUtils.get(countKey));
         Integer count = redisUtils.get(countKey, Integer.class) == null ? 0 : redisUtils.get(countKey, Integer.class);
-        if (count < 30) {
+        if (count < 3) {
             String[] str = redisUtils.get(orderId, String[].class);
             if (str == null || str.length == 0) {
                 str = new String[2];

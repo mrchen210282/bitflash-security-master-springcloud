@@ -196,10 +196,10 @@ public class ApiUserInfoController {
         }
         List<UserPayUrlEntity> urlEntity = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>().eq("uid", uid));
         if (urlEntity.size() < 3) {
-            UserPayUrlEntity userPayUrlEntity = urlEntity.stream()
+            List<UserPayUrlEntity> userPayUrlEntity = urlEntity.stream()
                     .filter(u->u.getImgType().equals("1") || u.getImgType().equals("2") || u.getImgType().equals("5"))
-                    .findFirst().get();
-            if(userPayUrlEntity ==null){
+                    .collect(Collectors.toList());
+            if(userPayUrlEntity ==null || userPayUrlEntity.size()==0){
                 return R.ok().put("msg", "2");
             }
         }

@@ -17,7 +17,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @TableName("user_account_game" )
 public class UserAccountGameEntity implements Serializable {
 
-
     /**
      *
      */

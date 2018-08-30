@@ -6,6 +6,9 @@ import feign.hystrix.FallbackFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,10 +47,11 @@ public class UserFeignFallback implements FallbackFactory<UserUtils> {
             }
 
             @Override
-            public List<UserInfoEntity> selectUserInfoList(Map<String, Object> map) {
+            public List<UserInfoEntity> selectUserInfoList(Map map) {
                 log.error("初始化用户信息出错原因-----:"+throwable.getMessage());
                 return new ArrayList<UserInfoEntity>();
             }
         };
+
     }
 }

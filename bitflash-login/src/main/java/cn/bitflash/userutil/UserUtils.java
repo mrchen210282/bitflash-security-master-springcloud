@@ -1,8 +1,8 @@
 package cn.bitflash.userutil;
 
 
-import cn.bitflash.user.UserInfoEntity;
-import cn.bitflash.user.UserInvitationCodeEntity;
+import cn.bitflash.user.*;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -55,8 +55,5 @@ public interface UserUtils {
      * @return
      */
     @PostMapping("/api/user/inner/selectUserInfoList")
-    List<UserInfoEntity> selectUserInfoList(@RequestBody Map<String,Object> map);
-
-
-
+    List<UserInfoEntity> selectUserInfoList( Map<String,Object> map);
 }

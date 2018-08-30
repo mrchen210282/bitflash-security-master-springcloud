@@ -1,5 +1,6 @@
 package cn.bitflash.tradeutil;
 
+import cn.bitflash.trade.UserAccountGameEntity;
 import cn.bitflash.tradeutil.TradeUtils;
 import cn.bitflash.trade.UserAccountEntity;
 import cn.bitflash.userutil.UserFeignFallback;
@@ -28,6 +29,11 @@ public class UserTradeFallback implements FallbackFactory<TradeUtils> {
             public UserAccountEntity selectOne(Map<String, Object> map) {
                 log.error("查询用户数量失败-----:"+throwable.getMessage());
                 return new UserAccountEntity();
+            }
+
+            @Override
+            public void insertUserAccountGame(UserAccountGameEntity userAccountGameEntity) {
+                log.error("查询用户数量失败-----:"+throwable.getMessage());
             }
         };
     }

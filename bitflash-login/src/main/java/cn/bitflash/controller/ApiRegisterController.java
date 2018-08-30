@@ -1,10 +1,38 @@
 package cn.bitflash.controller;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+
 import cn.bitflash.exception.RRException;
-import cn.bitflash.trade.UserAccountGameEntity;
-import cn.bitflash.userutil.UserUtils;
-import cn.bitflash.tradeutil.TradeUtils;
-import cn.bitflash.login.*;
+import cn.bitflash.login.AuthorityUserEntity;
+import cn.bitflash.login.RegisterForm;
+import cn.bitflash.login.TokenEntity;
+import cn.bitflash.login.UserEmpowerEntity;
+import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.AuthorityUserService;
 import cn.bitflash.service.TokenService;
 import cn.bitflash.service.UserEmpowerService;
@@ -14,22 +42,8 @@ import cn.bitflash.user.UserInfoEntity;
 import cn.bitflash.user.UserInvitationCodeEntity;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.SmsUtils;
 import common.validator.ValidatorUtils;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
-import java.util.*;
 
 @RestController
 @RequestMapping("/api/reg")

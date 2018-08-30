@@ -11,7 +11,6 @@ import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
 import cn.bitflash.utils.RedisUtils;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import io.netty.util.internal.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +64,7 @@ public class ApiUserTradeController {
     private TradePoundageService tradePoundageService;
 
     @Autowired
-    private UserUtils userUtils;
+   private UserUtils userUtils;
 
     /**
      * 交易列表(卖入)

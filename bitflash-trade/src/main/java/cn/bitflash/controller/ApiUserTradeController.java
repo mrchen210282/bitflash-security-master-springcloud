@@ -306,11 +306,7 @@ public class ApiUserTradeController {
                         tradePoundageEntity.setPoundage(percentB);
                         tradePoundageEntity.setCreateTime(new Date());
                         tradePoundageService.insert(tradePoundageEntity);
-
                         return R.ok();
-//                        } else {
-//                            R.error();
-//                        }
                     } else {
                         return R.error().put("code", "1");
                     }

@@ -722,23 +722,5 @@ public class ApiUserTradeController {
         return R.ok().put("list", list).put("count", count);
     }
 
-    public static void main(String[] args) throws UnsupportedEncodingException {
-//        String time = String.valueOf(System.currentTimeMillis());
-//        String token = AESTokenUtil.setToken(time, "陈承毅");
-//        System.out.println("加密数据"+token);
-//        String token2=AESTokenUtil.getToken(time,token);
-//        System.out.println("解密数据"+token2);
-        //System.out.println(randomUtil());
-        double a = 1000000;
-
-        System.out.println(a % 100d);
-
-//        ApiUserTradeController api = new ApiUserTradeController();
-//        DecimalFormat df = new DecimalFormat("######0.00");
-//        String str = df.format(a);
-//        System.out.println(str);
-
-
-    }
 
 }

@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * @date 2018年5月22日 下午3:12:11
  */
 @RestController
-@RequestMapping("/api" )
+@RequestMapping("/api")
 public class ApiSystemController {
 
     @Autowired
@@ -38,58 +38,77 @@ public class ApiSystemController {
     @Autowired
     private PlatFormConfigService platFormConfigService;
 
-    @GetMapping("update" )
+    @GetMapping("update")
     public R update(@RequestParam String appid, @RequestParam String version, @RequestParam String imei) {
         System.out.println(appid + "**" + version + "**" + imei);
         Map<String, String> map = new HashMap<String, String>();
         AppStatusEntity appStatusEntity = appStatusService.selectById(appid);
         if (appStatusEntity == null) {
-            map.put("status", "-1" );
+            map.put("status", "-1");
             return R.ok().put("data", map);
         }
-        int old_v = Integer.valueOf(version.replace(".", "" )).intValue();
-        int new_v = Integer.valueOf(appStatusEntity.getVersion().replace(".", "" )).intValue();
-        if (new_v > old_v) {
-            map.put("status", "1" );
+        String[] newversion = appStatusEntity.getVersion().split("\\.");
+        String[] oldversion = appStatusEntity.getVersion().split("\\.");
+
+        if (newversion.length - oldversion.length != 0) {
+            map.put("status", "1");
             map.put("url", appStatusEntity.getUrl());
             map.put("note", appStatusEntity.getNote());
             map.put("title", appStatusEntity.getTitle());
-        } else {
-            map.put("status", "0" );
+            return R.ok().put("data", map);
         }
+        for (int i = 0; i < newversion.length; i++) {
+            if (!newversion[i].equals(oldversion[i])) {
+                map.put("status", "1");
+                map.put("url", appStatusEntity.getUrl());
+                map.put("note", appStatusEntity.getNote());
+                map.put("title", appStatusEntity.getTitle());
+            } else {
+                map.put("status", "0");
+                return R.ok().put("data", map);
+            }
+        }
+        /*int old_v = Integer.valueOf(version.replace(".", "" )).intValue();
+        int new_v = Integer.valueOf(appStatusEntity.getVersion().replace(".", "" )).intValue();
+        if (new_v > old_v) {
+
+        } else {
+
+        }*/
         return R.ok().put("data", map);
     }
 
     /**
      * 获取当天起，前7天的价格
+     *
      * @return
      */
     @Login
     @PostMapping("getWeekPriceRate")
-    public R getWeekPriceRate(){
+    public R getWeekPriceRate() {
         /*String str=platFormConfigService.getVal(Common.SHOW_DATE);
         Long time = Long.valueOf(str);*/
         Date now = new DateTime().withTimeAtStartOfDay().toDate();
-        Date after = DateUtils.addDateDays(now,-7);
-        Date yesterday = DateUtils.addDateDays(now,-1);
-        DateTimeFormatter dt=DateTimeFormatter.ofPattern("MM-dd");
-        List<PriceLinechartEntity> list=priceLinechartService.selectList(new EntityWrapper<PriceLinechartEntity>().between("rate_time",after,yesterday).orderBy("rate_time"));
-        List<String> date=list.stream().map(u->u.getRateTime().format(dt)).collect(Collectors.toList());
-        List<Float> price=list.stream().map(PriceLinechartEntity::getPrice).collect(Collectors.toList());
+        Date after = DateUtils.addDateDays(now, -7);
+        Date yesterday = DateUtils.addDateDays(now, -1);
+        DateTimeFormatter dt = DateTimeFormatter.ofPattern("MM-dd");
+        List<PriceLinechartEntity> list = priceLinechartService.selectList(new EntityWrapper<PriceLinechartEntity>().between("rate_time", after, yesterday).orderBy("rate_time"));
+        List<String> date = list.stream().map(u -> u.getRateTime().format(dt)).collect(Collectors.toList());
+        List<Float> price = list.stream().map(PriceLinechartEntity::getPrice).collect(Collectors.toList());
         PriceLinechartEntity yestPrice = priceLinechartService.selectById(yesterday);
-        if(yestPrice==null){
-            yestPrice=list.get(list.size()-1);
+        if (yestPrice == null) {
+            yestPrice = list.get(list.size() - 1);
         }
-        return R.ok().put("date",date).put("price",price).put("yesterday",yestPrice);
+        return R.ok().put("date", date).put("price", price).put("yesterday", yestPrice);
     }
 
     @PostMapping("getTime")
-    public R getTime(){
+    public R getTime() {
         return R.ok(String.valueOf(System.currentTimeMillis()));
     }
 
     @PostMapping("getBitflash")
-    public R getBitflash(){
+    public R getBitflash() {
         String value = platFormConfigService.getVal("bitflush_url");
         return R.ok(value);
     }

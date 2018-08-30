@@ -106,6 +106,7 @@ public class TokenFilter extends ZuulFilter {
         //token为空
         if (StringUtils.isBlank(secretTime) || StringUtils.isBlank(secretToken)) {
             String url = request.getRequestURI();
+            ctx.setSendZuulResponse(false); //不进行路由
             throw new RRException("token不能为空,请求接口为："+url);
         }
         try {
@@ -120,10 +121,12 @@ public class TokenFilter extends ZuulFilter {
             String token = AESTokenUtil.getToken(secretTime, secretToken);
             TokenEntity tokenEntity = redisUtils.get(token, TokenEntity.class);
             if (tokenEntity == null) {
+                ctx.setSendZuulResponse(false); //不进行路由
                 throw new RRException("token错误/失效");
             }
             session.setAttribute(TOKEN, token);
         } catch (Exception e) {
+            ctx.setSendZuulResponse(false); //不进行路由
             throw new RRException("token错误/失效");
         }
         return null;

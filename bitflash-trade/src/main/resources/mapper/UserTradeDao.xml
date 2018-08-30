@@ -97,11 +97,10 @@
         AND <![CDATA[ut.uid = #{uid}]]>
         UNION
         -- 查询我买别人的订单
-        SELECT
-        b.realname,b.nickname,a.id,a.price,a.quantity,a.uid,a.create_time,a.state,"0" AS isMySelf
-        FROM user_trade a
+        SELECT b.realname,b.nickname,a.id,a.price,a.quantity,a.uid,a.create_time,a.state,"0" AS isMySelf
+        FROM user_trade_history uth
+        LEFT JOIN user_trade a ON a.id = uth.user_trade_id
         LEFT JOIN user_info b ON a.uid = b.uid
-        LEFT JOIN user_trade_history uth ON uth.user_trade_id = a.id
         WHERE 1 = 1
         AND <![CDATA[ uth.purchase_uid = #{uid} ]]> and <![CDATA[ a.state <>'9']]> AND a.state = '6' OR a.state = '5'
         ) t

@@ -54,14 +54,25 @@ public class ApiUserComplaintController {
             userTradeEntity.setState(Common.STATE_COMPLAINT);
             userTradeService.insertOrUpdate(userTradeEntity);
 
-            //添加申拆
-            userComplaintEntity = new UserComplaintEntity();
-            userComplaintEntity.setComplaintState(complaintState);
-            userComplaintEntity.setComplaintUid(uid);
-            userComplaintEntity.setOrderId(Integer.valueOf(orderId));
-            userComplaintEntity.setOrderState(Common.COMPLAINT_NO);
-            userComplaintEntity.setCreateTime(new Date());
-            userComplaintService.insert(userComplaintEntity);
+            //查询卖入订单信息
+            UserTradeEntity userTrade =  userTradeService.selectById(orderId);
+            if(null != userTrade) {
+                //添加申拆
+                userComplaintEntity = new UserComplaintEntity();
+                userComplaintEntity.setComplaintState(complaintState);
+                userComplaintEntity.setComplaintUid(uid);
+                //订单发布人
+                userComplaintEntity.setContactsUid(userTrade.getUid());
+                userComplaintEntity.setOrderId(Integer.valueOf(orderId));
+                userComplaintEntity.setOrderState(Common.COMPLAINT_NO);
+                userComplaintEntity.setCreateTime(new Date());
+                userComplaintService.insert(userComplaintEntity);
+            } else {
+                //申拆订单不存在
+                return R.error().put("code","501");
+            }
+
+
 
             //
         }

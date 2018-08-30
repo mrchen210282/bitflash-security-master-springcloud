@@ -63,10 +63,21 @@ public class ApiComplaintController {
      * @param id 订单id
      * @return userComplaintBean 订单详情
      */
+    @Login
     @PostMapping("/check")
-    public R checkAppeal(@RequestParam("id") String id) {
-        UserComplaintBean userComplaintBean = userComplaintService.getComplaintMessage(id);
+    public R checkAppeal(@RequestParam("id") String id,@RequestAttribute("uid") String uid) {
+        String name = null;
+        String mobile = null;
 
+        UserComplaintBean userComplaintBean = userComplaintService.getComplaintMessage(id);
+        if(uid.equals(userComplaintBean.getComplaintUid())){
+            name = userComplaintBean.getContactsUname();
+            mobile = userComplaintBean.getContactsMobile();
+
+        }else if(uid.equals(userComplaintBean.getContactsUid())){
+            name = userComplaintBean.getComplaintUname();
+            mobile = userComplaintBean.getComplaintMobile();
+        }
         //判定订单不存在
         if (userComplaintBean == null) {
             return R.ok().put("code", "订单不存在");
@@ -74,7 +85,7 @@ public class ApiComplaintController {
 
         Map<String, Float> map = this.poundage(id, userComplaintBean.getComplaintState());
 
-        return R.ok().put("userComplaintBean", userComplaintBean).put("totalQuantity", map.get("totalQuantity")).put("price", map.get("price")).put("buyQuantity", map.get("buyQuantity")).put("totalMoney", map.get("totalMoney"));
+        return R.ok().put("orderId",id).put("name", name).put("mobile",mobile).put("totalQuantity", map.get("totalQuantity")).put("price", map.get("price")).put("buyQuantity", map.get("buyQuantity")).put("totalMoney", map.get("totalMoney"));
     }
 
     /**

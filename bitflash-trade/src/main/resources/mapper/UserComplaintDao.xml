@@ -5,25 +5,42 @@
 
     <select id="getComplaintMessage" resultType="cn.bitflash.trade.UserComplaintBean">
 	SELECT
-		ucc.*, (
-			SELECT
-				ui.nickname
-			FROM
-				user_info ui
-			WHERE
-				ui.uid = ucc.contacts_uid
-		) AS contactsUname,
-		(
-			SELECT
-				ui.mobile
-			FROM
-				user_info ui
-			WHERE
-				ui.uid = ucc.contacts_uid
-		) AS contactsMobile
+	ucc.*, (
+		SELECT
+			ui.nickname
+		FROM
+			user_info ui
+		WHERE
+			ui.uid = ucc.contacts_uid
+	) AS contactsUname,
+	(
+		SELECT
+			ui.mobile
+		FROM
+			user_info ui
+		WHERE
+			ui.uid = ucc.contacts_uid
+	) AS contactsMobile,
+(
+		SELECT
+			ui.nickname
+		FROM
+			user_info ui
+		WHERE
+			ui.uid = ucc.complaint_uid
+	) AS complaintUname,
+	(
+		SELECT
+			ui.mobile
+		FROM
+			user_info ui
+		WHERE
+			ui.uid = ucc.complaint_uid
+	) AS complaintMobile
 	FROM
 		user_complaint ucc
-	where ucc.order_id = #{id}
+	WHERE
+		ucc.order_id = #{id}
     </select>
 
 </mapper>

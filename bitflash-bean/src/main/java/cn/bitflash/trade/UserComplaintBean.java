@@ -13,6 +13,10 @@ public class UserComplaintBean extends UserComplaintEntity implements Serializab
 
     private String contactsMobile;
 
+    private String complaintUname;
+
+    private String complaintMobile;
+
     public String getContactsUname() {
         return contactsUname;
     }
@@ -27,5 +31,21 @@ public class UserComplaintBean extends UserComplaintEntity implements Serializab
 
     public void setContactsMobile(String contactsMobile) {
         this.contactsMobile = contactsMobile;
+    }
+
+    public String getComplaintUname() {
+        return complaintUname;
+    }
+
+    public void setComplaintUname(String complaintUname) {
+        this.complaintUname = complaintUname;
+    }
+
+    public String getComplaintMobile() {
+        return complaintMobile;
+    }
+
+    public void setComplaintMobile(String complaintMobile) {
+        this.complaintMobile = complaintMobile;
     }
 }

@@ -1,13 +1,6 @@
 package cn.bitflash.controller;
 
-import cn.bitflash.annotation.Login;
 import cn.bitflash.tradeutil.UserUtils;
-import cn.bitflash.login.UserGTCidEntity;
-import cn.bitflash.service.PlatFormConfigService;
-import cn.bitflash.utils.Common;
-import cn.bitflash.utils.R;
-import cn.bitflash.utils.RedisUtils;
-import common.utils.GeTuiSendMessage;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
@@ -15,6 +8,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import cn.bitflash.annotation.Login;
+import cn.bitflash.login.UserGTCidEntity;
+import cn.bitflash.service.PlatFormConfigService;
+import cn.bitflash.utils.Common;
+import cn.bitflash.utils.R;
+import cn.bitflash.utils.RedisUtils;
+import common.utils.GeTuiSendMessage;
 
 @RestController
 @RequestMapping("/api/msg" )

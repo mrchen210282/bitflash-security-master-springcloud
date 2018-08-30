@@ -1,9 +1,38 @@
 package cn.bitflash.controller;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+
 import cn.bitflash.exception.RRException;
-import cn.bitflash.userutil.UserUtils;
-import cn.bitflash.tradeutil.TradeUtils;
-import cn.bitflash.login.*;
+import cn.bitflash.login.AuthorityUserEntity;
+import cn.bitflash.login.RegisterForm;
+import cn.bitflash.login.TokenEntity;
+import cn.bitflash.login.UserEmpowerEntity;
+import cn.bitflash.login.UserEntity;
 import cn.bitflash.service.AuthorityUserService;
 import cn.bitflash.service.TokenService;
 import cn.bitflash.service.UserEmpowerService;
@@ -13,22 +42,8 @@ import cn.bitflash.user.UserInfoEntity;
 import cn.bitflash.user.UserInvitationCodeEntity;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.SmsUtils;
 import common.validator.ValidatorUtils;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
-import java.util.*;
 
 @RestController
 @RequestMapping("/api/reg")
@@ -41,7 +56,8 @@ public class ApiRegisterController {
 
 	@Autowired
 	private AuthorityUserService authorityUserService;
-	
+
+
 	@Autowired
 	private UserEmpowerService userEmpowerService;
 	
@@ -63,7 +79,7 @@ public class ApiRegisterController {
 	 */
 	@Transactional
 	@PostMapping("register")
-	public R register(@RequestBody RegisterForm form) {
+	public R register(@RequestBody RegisterForm form, HttpServletResponse response) {
 		UserEntity oldUser = userService.selectById(form.getMobile());
 		if (oldUser != null) {
 			return R.error(501, "手机号已经存在");
@@ -83,10 +99,13 @@ public class ApiRegisterController {
 		UserAccountEntity userAccountEntity = new UserAccountEntity();
 		userAccountEntity.setCreateTime(new Date());
 		userAccountEntity.setUid(uid);
-		boolean flag= tradeUtils.insert(userAccountEntity);
-		if(!flag){
-			throw new RRException("初始化用户失败");
-		}
+		tradeUtils.insert(userAccountEntity);
+
+		UserAccountGameEntity userAccountGameEntity = new UserAccountGameEntity();
+		userAccountGameEntity.setCreateTime(new Date());
+		userAccountGameEntity.setUid(uid);
+		tradeUtils.insertUserAccountGame(userAccountGameEntity);
+
 		// 初始化user_info表
 		UserInfoEntity userinfo = new UserInfoEntity();
 		userinfo.setUid(uid);
@@ -98,13 +117,15 @@ public class ApiRegisterController {
 		userinfo.setNickname(name);
 		if (StringUtils.isNotBlank(form.getInvitationCode())) {
 			// 校验验证码是否正确
-			UserInvitationCodeEntity userInvitationCodeEntity = userUtils.selectOne(form.getInvitationCode());
+			UserInvitationCodeEntity userInvitationCodeEntity = userUtils.selectUserInvitationCodeEntity(form.getInvitationCode(),form.getInvitationCode());
+
 			if (userInvitationCodeEntity == null) {
 				return R.error("邀请码不正确");
 			}
 			userinfo.setInvitation(true);
 			userinfo.setInvitationCode(form.getInvitationCode());
 		}
+
 		userUtils.insert(userinfo);
 		log.info("手机号：" + form.getMobile() + ",注册成功，途径app，没有推广码");
 		return R.ok("注册成功");
@@ -185,59 +206,76 @@ public class ApiRegisterController {
 	}
 
 	/**
-	 * 授权登录
-	 * @param request
-	 * @return
+	 * @param
+	 *
 	 */
 	@GetMapping("authorityValidate")
 	public R authorityValidate(HttpServletRequest request) {
 		logger.info("----校验第三方登录------");
+
 		String clientid = request.getParameter("clientid");
+		System.out.println(clientid);
 		String mobile = request.getParameter("mobile");
 		String ticket = request.getParameter("ticket");
 		String time = request.getParameter("time");
 		String sign = request.getParameter("sign");
 		String apiKey = "b1gtuVZRWVh0BdBX";
-		
+
+		logger.info(mobile);
+		logger.info(ticket);
+		logger.info(time);
+		logger.info(sign);
+
 		List<String> inParam = new ArrayList<String>();
 		inParam.add(mobile);
 		inParam.add(ticket);
 		inParam.add(clientid);
 		inParam.add(time);
 		inParam.add(apiKey);
-		
+
 		String mySign = Common.returnMD5(inParam);
-		
+
 		if(sign.equals(mySign)) {
 			if(StringUtils.isNotBlank(clientid) && StringUtils.isNotBlank(mobile) && StringUtils.isNotBlank(ticket)) {
 				UserEmpowerEntity userEmpowerEntity = userEmpowerService.selectOne(new EntityWrapper<UserEmpowerEntity>().eq("appid", clientid).eq("ticket", ticket));
 				logger.info("clientid:" + clientid);
-				
+
 				if(null != userEmpowerEntity) {
 					AuthorityUserEntity authorityUserEntity = authorityUserService.selectOne(new EntityWrapper<AuthorityUserEntity>().eq("mobile", mobile));
 					if(null != authorityUserEntity) {
-						
+
 						BigDecimal availableAssets = null;
-						UserAccountEntity userAccountEntity = tradeUtils.selectOne(new ModelMap("uid", authorityUserEntity.getUid()));
+						//UserAccountEntity userAccountEntity = userAccountService.selectOne(new EntityWrapper<UserAccountEntity>().eq("uid", authorityUserEntity.getUid()));
+						Map<String,Object> map = new HashMap<String,Object>();
+						map.put("uid",authorityUserEntity.getUid());
+						UserAccountEntity userAccountEntity = tradeUtils.selectOne(map);
+						UserInfoEntity userInfoEntity =  userUtils.selectUserInfoById(authorityUserEntity.getUid());
+
 						if(null != userAccountEntity) {
 							availableAssets = userAccountEntity.getAvailableAssets();
 						} else {
 							availableAssets = new BigDecimal("0.00");
 						}
-						
+
 						Long timeVal = System.currentTimeMillis();
 						List<String> outParam = new ArrayList<String>();
-						
+
+						String nickname = "";
+						if(null != userInfoEntity) {
+							nickname = userInfoEntity.getNickname();
+						}
+
 						//返回token信息
 						TokenEntity tokenEntity = tokenService.selectOne(new EntityWrapper<TokenEntity>().eq("mobile", mobile));
 						outParam.add(tokenEntity.getToken());
 						outParam.add(authorityUserEntity.getUid());
 						outParam.add(availableAssets.toEngineeringString());
+						outParam.add(nickname);
 						outParam.add(timeVal.toString());
 						outParam.add(apiKey);
 						String returnSign = Common.returnMD5(outParam);
-						
-						return R.ok().put("token", tokenEntity.getToken()).put("uid", authorityUserEntity.getUid()).put("availableAssets", availableAssets).put("sign", returnSign);
+
+						return R.ok().put("token", tokenEntity.getToken()).put("uid", authorityUserEntity.getUid()).put("availableAssets", availableAssets).put("sign", returnSign).put("nickname", nickname);
 					} else {
 						return R.error();
 					}

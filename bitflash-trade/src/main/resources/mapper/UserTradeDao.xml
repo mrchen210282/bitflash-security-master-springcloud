@@ -303,15 +303,41 @@
 
     <!-- add by wangjun 20180816 查询已完成订单-->
     <select id="selectFinishOrder" resultType="cn.bitflash.trade.UserTradeJoinBuyEntity">
-        select uth.user_trade_id as orderId,uth.price as price,uth.sell_quantity as quantity,uth.finish_time as finishTime,'0' tradeState,uth.state,ui.nickname from user_trade_history uth
-        left join user_info ui on ui.uid = uth.sell_uid where state = '4' and uth.sell_uid = #{uid} or purchase_uid = #{uid}
-        and finish_time is not null
-        UNION
-        select ubh.user_buy_id as orderId, ubh.price,ubh.quantity,ubh.finish_time as finishTime,'1' tradeState,ubh.sell_state AS state,ui.nickname as state from user_buy_history ubh
-        left join user_info ui on ui.uid = ubh.sell_uid
-        where 1 = 1 and sell_state = '6' and ubh.sell_uid = #{uid} OR purchase_uid = #{uid}
-        and finish_time is not null
-        order by finishTime asc limit #{pageNum},#{pageTotal}
+    SELECT
+	uth.user_trade_id AS orderId,
+	uth.price AS price,
+	uth.sell_quantity AS quantity,
+	uth.finish_time AS finishTime,
+	'0' tradeState,
+	uth.state,
+	ui.nickname
+    FROM
+        user_trade_history uth
+    LEFT JOIN user_info ui ON ui.uid = uth.sell_uid
+    WHERE
+        state = '4'
+    AND uth.sell_uid = #{uid} or purchase_uid = #{uid}
+    AND finish_time IS NOT NULL
+    UNION
+	SELECT
+		ubh.user_buy_id AS orderId,
+		ubh.price,
+		ubh.quantity,
+		ubh.finish_time AS finishTime,
+		'1' tradeState,
+		ubh.sell_state AS state,
+		ui.nickname AS state
+	FROM
+		user_buy_history ubh
+	LEFT JOIN user_info ui ON ui.uid = ubh.purchase_uid
+	WHERE
+		1 = 1
+	AND sell_state = '6'
+	AND ubh.sell_uid = #{uid} OR purchase_uid = #{uid}
+	AND finish_time IS NOT NULL
+	ORDER BY
+		finishTime ASC
+	limit #{pageNum},#{pageTotal}
     </select>
 
     <!-- add by wangjun 20180816 查询已完成订单-->
@@ -324,5 +350,95 @@
             left join user_info ui on ui.uid = ubh.sell_uid
             where 1 = 1 and sell_state = '6' and ubh.sell_uid = #{uid} OR purchase_uid = #{uid}
             ) t
+    </select>
+
+    <select id="checkSuccess" resultType="cn.bitflash.trade.UserTradeBean">
+    SELECT
+	ub.user_buy_id AS orderId,
+	ub.price AS acprice,
+	ub.purchase_uid AS purUid,
+	ub.sell_uid AS conUid,
+	'0' tradeState,
+	ub.quantity AS acquantity,
+	(
+		SELECT
+			ui.nickname
+		FROM
+			user_info ui
+		WHERE
+			ui.uid = ub.purchase_uid
+	) AS purName,
+	(
+		SELECT
+			ui.mobile
+		FROM
+			user_info ui
+		WHERE
+			ui.uid = ub.purchase_uid
+	) AS purMobile,
+	(
+		SELECT
+			ui.nickname
+		FROM
+			user_info ui
+		WHERE
+			ui.uid = ub.sell_uid
+	) AS conName,
+	(
+		SELECT
+			ui.mobile
+		FROM
+			user_info ui
+		WHERE
+			ui.uid = ub.sell_uid
+	) AS conMobile
+FROM
+	user_buy_history ub
+WHERE
+	ub.user_buy_id = #{id}
+UNION
+	SELECT
+	ut.user_trade_id AS orderId,
+	ut.price AS acprice,
+	ut.purchase_uid AS purUid,
+	ut.sell_uid AS conUid,
+	'1' tradeState,
+	ut.sell_quantity AS acquantity,
+	(
+		SELECT
+			ui.nickname
+		FROM
+			user_info ui
+		WHERE
+			ui.uid = ut.purchase_uid
+	) AS conName,
+	(
+		SELECT
+			ui.mobile
+		FROM
+			user_info ui
+		WHERE
+			ui.uid = ut.purchase_uid
+	) AS conMobile,
+	(
+		SELECT
+			ui.nickname
+		FROM
+			user_info ui
+		WHERE
+			ui.uid = ut.sell_uid
+	) AS purName,
+	(
+		SELECT
+			ui.mobile
+		FROM
+			user_info ui
+		WHERE
+			ui.uid = ut.sell_uid
+	) AS purMobile
+FROM
+	user_trade_history ut
+WHERE
+	ut.user_trade_id = #{id}
     </select>
 </mapper>

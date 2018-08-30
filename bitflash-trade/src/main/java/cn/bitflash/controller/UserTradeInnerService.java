@@ -16,6 +16,9 @@ public class UserTradeInnerService {
     private UserTradeService userTradeService;
 
     @Autowired
+    private UserAccountGameService userAccountGameService;
+
+    @Autowired
     private UserTradeHistoryService userTradeHistoryService;
 
     @Autowired
@@ -78,4 +81,8 @@ public class UserTradeInnerService {
         return userAccountService.updateById(userAccountEntity);
     }
 
+    @PostMapping("insertUserAccountGame")
+    public void insertUserAccountGame(UserAccountGameEntity userAccountGameEntity) {
+        userAccountGameService.insert(userAccountGameEntity);
+    }
 }

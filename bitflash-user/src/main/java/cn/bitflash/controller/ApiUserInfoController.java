@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 获取账户信息
@@ -195,7 +196,12 @@ public class ApiUserInfoController {
         }
         List<UserPayUrlEntity> urlEntity = userPayUrlService.selectList(new EntityWrapper<UserPayUrlEntity>().eq("uid", uid));
         if (urlEntity.size() < 3) {
-            return R.ok().put("msg", "2");
+            UserPayUrlEntity userPayUrlEntity = urlEntity.stream()
+                    .filter(u->u.getImgType().equals("1") || u.getImgType().equals("2") || u.getImgType().equals("5"))
+                    .findFirst().get();
+            if(userPayUrlEntity ==null){
+                return R.ok().put("msg", "2");
+            }
         }
 
         return R.ok().put("msg", "0");

@@ -554,24 +554,6 @@ public class ApiUserTradeController {
                 userTradeBean.setTradeAmount(tradeAmount);
             }
             return R.ok().put("userTradeBean", userTradeBean);
-
-//            List<UserTradeHistoryBean> list = userTradeHistoryService.selectTradeHistory(param);
-//            UserTradeHistoryBean userTradeHistoryBean = null;
-//            if (null != list && list.size() > 0) {
-//                userTradeHistoryBean = list.get(0);
-//            }
-//            String uid = userTradeHistoryBean.getPurchaseUid();
-//
-//            List<UserPayUrlEntity> url = userFeign.selectUserPayUrl(uid);
-//            try {
-//                String aliurl = url.stream().filter((u) -> u.getImgType().equals("2")).findFirst().get().getImgUrl();
-//                String wxurl = url.stream().filter((u) -> u.getImgType().equals("1")).findFirst().get().getImgUrl();
-//                return R.ok().put("userTrade", userTradeHistoryBean).put("wxUrl", wxurl)
-//                        .put("aliUrl", aliurl);
-//            } catch (Exception e) {
-//
-//            }
-
         } else {
             return R.error("参数不能为空！");
         }
@@ -744,7 +726,38 @@ public class ApiUserTradeController {
 //        String str = df.format(a);
 //        System.out.println(str);
 
-
     }
+
+
+    /**
+     * 查看买入订单明细
+     *
+     * @param id 订单id
+     * @return
+     */
+    @Login
+    @PostMapping("viewSuccess")
+    public R viewSuccess(@RequestParam String id,@RequestAttribute("uid")String uid) {
+        UserTradeBean userTradeBean = userTradeService.checkSuccess(Integer.parseInt(id));
+        String name = null;
+        String mobile = null;
+        if(uid.equals(userTradeBean.getPurUid())){
+            name = userTradeBean.getConName();
+            mobile = userTradeBean.getConMobile();
+        }
+        else if(uid.equals(userTradeBean.getConUid())){
+            name = userTradeBean.getPurName();
+            mobile = userTradeBean.getPurMobile();
+        }
+
+        //数量
+        BigDecimal quantity = new BigDecimal(userTradeBean.getAcquantity());
+        //价格
+        BigDecimal price = new BigDecimal(userTradeBean.getAcprice());
+        BigDecimal tradeAmount = price.multiply(quantity);
+        userTradeBean.setTradeAmount(tradeAmount);
+        return R.ok().put("name",name).put("mobile",mobile).put("userTradeBean",userTradeBean);
+    }
+
 
 }

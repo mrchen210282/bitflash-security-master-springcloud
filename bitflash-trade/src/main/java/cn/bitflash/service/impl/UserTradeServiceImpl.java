@@ -172,5 +172,11 @@ public class UserTradeServiceImpl extends ServiceImpl<UserTradeDao, UserTradeEnt
         return baseMapper.selectFinishOrderCount(map);
     }
 
+
+    @Override
+    public UserTradeBean checkSuccess(Integer id){
+        return  baseMapper.checkSuccess(id);
+    }
+
 }
 

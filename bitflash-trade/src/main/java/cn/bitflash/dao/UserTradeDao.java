@@ -67,4 +67,9 @@ public interface UserTradeDao extends BaseMapper<UserTradeEntity> {
 
     //查询已完成订单
     Integer selectFinishOrderCount(Map<String,Object> map);
+
+
+
+    UserTradeBean checkSuccess(Integer id);
+
 }

@@ -69,6 +69,12 @@ public class ApiUserInnerController {
         return userInvitationCodeService.selectOne(new EntityWrapper<UserInvitationCodeEntity>().eq("uid",uid));
     }
 
+    @PostMapping("/selectUserInvitationCodeEntity")
+    public UserInvitationCodeEntity selectUserInvitationCodeEntity(String lftCode,String rgtCode) {
+        return userInvitationCodeService.selectOne(new EntityWrapper<UserInvitationCodeEntity>().eq("lft_code", lftCode).or().eq("rgt_code", rgtCode));
+    }
+
+
     @PostMapping("/selectTreeNodes")
     public List<UserRelationJoinAccountEntity> selectTreeNodes(@RequestParam("uid") String uid) {
         return userRelationService.selectTreeNodes(uid);

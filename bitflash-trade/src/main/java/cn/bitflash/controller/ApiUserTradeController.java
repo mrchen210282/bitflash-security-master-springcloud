@@ -147,12 +147,12 @@ public class ApiUserTradeController {
         if (null != userAccountEntity) {
             returnMap = userTradeService.responseTrade(param);
             //可卖份数 = 可用额度 / 100
-            if(userAccount.getAvailableAssets().compareTo(new BigDecimal(0)) <= -1) {
-                returnMap.put("number","0");
+            if (userAccount.getAvailableAssets().compareTo(new BigDecimal(0)) <= -1) {
+                returnMap.put("number", "0");
             } else {
-               // BigDecimal bigDecimal = userAccount.getAvailableAssets().divide(new BigDecimal(Common.MIN_PRICE));
+                // BigDecimal bigDecimal = userAccount.getAvailableAssets().divide(new BigDecimal(Common.MIN_PRICE));
                 double number = Double.valueOf(userAccount.getAvailableAssets().toString()) / Common.MIN_NUMBER;
-                returnMap.put("number",number);
+                returnMap.put("number", number);
             }
 
             String availableAssets = Common.decimalFormat(Double.valueOf(userAccount.getAvailableAssets().toString()));
@@ -193,14 +193,14 @@ public class ApiUserTradeController {
                 //查询手续费
                 UserTradeConfigEntity userTradeConfigEntity = userTradeConfigService.selectById(Common.TRADE_CONFIG_ID);
                 Integer poundage = 0;
-                if(null != userTradeConfigEntity) {
+                if (null != userTradeConfigEntity) {
                     poundage = (int) userTradeConfigEntity.getPoundage() * 100;
                 }
 
                 //userTradeConfigEntity.getPoundage() * 100;
-                returnMap.put("sum",df.format(sum));
+                returnMap.put("sum", df.format(sum));
                 //                //手续费
-                returnMap.put("poundage",poundage);
+                returnMap.put("poundage", poundage);
                 //returnMap.put("wechatUrl", returnMap.get("imgUrl"));
 //                if (list.size() > 1) {
 //                    Map<String, Object> returnMap2 = list.get(1);
@@ -238,7 +238,7 @@ public class ApiUserTradeController {
             if (priceB.compareTo(minPrice) <= -1) {
                 return R.error("最低价格为0.33!");
             }
-            if(Integer.valueOf(quantity) <= 0) {
+            if (Integer.valueOf(quantity) <= 0) {
                 return R.error("发布数量最小为100!");
             }
             BigDecimal quantityB = new BigDecimal(quantity);
@@ -329,7 +329,7 @@ public class ApiUserTradeController {
      */
     @Login
     @PostMapping("listTrade")
-    public R listTrade(@RequestAttribute("uid")String uid, @RequestParam String state) {
+    public R listTrade(@RequestAttribute("uid") String uid, @RequestParam String state) {
         Map<String, Object> param = new HashMap<String, Object>();
         List<UserTradeBean> list = null;
         if (StringUtils.isNotBlank(state)) {
@@ -386,7 +386,7 @@ public class ApiUserTradeController {
 
                         //删除手续费记录
                         map.clear();
-                        map.put("user_trade_id",orderId);
+                        map.put("user_trade_id", orderId);
                         tradePoundageService.deleteByMap(map);
 
                     } else {
@@ -428,19 +428,19 @@ public class ApiUserTradeController {
     /**
      * 购买
      *
-     * @param orderId     订单id
+     * @param orderId 订单id
      * @return
      */
     @Login
     @PostMapping("purchase")
     @Transactional
-    public R purchase(@RequestAttribute("uid")String uid, @RequestParam String orderId, @RequestParam String payPwd) {
+    public R purchase(@RequestAttribute("uid") String uid, @RequestParam String orderId, @RequestParam String payPwd) {
 
-        UserPayPwdEntity userPayPwd = userUtils.selectUserPayPwd(new ModelMap("uid",uid));
+        UserPayPwdEntity userPayPwd = userUtils.selectUserPayPwd(new ModelMap("uid", uid));
         if (userPayPwd.getPayPassword().equals(payPwd)) {
             if (StringUtils.isNotBlank(orderId)) {
 
-                logger.info("购买人:" + uid+ ",订单号:" + orderId);
+                logger.info("购买人:" + uid + ",订单号:" + orderId);
                 // 查询订单状态为已锁定(state:5)
                 Map<String, Object> param = new HashMap<String, Object>();
                 param.put("id", orderId);
@@ -491,7 +491,7 @@ public class ApiUserTradeController {
                                     userAccountService.updateUserAccountByParam(userAccount);
 
                                     //删除手续费记录
-                                    param.put("orderId",orderId);
+                                    param.put("orderId", orderId);
                                     tradePoundageService.deleteTradePoundageById(param);
 
                                     // 添加购买记录
@@ -538,13 +538,13 @@ public class ApiUserTradeController {
 
             TradePoundageEntity tradePoundageEntity = tradePoundageService.selectById(id);
 
-            if(null != tradePoundageEntity) {
+            if (null != tradePoundageEntity) {
                 //扣除交易额=交易额+手续费
                 BigDecimal deductAmount = userTradeBean.getQuantity().add(tradePoundageEntity.getPoundage());
                 userTradeBean.setDeductAmount(deductAmount);
             }
 
-            if(null != userTradeBean) {
+            if (null != userTradeBean) {
                 //数量
                 BigDecimal quantity = userTradeBean.getQuantity();
                 //价格
@@ -562,7 +562,7 @@ public class ApiUserTradeController {
     /**
      * 我已付款
      *
-     * @param orderId          订单id
+     * @param orderId     订单id
      * @param userAccount
      * @return
      */
@@ -570,40 +570,18 @@ public class ApiUserTradeController {
     @PostMapping("payTrade")
     @Transactional
     public R payTrade(@RequestParam String orderId, @UserAccount UserAccountEntity userAccount) {
-        if (StringUtils.isNotBlank(orderId)) {
-            Map<String, Object> map = new HashMap<String, Object>();
-            map.put("id", orderId);
 
-            UserTradeBean uesrTradeBean = userTradeService.queryDetail(map);
-            logger.info("订单号:" + orderId + ",付款人:" + uesrTradeBean.getRealname() + ",数量:" + uesrTradeBean.getQuantity() + ",价格:" + uesrTradeBean.getPrice());
-
-            if (null != uesrTradeBean) {
-
-                // 更新为已购买
-                UserTradeEntity userTradeEntity = new UserTradeEntity();
-                userTradeEntity.setId(Integer.valueOf(orderId));
-                userTradeEntity.setState(Common.STATE_CONFIRM);
-                userTradeService.updateById(userTradeEntity);
-
-
-                UserTradeHistoryEntity userTradeHistory = new UserTradeHistoryEntity();
-                userTradeHistory.setUserTradeId(new Integer(orderId));
-                userTradeHistory.setSellUid(uesrTradeBean.getUid());
-                userTradeHistory.setSellQuantity(uesrTradeBean.getQuantity());
-                userTradeHistory.setPrice(uesrTradeBean.getPrice());
-                userTradeHistory.setPurchaseUid(userAccount.getUid());
-                userTradeHistory.setPurchaseQuantity(uesrTradeBean.getQuantity());
-                userTradeHistory.setCreateTime(new Date());
-                userTradeHistory.setState(Common.STATE_CONFIRM);
-                userTradeHistoryService.insert(userTradeHistory);
-                return R.ok();
-            } else {
-                return R.error("未查询到该用户信息！");
-            }
-
-        } else {
-            return R.error("参数不能为空！");
-        }
+        // 更新为已购买
+        UserTradeEntity userTradeEntity = new UserTradeEntity();
+        userTradeEntity.setId(Integer.valueOf(orderId));
+        userTradeEntity.setState(Common.STATE_CONFIRM);
+        userTradeService.updateById(userTradeEntity);
+        //更新历史记录
+        UserTradeHistoryEntity userTradeHistory = userTradeHistoryService
+                .selectOne(new EntityWrapper<UserTradeHistoryEntity>().eq("user_trade_id",orderId));
+        userTradeHistory.setState(Common.STATE_CONFIRM);
+        userTradeHistoryService.updateById(userTradeHistory);
+        return R.ok();
     }
 
     /**
@@ -614,7 +592,7 @@ public class ApiUserTradeController {
      */
     @Login
     @PostMapping("provingState")
-    public R provingState(@RequestParam String orderId, @RequestAttribute("uid")String uid) {
+    public R provingState(@RequestParam String orderId, @RequestAttribute("uid") String uid) {
         String[] str = redisUtils.get(orderId, String[].class);
         if (str == null || str.length == 0) {
             return R.ok().put("code", 200);
@@ -632,7 +610,7 @@ public class ApiUserTradeController {
      */
     @Login
     @PostMapping("addLock")
-    public R addLock(@RequestParam String orderId, @RequestAttribute("uid")String uid) throws ParseException {
+    public R addLock(@RequestParam String orderId, @RequestAttribute("uid") String uid) throws ParseException {
         UserTradeEntity userTradeEntity = userTradeService.selectById(orderId);
         if (userTradeEntity.getState().equals(Common.STATE_CANCEL)) {
             return R.error(501, "订单已经被撤销,无法锁定");
@@ -640,13 +618,30 @@ public class ApiUserTradeController {
         String countKey = Common.COUNT_LOCK + uid;
         logger.debug("当前锁定订单的数量为：" + redisUtils.get(countKey));
         Integer count = redisUtils.get(countKey, Integer.class) == null ? 0 : redisUtils.get(countKey, Integer.class);
-        if (count < 30) {
+        if (count < 3) {
             String[] str = redisUtils.get(orderId, String[].class);
             if (str == null || str.length == 0) {
+
+                //加入历史记录
+                UserTradeHistoryEntity userTradeHistory = new UserTradeHistoryEntity();
+                userTradeHistory.setUserTradeId(new Integer(orderId));
+                userTradeHistory.setSellUid(userTradeEntity.getUid());
+                userTradeHistory.setSellQuantity(userTradeEntity.getQuantity());
+                userTradeHistory.setPrice(userTradeEntity.getPrice());
+                userTradeHistory.setPurchaseUid(uid);
+                userTradeHistory.setPurchaseQuantity(userTradeEntity.getQuantity());
+                userTradeHistory.setCreateTime(new Date());
+                userTradeHistory.setState(Common.STATE_LOCK);
+                userTradeHistoryService.insert(userTradeHistory);
+
+                //更新订单状态
+                userTradeEntity.setState(Common.STATE_LOCK);
+                userTradeService.updateById(userTradeEntity);
+
+                //统计锁定数量
                 str = new String[2];
                 str[0] = orderId;
                 str[1] = uid;
-                //过期时间1小时
                 redisUtils.set(orderId, str, 60 * 60);
                 //当天时间凌晨23:59:59的秒数
                 long tomorrow = LocalDateTime.now().withHour(23)
@@ -656,8 +651,7 @@ public class ApiUserTradeController {
                 long now = LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"));
                 //设置过期时间为当天剩余时间的秒数
                 redisUtils.set(countKey, ++count, (tomorrow - now));
-                userTradeEntity.setState(Common.STATE_LOCK);
-                userTradeService.updateById(userTradeEntity);
+
                 return R.ok();
             } else if (str[1].equals(uid)) {
                 return R.error(502, "订单被锁定,本人锁定");
@@ -707,7 +701,7 @@ public class ApiUserTradeController {
         List<UserTradeJoinBuyEntity> list = userTradeService.selectFinishOrder(map);
 
         Integer count = userTradeService.selectFinishOrderCount(map);
-        return R.ok().put("list", list).put("count",count);
+        return R.ok().put("list", list).put("count", count);
     }
 
     public static void main(String[] args) throws UnsupportedEncodingException {

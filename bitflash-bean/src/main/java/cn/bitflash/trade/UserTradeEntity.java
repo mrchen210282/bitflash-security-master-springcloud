@@ -38,6 +38,7 @@ public class UserTradeEntity implements Serializable {
     /**
      * id
      */
+    @TableId(type = IdType.INPUT)
     private Integer id;
 
     private String uid;

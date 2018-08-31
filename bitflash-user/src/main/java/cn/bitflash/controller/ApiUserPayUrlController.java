@@ -58,7 +58,7 @@ public class ApiUserPayUrlController {
      */
     @Login
     @PostMapping("upload")
-    public R upload(@RequestBody ImgForm imgForm, @RequestAttribute("uid")String uid) {
+    public R upload(@RequestBody ImgForm imgForm, @RequestAttribute("uid") String uid) {
         UserEntity user = loginUtils.selectOneByUser(new ModelMap("uid", uid));
         ValidatorUtils.validateEntity(imgForm);
         //验证交易密码
@@ -143,7 +143,7 @@ public class ApiUserPayUrlController {
     @Login
     @PostMapping("uploadImg")
     public R uploadImgMessage(@RequestParam String img, @RequestParam String imgType,
-                              @RequestAttribute("uid")String uid) {
+                              @RequestAttribute("uid") String uid) {
         UserEntity user = loginUtils.selectOneByUser(new ModelMap("uid", uid));
         UserPayUrlEntity userPay = userPayUrlService.selectOne(new EntityWrapper<UserPayUrlEntity>().eq("uid", user.getUid())
                 .and().eq("img_type", imgType));
@@ -193,12 +193,12 @@ public class ApiUserPayUrlController {
      */
     @Login
     @PostMapping("getPayMessage")
-    public R getPayMessage(@RequestParam("accountId") String accountId,@RequestParam("type") String type) {
+    public R getPayMessage(@RequestParam("accountId") String accountId, @RequestParam("type") String type) {
         String uid = null;
-        if(type. equals("1")){
+        if (type.equals("1")) {
             UserTradeEntity tradeEntity = tradeUtils.selectOneTrade(new ModelMap("id", accountId));
             uid = tradeEntity.getUid();
-        }else if(type.equals("2")){
+        } else if (type.equals("2")) {
             UserBuyHistoryEntity userBuyEntity = tradeUtils.selectOneBuy(new ModelMap("user_buy_id", accountId));
             uid = userBuyEntity.getSellUid();
         }
@@ -209,16 +209,16 @@ public class ApiUserPayUrlController {
         if (payUrlEntities == null || payUrlEntities.size() == 0) {
             return R.error("未设置支付信息");
         }
-        List<Map<String,Object>> list = new ArrayList<>();
+        List<Map<String, Object>> list = new ArrayList<>();
         payUrlEntities.stream().forEach(u -> {
             if (u.getImgType().equals("1")) {
-                list.add(new ModelMap("name","微信").addAttribute("type",1));
+                list.add(new ModelMap("name", "微信").addAttribute("type", 1));
             }
             if (u.getImgType().equals("2")) {
-                list.add(new ModelMap("name","支付宝").addAttribute("type",2));
+                list.add(new ModelMap("name", "支付宝").addAttribute("type", 2));
             }
             if (u.getImgType().equals("5")) {
-                list.add(new ModelMap("name","银行卡").addAttribute("type",5));
+                list.add(new ModelMap("name", "银行卡").addAttribute("type", 5));
             }
         });
 
@@ -226,17 +226,17 @@ public class ApiUserPayUrlController {
     }
 
     /**
-     * @param myuid    登录人的uid
+     * @param myuid   登录人的uid
      * @param uid     别人的uid
      * @param imgType 图片类型
      * @return
      */
     @Login
     @PostMapping("getPayUrl")
-    public R getPayUrl(@RequestAttribute("uid")String myuid, @RequestParam(value = "uid", required = false) String uid, @RequestParam("imgType") String imgType) {
+    public R getPayUrl(@RequestAttribute("uid") String myuid, @RequestParam(value = "uid", required = false) String uid, @RequestParam("imgType") String imgType) {
         UserPayUrlEntity payUrlEntity = null;
         if (uid == null) {
-            payUrlEntity = userPayUrlService.selectOne(new EntityWrapper<UserPayUrlEntity>().eq("uid",myuid).eq("img_type", imgType));
+            payUrlEntity = userPayUrlService.selectOne(new EntityWrapper<UserPayUrlEntity>().eq("uid", myuid).eq("img_type", imgType));
         } else {
             payUrlEntity = userPayUrlService.selectOne(new EntityWrapper<UserPayUrlEntity>().eq("uid", uid).eq("img_type", imgType));
         }
@@ -244,19 +244,20 @@ public class ApiUserPayUrlController {
             return R.error("未上传收款信息");
         }
         if (payUrlEntity.getName() != null && payUrlEntity.getAccount() != null) {
-            return R.ok().put("url", payUrlEntity.getImgUrl()).put("name", payUrlEntity.getName()==null?"对方暂未设置":payUrlEntity.getName()).put("account", payUrlEntity.getAccount()==null?"对方暂未设置":payUrlEntity.getAccount());
+            return R.ok().put("url", payUrlEntity.getImgUrl()).put("name", payUrlEntity.getName() == null ? "对方暂未设置" : payUrlEntity.getName()).put("account", payUrlEntity.getAccount() == null ? "对方暂未设置" : payUrlEntity.getAccount());
         }
         return R.ok().put("url", payUrlEntity.getImgUrl());
     }
 
     /**
      * 身份认证完成接口
+     *
      * @param uid
      * @return
      */
     @Login
     @PostMapping("successUpload")
-    public R successUpload(@RequestAttribute(ApiLoginInterceptor.UID)String uid){
+    public R successUpload(@RequestAttribute(ApiLoginInterceptor.UID) String uid) {
         UserInfoEntity userinfo = new UserInfoEntity();
         userinfo.setIsAuthentication("1");
         userinfo.setUid(uid);

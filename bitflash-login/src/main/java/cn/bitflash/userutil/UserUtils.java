@@ -31,7 +31,7 @@ public interface UserUtils {
     @PostMapping("/api/user/inner/selectUserInvitationCodeEntity")
     UserInvitationCodeEntity selectUserInvitationCodeEntity(@RequestParam("lftCode")String lftCode,@RequestParam("rgtCode")String rgtCode);
 
-    
+
     /**
      * 初始化user_info表
      * @param userInfoEntity

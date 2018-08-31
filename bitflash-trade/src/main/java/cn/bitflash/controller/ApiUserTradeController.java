@@ -703,8 +703,6 @@ public class ApiUserTradeController {
         return R.ok().put("list", list).put("count", count);
     }
 
-
-    }
  /**
      * 查看买入订单明细
      *

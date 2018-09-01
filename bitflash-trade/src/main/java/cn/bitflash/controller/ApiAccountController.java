@@ -70,7 +70,7 @@ public class ApiAccountController {
             List<UserTradeHistoryEntity> trades = userTradeHistoryService.selectList(new EntityWrapper<UserTradeHistoryEntity>().eq("purchase_uid", uid));
             Double alltrade = 0d;
             Double yesttrade = 0d;
-            if (trades != null || trades.size() > 0) {
+            if (trades != null && trades.size() > 0) {
                 alltrade = trades.stream().mapToDouble(u -> {
                     Double money = u.getPurchaseQuantity().doubleValue();
                     return money;
@@ -86,7 +86,7 @@ public class ApiAccountController {
             List<UserBuyHistoryEntity> buys = userBuyHistoryService.selectList(new EntityWrapper<UserBuyHistoryEntity>().eq("purchase_uid", uid));
             Double allbuy = 0d;
             Double yestbuy = 0d;
-            if (buys != null || buys.size() > 0) {
+            if (buys != null && buys.size() > 0) {
                 allbuy = buys.stream().mapToDouble(u -> {
                     Double money = u.getQuantity().doubleValue();
                     return money;

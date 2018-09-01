@@ -76,7 +76,7 @@ public class ApiAccountController {
                     return money;
                 }).sum();
                 //昨日交易购买
-                yesttrade = trades.stream().filter(u -> sdf.format(u.getFinishTime()).equals(yester)).mapToDouble(u -> {
+                yesttrade = trades.stream().filter(u -> u.getFinishTime() != null && sdf.format(u.getFinishTime()).equals(yester)).mapToDouble(u -> {
                     Double money = u.getSellQuantity().doubleValue();
                     return money;
                 }).sum();
@@ -92,7 +92,7 @@ public class ApiAccountController {
                     return money;
                 }).sum();
                 //昨日求购购买
-                yestbuy = buys.stream().filter(u -> sdf.format(u.getFinishTime()).equals(yester)).mapToDouble(u -> {
+                yestbuy = buys.stream().filter(u -> u.getFinishTime() != null && sdf.format(u.getFinishTime()).equals(yester)).mapToDouble(u -> {
                     Double money = u.getQuantity().doubleValue();
                     return money;
                 }).sum();
@@ -110,3 +110,4 @@ public class ApiAccountController {
         }
     }
 }
+

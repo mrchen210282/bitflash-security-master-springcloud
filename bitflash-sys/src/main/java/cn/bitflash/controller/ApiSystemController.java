@@ -44,11 +44,31 @@ public class ApiSystemController {
         Map<String, String> map = new HashMap<String, String>();
         AppStatusEntity appStatusEntity = appStatusService.selectById(appid);
         if (appStatusEntity == null) {
+            map.put("status", "-1" );
+            return R.ok().put("data", map);
+        }
+        int old_v = Integer.valueOf(version.replace(".", "" )).intValue();
+        int new_v = Integer.valueOf(appStatusEntity.getVersion().replace(".", "" )).intValue();
+        if (new_v > old_v) {
+            map.put("status", "1" );
+            map.put("url", appStatusEntity.getUrl());
+            map.put("note", appStatusEntity.getNote());
+            map.put("title", appStatusEntity.getTitle());
+        } else {
+            map.put("status", "0" );
+        }
+        return R.ok().put("data", map);
+    }
+   /* public R update(@RequestParam String appid, @RequestParam String version, @RequestParam String imei) {
+        System.out.println(appid + "**" + version + "**" + imei);
+        Map<String, String> map = new HashMap<String, String>();
+        AppStatusEntity appStatusEntity = appStatusService.selectById(appid);
+        if (appStatusEntity == null) {
             map.put("status", "-1");
             return R.ok().put("data", map);
         }
         String[] newversion = appStatusEntity.getVersion().split("\\.");
-        String[] oldversion = appStatusEntity.getVersion().split("\\.");
+        String[] oldversion = version.split("\\.");
 
         if (newversion.length - oldversion.length != 0) {
             map.put("status", "1");
@@ -68,15 +88,9 @@ public class ApiSystemController {
                 return R.ok().put("data", map);
             }
         }
-        /*int old_v = Integer.valueOf(version.replace(".", "" )).intValue();
-        int new_v = Integer.valueOf(appStatusEntity.getVersion().replace(".", "" )).intValue();
-        if (new_v > old_v) {
-
-        } else {
-
-        }*/
         return R.ok().put("data", map);
-    }
+    }*/
+
 
     /**
      * 获取当天起，前7天的价格

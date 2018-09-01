@@ -8,8 +8,8 @@
         from user_send us
         left join tb_user tu
         on us.sendee_uid = tu.uid
-        where us.send_uid = #{arg0}
-        limit #{arg1},6
+        where us.send_uid = #{send_uid}
+        limit #{pages},6
     </select>
 
     <select id="selectaccept" resultType="cn.bitflash.trade.UserSendEntity">
@@ -17,8 +17,8 @@
         from user_send us
         left join tb_user tu
         on us.send_uid = tu.uid
-        where us.sendee_uid = #{arg0}
-        limit #{arg1},6
+        where us.sendee_uid = #{send_uid}
+        limit #{pages},6
     </select>
 
     <select id="selectaccountcount" resultType="java.lang.Integer">

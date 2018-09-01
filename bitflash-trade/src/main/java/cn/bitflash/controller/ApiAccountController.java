@@ -61,43 +61,52 @@ public class ApiAccountController {
                     .put("totelAssets", account.getTotelIncome())
                     .put("avaliableAssets", account.getAvailableAssets())
                     .put("frozenAssets", account.getFrozenAssets())
-                    .put("vip",infoEntity.getIsVip());
-        }else{
+                    .put("vip", infoEntity.getIsVip());
+        } else {
             Date yesterday = DateUtils.addDateDays(new Date(), -1);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String yester = sdf.format(yesterday);
             //交易
-            List<UserTradeHistoryEntity> trades = userTradeHistoryService.selectList(new EntityWrapper<UserTradeHistoryEntity>().eq("purchase_uid",uid));
-            Double alltrade = trades.stream().mapToDouble(u -> {
-                Double money = u.getPurchaseQuantity().doubleValue();
-                return money;
-            }).sum();
-            //昨日交易购买
-            Double yesttrade = trades.stream().filter(u->sdf.format(u.getFinishTime()).equals(yester)).mapToDouble(u -> {
-                Double money = u.getSellQuantity().doubleValue();
-                return money;
-            }).sum();
+            List<UserTradeHistoryEntity> trades = userTradeHistoryService.selectList(new EntityWrapper<UserTradeHistoryEntity>().eq("purchase_uid", uid));
+            Double alltrade = 0d;
+            Double yesttrade = 0d;
+            if (trades != null || trades.size() > 0) {
+                alltrade = trades.stream().mapToDouble(u -> {
+                    Double money = u.getPurchaseQuantity().doubleValue();
+                    return money;
+                }).sum();
+                //昨日交易购买
+                yesttrade = trades.stream().filter(u -> u.getFinishTime() != null && sdf.format(u.getFinishTime()).equals(yester)).mapToDouble(u -> {
+                    Double money = u.getSellQuantity().doubleValue();
+                    return money;
+                }).sum();
+            }
 
             //求购
-            List<UserBuyHistoryEntity> buys = userBuyHistoryService. selectList(new EntityWrapper<UserBuyHistoryEntity>().eq("purchase_uid",uid));
-            Double allbuy = buys.stream().mapToDouble(u -> {
-                Double money = u.getQuantity().doubleValue();
-                return money;
-            }).sum();
-            //昨日求购购买
-            Double yestbuy = buys.stream().filter(u->sdf.format(u.getFinishTime()).equals(yester)).mapToDouble(u -> {
-                Double money = u.getQuantity().doubleValue();
-                return money;
-            }).sum();
+            List<UserBuyHistoryEntity> buys = userBuyHistoryService.selectList(new EntityWrapper<UserBuyHistoryEntity>().eq("purchase_uid", uid));
+            Double allbuy = 0d;
+            Double yestbuy = 0d;
+            if (buys != null || buys.size() > 0) {
+                allbuy = buys.stream().mapToDouble(u -> {
+                    Double money = u.getQuantity().doubleValue();
+                    return money;
+                }).sum();
+                //昨日求购购买
+                yestbuy = buys.stream().filter(u -> u.getFinishTime() != null && sdf.format(u.getFinishTime()).equals(yester)).mapToDouble(u -> {
+                    Double money = u.getQuantity().doubleValue();
+                    return money;
+                }).sum();
+            }
+
             /**
              * allbuy 总购买
              * yesterdaybuy 昨日购买
              * avaliableAssets 可用资产
              */
-            return R.ok().put("allbuy",alltrade+allbuy)
-                    .put("yesterdaybuy",yesttrade+yestbuy)
+            return R.ok().put("allbuy", alltrade + allbuy)
+                    .put("yesterdaybuy", yesttrade + yestbuy)
                     .put("avaliableAssets", account.getAvailableAssets())
-                    .put("vip",infoEntity.getIsVip());
+                    .put("vip", infoEntity.getIsVip());
         }
     }
 }

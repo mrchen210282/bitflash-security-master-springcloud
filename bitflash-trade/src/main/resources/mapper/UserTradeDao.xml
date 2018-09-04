@@ -165,7 +165,7 @@
     <!-- add by wangjun 2018.6.23 查看订单明细 -->
     <select id="queryDetail" resultType="cn.bitflash.trade.UserTradeBean">
         select
-        distinct (select b.nickname from user_info b where a.uid = b.uid) nickname,
+        (select b.nickname from user_info b where a.uid = b.uid) nickname,
         (select b.mobile from user_info b where a.uid = b.uid) mobile,
         a.id,
         a.price,
@@ -178,6 +178,7 @@
         from
         user_trade a
         left join trade_poundage tp on tp.user_trade_id = a.id
+        LEFT JOIN user_info ui ON ui.uid = a.uid
         left join user_trade_history uth on a.id = uth.user_trade_id
         <where>
             1 = 1

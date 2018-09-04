@@ -43,7 +43,7 @@ public class ApiUserInnerController {
     }
 
     @PostMapping("/selectUserInfoById")
-    public UserInfoEntity selectUserInfoById(@RequestParam("uid") String uid){
+    public UserInfoEntity selectUserInfoById(@RequestParam("uid")String uid){
         return userInfoService.selectById(uid);
     }
 

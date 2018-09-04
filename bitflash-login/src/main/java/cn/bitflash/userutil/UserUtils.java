@@ -47,7 +47,7 @@ public interface UserUtils {
      * @return
      */
     @PostMapping("/api/user/inner/selectUserInfoById")
-    UserInfoEntity selectUserInfoById(String uid);
+    UserInfoEntity selectUserInfoById(@RequestParam("uid")String uid);
 
 
     /**

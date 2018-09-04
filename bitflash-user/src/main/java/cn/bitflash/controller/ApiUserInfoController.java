@@ -94,10 +94,13 @@ public class ApiUserInfoController {
                 .eq("invitation_code", userInvitationCode.getLftCode()));
         String address = sysfeign.getVal(Common.ADDRESS);
         map.put("leftAddress", address + userInvitationCode.getLftCode());
+        map.put("showleft",200);
         if (ur != null) {
             map.put("rightAddress", address + userInvitationCode.getRgtCode());
+            map.put("showright",200);
         } else {
             map.put("rightAddress", "");
+            map.put("showright",500);
         }
         return R.ok().put("myRelation", map);
     }

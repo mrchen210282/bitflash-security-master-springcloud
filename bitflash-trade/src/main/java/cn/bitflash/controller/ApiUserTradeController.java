@@ -388,6 +388,9 @@ public class ApiUserTradeController {
                         map.put("user_trade_id", orderId);
                         tradePoundageService.deleteByMap(map);
 
+                        //删除历史记录
+                        userTradeHistoryService.deleteById(orderId);
+
                     } else {
                         logger.info("根据订单id:" + orderId + ",查询不到交易记录");
                         return R.error();

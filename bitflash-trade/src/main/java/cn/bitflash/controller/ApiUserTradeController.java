@@ -527,6 +527,44 @@ public class ApiUserTradeController {
      * @return
      */
     @Login
+    @PostMapping("selectDetail")
+    public R selectDetail(@RequestParam String id) {
+        if (StringUtils.isNotBlank(id)) {
+            Map<String, Object> param = new HashMap<String, Object>();
+            param.put("id", id);
+
+            UserTradeBean userTradeBean = userTradeService.selectDetail(param);
+
+            TradePoundageEntity tradePoundageEntity = tradePoundageService.selectById(id);
+
+            if (null != tradePoundageEntity) {
+                //扣除交易额=交易额+手续费
+                BigDecimal deductAmount = userTradeBean.getQuantity().add(tradePoundageEntity.getPoundage());
+                userTradeBean.setDeductAmount(deductAmount);
+            }
+
+            if (null != userTradeBean) {
+                //数量
+                BigDecimal quantity = userTradeBean.getQuantity();
+                //价格
+                BigDecimal price = userTradeBean.getPrice();
+                BigDecimal tradeAmount = price.multiply(quantity);
+
+                userTradeBean.setTradeAmount(tradeAmount);
+            }
+            return R.ok().put("userTradeBean", userTradeBean);
+        } else {
+            return R.error("参数不能为空！");
+        }
+    }
+
+    /**
+     * 查看买入订单明细
+     *
+     * @param id 订单id
+     * @return
+     */
+    @Login
     @PostMapping("viewDetail")
     public R viewDetail(@RequestParam String id) {
         if (StringUtils.isNotBlank(id)) {

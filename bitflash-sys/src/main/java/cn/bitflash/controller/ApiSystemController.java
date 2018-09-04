@@ -63,9 +63,10 @@ public class ApiSystemController {
                 map.put("url", appStatusEntity.getUrl());
                 map.put("note", appStatusEntity.getNote());
                 map.put("title", appStatusEntity.getTitle());
+                return R.ok().put("data", map);
             } else {
                 map.put("status", "0");
-                return R.ok().put("data", map);
+
             }
         }
         return R.ok().put("data", map);

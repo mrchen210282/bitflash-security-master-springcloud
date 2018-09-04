@@ -67,7 +67,7 @@ public class ApiAccountController {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String yester = sdf.format(yesterday);
             //交易
-            List<UserTradeHistoryEntity> trades = userTradeHistoryService.selectList(new EntityWrapper<UserTradeHistoryEntity>().eq("purchase_uid", uid));
+            List<UserTradeHistoryEntity> trades = userTradeHistoryService.selectList(new EntityWrapper<UserTradeHistoryEntity>().eq("purchase_uid", uid).isNotNull("finish_time"));
             Double alltrade = 0d;
             Double yesttrade = 0d;
             if (trades != null && trades.size() > 0) {
@@ -83,7 +83,7 @@ public class ApiAccountController {
             }
 
             //求购
-            List<UserBuyHistoryEntity> buys = userBuyHistoryService.selectList(new EntityWrapper<UserBuyHistoryEntity>().eq("purchase_uid", uid));
+            List<UserBuyHistoryEntity> buys = userBuyHistoryService.selectList(new EntityWrapper<UserBuyHistoryEntity>().eq("purchase_uid", uid).isNotNull("finish_time"));
             Double allbuy = 0d;
             Double yestbuy = 0d;
             if (buys != null && buys.size() > 0) {

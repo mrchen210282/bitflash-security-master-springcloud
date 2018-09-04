@@ -12,7 +12,7 @@
 
 
     <select id="selectTradeHistory" resultType="cn.bitflash.trade.UserTradeHistoryBean">
-        select id,user_trade_id,purchase_uid,sell_uid,a.create_time,b.realname
+        select user_trade_id,purchase_uid,sell_uid,a.create_time,b.realname
         as purchaseName,b.mobile as purchaseMobile,b.nickname,b.nicklock,b.mobile,
         a.sell_quantity AS sellQuantity,
         a.price from user_trade_history a

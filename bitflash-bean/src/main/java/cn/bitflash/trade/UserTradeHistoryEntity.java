@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -33,13 +32,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class UserTradeHistoryEntity implements Serializable {
 
     private static final long serialVersionUID = -3272015324293238491L;
-
-    /**
-     * id
-     */
-    @TableId
-    private Integer id;
-
     /**
      * 交易订单id
      */
@@ -106,14 +98,6 @@ public class UserTradeHistoryEntity implements Serializable {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public Integer getUserTradeId() {

@@ -233,7 +233,7 @@
 
     <!-- add by wangjun 2018.6.23 查询交易历史 -->
     <select id="selectTradeHistory" resultType="cn.bitflash.trade.UserTradeBean">
-        select a.id,a.purchase_uid,a.sell_uid,a.user_trade_id,
+        select a.purchase_uid,a.sell_uid,a.user_trade_id,
 
         <if test='state == "4"'>
             a.sell_quantity as quantity,

@@ -59,6 +59,7 @@ public class ApiRegisterController {
 	@Autowired
 	private UserService userService;
 
+
 	@Autowired
 	private AuthorityUserService authorityUserService;
 

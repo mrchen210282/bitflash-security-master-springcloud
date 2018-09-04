@@ -129,6 +129,18 @@ public class UserTradeServiceImpl extends ServiceImpl<UserTradeDao, UserTradeEnt
     }
 
     /**
+     * 查看订单明细
+     *
+     * @param param
+     * @return
+     */
+    @Override
+    public UserTradeBean selectDetail(Map<String, Object> param) {
+        UserTradeBean userTradeBean = baseMapper.selectDetail(param);
+        return userTradeBean;
+    }
+
+    /**
      * 添加交易记录
      */
     @Override

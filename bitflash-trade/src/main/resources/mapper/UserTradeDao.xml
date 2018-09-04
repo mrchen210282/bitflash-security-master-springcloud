@@ -191,6 +191,26 @@
     </select>
 
 
+    <!-- add by wangjun 2018.6.23 查看订单明细 -->
+    <select id="selectDetail" resultType="cn.bitflash.trade.UserTradeBean">
+        select
+            a.price,
+            a.quantity,
+            tp.poundage
+        from
+        user_trade a
+        left join trade_poundage tp on tp.user_trade_id = a.id
+        <where>
+            1 = 1
+            <if test="id != null and id != ''">
+                and a.id = #{id}
+            </if>
+            <if test="state != null and state != ''">
+                and a.state = #{state}
+            </if>
+        </where>
+    </select>
+
     <!-- add by wangjun 2018.8.21 查看购买人明细 -->
     <select id="queryPoundageDetail" resultType="cn.bitflash.trade.UserTradeBean">
         select b.realname,a.id,a.price,a.quantity,a.uid,a.create_time,tp.poundage,b.mobile

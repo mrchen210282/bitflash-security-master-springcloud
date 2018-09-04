@@ -42,6 +42,8 @@ public interface UserTradeDao extends BaseMapper<UserTradeEntity> {
      */
     public UserTradeBean queryDetail(Map<String, Object> param);
 
+    public UserTradeBean selectDetail(Map<String, Object> param);
+
     public Integer insertUserTrade(UserTradeEntity userTradeEntity);
 
     public List<UserTradeEntity> searchTrade(Map<String, Object> param);

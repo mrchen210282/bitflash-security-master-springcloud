@@ -44,6 +44,8 @@ public interface UserTradeService extends IService<UserTradeEntity> {
      */
     public UserTradeBean queryDetail(Map<String, Object> param);
 
+    public UserTradeBean selectDetail(Map<String, Object> param);
+
     /**
      * 添加交易记录
      */

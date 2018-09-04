@@ -87,6 +87,9 @@ public class TokenFilter extends ZuulFilter {
         if(url.indexOf("/api/update")!=-1){
             return false;
         }
+        if(url.indexOf("/server2/responseCode")!=-1){
+                return false;
+        }
         return true;
     }
 

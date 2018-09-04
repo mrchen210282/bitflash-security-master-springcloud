@@ -27,7 +27,7 @@
             </if>
             and a.state = '1'
         </where>
-        order by price limit #{pageNum},#{pageTotal}
+        order by price ,create_time limit #{pageNum},#{pageTotal}
     </select>
 
     <select id="tradeListCount" resultType="java.lang.Integer">

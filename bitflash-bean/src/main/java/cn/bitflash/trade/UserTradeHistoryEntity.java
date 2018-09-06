@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -35,6 +36,7 @@ public class UserTradeHistoryEntity implements Serializable {
     /**
      * 交易订单id
      */
+    @TableId
     private String userTradeId;
 
     //购买者id

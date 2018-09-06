@@ -11,6 +11,8 @@ import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.DateUtils;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +31,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class ApiSystemController {
 
+    private final Logger logger = LoggerFactory.getLogger(ApiSystemController.class);
+
     @Autowired
     private AppStatusService appStatusService;
 
@@ -40,7 +44,7 @@ public class ApiSystemController {
 
     @GetMapping("update")
     public R update(@RequestParam String appid, @RequestParam String version, @RequestParam String imei) {
-        System.out.println(appid + "**" + version + "**" + imei);
+        logger.info(appid + "**" + version + "**" + imei);
         Map<String, String> map = new HashMap<String, String>();
         AppStatusEntity appStatusEntity = appStatusService.selectById(appid);
         if (appStatusEntity == null) {

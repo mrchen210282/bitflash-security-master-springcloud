@@ -18,6 +18,7 @@ package cn.bitflash.trade;
 
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.enums.IdType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
@@ -33,14 +34,9 @@ import java.util.Date;
 public class UserBuyHistoryEntity implements Serializable {
 
     /**
-     * id
-     */
-    @TableId
-    private Integer id;
-
-    /**
      * 求购订单id
      */
+    @TableId(type= IdType.INPUT)
     private Integer userBuyId;
 
     /**
@@ -78,14 +74,6 @@ public class UserBuyHistoryEntity implements Serializable {
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date finishTime;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getUserBuyId() {
         return userBuyId;

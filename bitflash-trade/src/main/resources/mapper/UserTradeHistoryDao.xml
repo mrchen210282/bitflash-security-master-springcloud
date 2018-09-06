@@ -39,4 +39,11 @@
         </where>
     </select>
 
+
+    <insert id="insertUserTradeHistory" parameterType="cn.bitflash.trade.UserTradeHistoryEntity">
+      insert into user_trade_history (purchase_uid,  purchase_quantity,  sell_uid,  sell_quantity,  `state`,  price,  create_time,user_trade_id)
+      values
+      (#{purchaseUid},#{purchaseQuantity},#{sellUid},#{sellQuantity},#{state},#{price},#{createTime},#{userTradeId})
+    </insert>
+
 </mapper>

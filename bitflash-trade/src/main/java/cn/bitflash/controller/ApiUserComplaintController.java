@@ -2,9 +2,11 @@ package cn.bitflash.controller;
 
 import cn.bitflash.annotation.Login;
 import cn.bitflash.service.UserComplaintService;
+import cn.bitflash.service.UserTradeHistoryService;
 import cn.bitflash.service.UserTradeService;
 import cn.bitflash.trade.UserComplaintEntity;
 import cn.bitflash.trade.UserTradeEntity;
+import cn.bitflash.trade.UserTradeHistoryEntity;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -31,6 +33,9 @@ public class ApiUserComplaintController {
     @Autowired
     private UserTradeService userTradeService;
 
+    @Autowired
+    private UserTradeHistoryService userTradeHistoryService;
+
     /**
      * 添加申拆
      * @param uid 用户id
@@ -55,14 +60,17 @@ public class ApiUserComplaintController {
             userTradeService.insertOrUpdate(userTradeEntity);
 
             //查询卖入订单信息
-            UserTradeEntity userTrade =  userTradeService.selectById(orderId);
-            if(null != userTrade) {
+
+            UserTradeHistoryEntity userTradeHistoryEntity =  userTradeHistoryService.selectOne(new EntityWrapper<UserTradeHistoryEntity>().eq("user_trade_id",orderId));
+
+            if(null != userTradeHistoryEntity) {
                 //添加申拆
                 userComplaintEntity = new UserComplaintEntity();
                 userComplaintEntity.setComplaintState(complaintState);
-                userComplaintEntity.setComplaintUid(uid);
+
+                userComplaintEntity.setComplaintUid(userTradeHistoryEntity.getSellUid());
                 //订单发布人
-                userComplaintEntity.setContactsUid(userTrade.getUid());
+                userComplaintEntity.setContactsUid(userTradeHistoryEntity.getPurchaseUid());
                 userComplaintEntity.setOrderId(Integer.valueOf(orderId));
                 userComplaintEntity.setOrderState(Common.COMPLAINT_NO);
                 userComplaintEntity.setCreateTime(new Date());

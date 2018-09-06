@@ -198,7 +198,7 @@ public class ApiWanToBuyController {
         tradePoundageEntity.setCreateTime(new Date());
         tradePoundageEntity.setPoundage(new BigDecimal(map.get("totalPoundage")));
         tradePoundageEntity.setUid(uid);
-        tradePoundageEntity.setUserTradeId(Integer.parseInt(id));
+        tradePoundageEntity.setUserTradeId(id);
         tradePoundageEntity.setQuantity(new BigDecimal(map.get("buyQuantity")));
         tradePoundageService.insert(tradePoundageEntity);
 

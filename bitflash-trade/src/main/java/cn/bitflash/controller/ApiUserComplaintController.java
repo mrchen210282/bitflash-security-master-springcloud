@@ -49,7 +49,7 @@ public class ApiUserComplaintController {
 
             //设置交易订单状态为9申拆中
             UserTradeEntity userTradeEntity = new UserTradeEntity();
-            userTradeEntity.setId(Integer.valueOf(orderId));
+            userTradeEntity.setId(orderId);
             //申拆中
             userTradeEntity.setState(Common.STATE_COMPLAINT);
             userTradeService.insertOrUpdate(userTradeEntity);
@@ -71,10 +71,6 @@ public class ApiUserComplaintController {
                 //申拆订单不存在
                 return R.error().put("code","501");
             }
-
-
-
-            //
         }
         return R.ok();
     }

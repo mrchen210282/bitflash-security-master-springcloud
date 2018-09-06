@@ -33,9 +33,7 @@ import java.util.Date;
 @TableName("trade_poundage" )
 public class TradePoundageEntity implements Serializable  {
 
-
-    @TableId(type = IdType.INPUT)
-    private Integer userTradeId;
+    private String userTradeId;
 
     private String uid;
 
@@ -46,11 +44,11 @@ public class TradePoundageEntity implements Serializable  {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" )
     private Date createTime;
 
-    public Integer getUserTradeId() {
+    public String getUserTradeId() {
         return userTradeId;
     }
 
-    public void setUserTradeId(Integer userTradeId) {
+    public void setUserTradeId(String userTradeId) {
         this.userTradeId = userTradeId;
     }
 

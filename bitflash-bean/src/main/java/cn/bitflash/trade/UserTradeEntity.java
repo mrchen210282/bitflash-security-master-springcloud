@@ -39,7 +39,7 @@ public class UserTradeEntity implements Serializable {
      * id
      */
     @TableId(type = IdType.INPUT)
-    private Integer id;
+    private String id;
 
     private String uid;
 
@@ -73,11 +73,11 @@ public class UserTradeEntity implements Serializable {
         this.state = state;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

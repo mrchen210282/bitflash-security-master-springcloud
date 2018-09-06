@@ -35,7 +35,7 @@ public class UserTradeHistoryEntity implements Serializable {
     /**
      * 交易订单id
      */
-    private Integer userTradeId;
+    private String userTradeId;
 
     //购买者id
     private String purchaseUid;
@@ -100,11 +100,11 @@ public class UserTradeHistoryEntity implements Serializable {
         this.price = price;
     }
 
-    public Integer getUserTradeId() {
+    public String getUserTradeId() {
         return userTradeId;
     }
 
-    public void setUserTradeId(Integer userTradeId) {
+    public void setUserTradeId(String userTradeId) {
         this.userTradeId = userTradeId;
     }
 

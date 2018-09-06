@@ -110,9 +110,6 @@ public class ApiUserPayUrlController {
             } else {
                 return R.error();
             }
-
-
-
         } catch (Exception e) {
             e.printStackTrace();
             return R.error();

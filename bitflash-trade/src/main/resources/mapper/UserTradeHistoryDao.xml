@@ -12,7 +12,7 @@
 
 
     <select id="selectTradeHistory" resultType="cn.bitflash.trade.UserTradeHistoryBean">
-        select id,user_trade_id,purchase_uid,sell_uid,a.create_time,b.realname
+        select user_trade_id,purchase_uid,sell_uid,a.create_time,b.realname
         as purchaseName,b.mobile as purchaseMobile,b.nickname,b.nicklock,b.mobile,
         a.sell_quantity AS sellQuantity,
         a.price from user_trade_history a
@@ -38,5 +38,12 @@
             </if>
         </where>
     </select>
+
+
+    <insert id="insertUserTradeHistory" parameterType="cn.bitflash.trade.UserTradeHistoryEntity">
+      insert into user_trade_history (purchase_uid,  purchase_quantity,  sell_uid,  sell_quantity,  `state`,  price,  create_time,user_trade_id)
+      values
+      (#{purchaseUid},#{purchaseQuantity},#{sellUid},#{sellQuantity},#{state},#{price},#{createTime},#{userTradeId})
+    </insert>
 
 </mapper>

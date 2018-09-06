@@ -1,5 +1,6 @@
 package cn.bitflash.service.impl;
 
+import cn.bitflash.controller.ApiUserTradeController;
 import cn.bitflash.dao.UserBuyDao;
 import cn.bitflash.service.UserBuyService;
 import cn.bitflash.trade.UserBuyBean;
@@ -7,6 +8,8 @@ import cn.bitflash.trade.UserBuyEntity;
 import cn.bitflash.trade.UserBuyMessageBean;
 import cn.bitflash.utils.Common;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -24,6 +27,8 @@ import static cn.bitflash.utils.Common.STATE_BUY_CANCEL;
 @Service("userBuyService")
 public class UserBuyServiceImpl extends ServiceImpl<UserBuyDao, UserBuyEntity> implements UserBuyService {
 
+    private final Logger logger = LoggerFactory.getLogger(UserBuyServiceImpl.class);
+
     @Override
     public List<UserBuyMessageBean> getBuyMessage(String uid, Integer pages) {
         return baseMapper.getBuyMessage(uid, pages);
@@ -36,8 +41,11 @@ public class UserBuyServiceImpl extends ServiceImpl<UserBuyDao, UserBuyEntity> i
 
     @Override
     public void addBuyMessage(UserBuyEntity userBuyEntity, String uid) {
-        userBuyEntity.setId(Common.randomUtil());
+        String orderId = Common.randomUtil();
+        userBuyEntity.setId(orderId);
         System.out.println(userBuyEntity.getId());
+        logger.info("订单号:" + orderId);
+
         userBuyEntity.setUid(uid);
         userBuyEntity.setCreateTime(new Date());
         userBuyEntity.setState(STATE_BUY_CANCEL);

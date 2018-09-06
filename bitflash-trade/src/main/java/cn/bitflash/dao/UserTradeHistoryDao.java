@@ -21,4 +21,6 @@ public interface UserTradeHistoryDao extends BaseMapper<UserTradeHistoryEntity> 
     public List<UserTradeHistoryBean> selectTradeHistory(Map<String, Object> map);
 
     public Map<String, Object> selectTradeHistoryIncome(Map<String, Object> map);
+
+    public void insertUserTradeHistory(UserTradeHistoryEntity uesrTradeHistory);
 }

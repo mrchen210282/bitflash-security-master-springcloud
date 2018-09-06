@@ -1,5 +1,7 @@
 package cn.bitflash.utils;
 
+import sun.applet.Main;
+
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Random;
@@ -129,9 +131,11 @@ public class Common {
 	 * 生成8位随机数
 	 * @return
 	 */
-	public static int randomUtil(){
-		Random random = new Random();
-		return 10000000 + random.nextInt(90000000);
+	public static String randomUtil(){
+		String randomNum = String.valueOf(Math.random());
+		randomNum = randomNum.replace(".", "");
+		randomNum = randomNum.substring(0, 8);
+		return randomNum;
 	}
 
 	/**
@@ -151,6 +155,10 @@ public class Common {
 		} else {
 			return null;
 		}
+	}
+
+	public static void main(String[] args) {
 
 	}
+
 }

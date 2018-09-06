@@ -35,4 +35,8 @@ public class UserTradeHistoryServiceImpl extends ServiceImpl<UserTradeHistoryDao
         return returnMap;
     }
 
+    public void insertUserTradeHistory(UserTradeHistoryEntity uesrTradeHistory) {
+        baseMapper.insertUserTradeHistory(uesrTradeHistory);
+    }
+
 }

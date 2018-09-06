@@ -33,17 +33,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class UserTradeHistoryEntity implements Serializable {
 
     private static final long serialVersionUID = -3272015324293238491L;
-
-    /**
-     * id
-     */
-    @TableId
-    private Integer id;
-
     /**
      * 交易订单id
      */
-    private Integer userTradeId;
+    @TableId
+    private String userTradeId;
 
     //购买者id
     private String purchaseUid;
@@ -108,19 +102,11 @@ public class UserTradeHistoryEntity implements Serializable {
         this.price = price;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getUserTradeId() {
+    public String getUserTradeId() {
         return userTradeId;
     }
 
-    public void setUserTradeId(Integer userTradeId) {
+    public void setUserTradeId(String userTradeId) {
         this.userTradeId = userTradeId;
     }
 

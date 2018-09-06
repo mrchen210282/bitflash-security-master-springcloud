@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.MD5Util;
 import common.validator.ValidatorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import sun.misc.BASE64Decoder;
@@ -58,6 +59,7 @@ public class ApiUserPayUrlController {
      */
     @Login
     @PostMapping("upload")
+    @Transactional
     public R upload(@RequestBody ImgForm imgForm, @RequestAttribute("uid") String uid) {
         UserEntity user = loginUtils.selectOneByUser(new ModelMap("uid", uid));
         ValidatorUtils.validateEntity(imgForm);
@@ -70,7 +72,7 @@ public class ApiUserPayUrlController {
 
         String imgType = imgForm.getImgType();
         String imgUrl = "";
-        String path = "/home/statics/qrcode/";
+        String path = "D:\\upload\\img\\"; ///home/statics/qrcode/
         String md5 = MD5Util.stringToMD5(user.getMobile() + System.currentTimeMillis());
         switch (imgType) {
             case "1":
@@ -93,21 +95,27 @@ public class ApiUserPayUrlController {
         try {
             // Base64解码
             String[] base64Str = imgForm.getImg().split(",");
-            byte[] b = decoder.decodeBuffer(base64Str[1]);
-            for (int i = 0; i < b.length; ++i) {
-                if (b[i] < 0) {// 调整异常数据
-                    b[i] += 256;
+            if(base64Str.length >= 2) {
+                byte[] b = decoder.decodeBuffer(base64Str[1]);
+                for (int i = 0; i < b.length; ++i) {
+                    if (b[i] < 0) {// 调整异常数据
+                        b[i] += 256;
+                    }
                 }
+                // 生成jpeg图片
+                OutputStream out = new FileOutputStream(path);
+                out.write(b);
+                out.flush();
+                out.close();
+            } else {
+                return R.error();
             }
-            // 生成jpeg图片
-            // String imgFilePath = "D:\\upload\\img\\new.jpg";// 新生成的图片
-            OutputStream out = new FileOutputStream(path);
-            out.write(b);
-            out.flush();
-            out.close();
+
+
 
         } catch (Exception e) {
-            //return R.error();
+            e.printStackTrace();
+            return R.error();
         }
 
         // 先查询是否已上传过图片，如果已上传则使用最新上传的图片
@@ -156,18 +164,24 @@ public class ApiUserPayUrlController {
         try {
             // Base64解码
             String[] base64Str = img.split(",");
-            byte[] b = decoder.decodeBuffer(base64Str[1]);
-            for (int i = 0; i < b.length; ++i) {
-                if (b[i] < 0) {// 调整异常数据
-                    b[i] += 256;
+            if(base64Str.length >= 2) {
+                byte[] b = decoder.decodeBuffer(base64Str[1]);
+                for (int i = 0; i < b.length; ++i) {
+                    if (b[i] < 0) {// 调整异常数据
+                        b[i] += 256;
+                    }
                 }
+                OutputStream out = new FileOutputStream(path);
+                out.write(b);
+                out.flush();
+                out.close();
+            } else {
+                return R.error();
             }
-            OutputStream out = new FileOutputStream(path);
-            out.write(b);
-            out.flush();
-            out.close();
+
         } catch (Exception e) {
             e.printStackTrace();
+            return R.error();
         }
         //为空代表第一次上传图片插入操作
         if (userPay == null) {

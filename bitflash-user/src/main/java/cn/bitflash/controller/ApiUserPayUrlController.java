@@ -107,7 +107,7 @@ public class ApiUserPayUrlController {
             out.close();
 
         } catch (Exception e) {
-            //return R.error();
+            return R.error();
         }
 
         // 先查询是否已上传过图片，如果已上传则使用最新上传的图片
@@ -168,6 +168,7 @@ public class ApiUserPayUrlController {
             out.close();
         } catch (Exception e) {
             e.printStackTrace();
+            return R.error();
         }
         //为空代表第一次上传图片插入操作
         if (userPay == null) {

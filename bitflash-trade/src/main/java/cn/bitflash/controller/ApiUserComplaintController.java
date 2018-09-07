@@ -71,7 +71,7 @@ public class ApiUserComplaintController {
                 userComplaintEntity.setComplaintUid(userTradeHistoryEntity.getSellUid());
                 //订单发布人
                 userComplaintEntity.setContactsUid(userTradeHistoryEntity.getPurchaseUid());
-                userComplaintEntity.setOrderId(Integer.valueOf(orderId));
+                userComplaintEntity.setOrderId(orderId);
                 userComplaintEntity.setOrderState(Common.COMPLAINT_NO);
                 userComplaintEntity.setCreateTime(new Date());
                 userComplaintService.insert(userComplaintEntity);

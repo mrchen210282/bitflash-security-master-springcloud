@@ -70,7 +70,7 @@ public interface UserTradeService extends IService<UserTradeEntity> {
     Integer selectFinishOrderCount(Map<String,Object> map);
 
 
-    UserTradeBean checkSuccess(Integer id);
+    UserTradeBean checkSuccess(String id);
 
 
 }

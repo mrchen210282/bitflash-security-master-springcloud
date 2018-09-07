@@ -37,7 +37,7 @@ public class UserBuyHistoryEntity implements Serializable {
      * 求购订单id
      */
     @TableId(type= IdType.INPUT)
-    private Integer userBuyId;
+    private String userBuyId;
 
     /**
      * 求购者id
@@ -75,11 +75,11 @@ public class UserBuyHistoryEntity implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date finishTime;
 
-    public Integer getUserBuyId() {
+    public String getUserBuyId() {
         return userBuyId;
     }
 
-    public void setUserBuyId(Integer userBuyId) {
+    public void setUserBuyId(String userBuyId) {
         this.userBuyId = userBuyId;
     }
 

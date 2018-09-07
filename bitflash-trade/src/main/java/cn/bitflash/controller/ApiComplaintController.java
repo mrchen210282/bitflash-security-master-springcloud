@@ -101,11 +101,11 @@ public class ApiComplaintController {
         Float buyQuantity = 0f;
         Float price = 0f;
         if (state.equals("0")) {
-            UserTradeEntity userTradeEntity = userTradeService.selectById(Integer.parseInt(id));
+            UserTradeEntity userTradeEntity = userTradeService.selectById(id);
             price = Float.parseFloat(df.format(userTradeEntity.getPrice()));
             buyQuantity = Float.parseFloat(df.format(userTradeEntity.getQuantity()));
         } else if (state.equals("1")) {
-            UserBuyEntity userBuy = userBuyService.selectById(Integer.parseInt(id));
+            UserBuyEntity userBuy = userBuyService.selectById(id);
             price = Float.parseFloat(df.format(userBuy.getPrice()));
             buyQuantity = Float.parseFloat(df.format(userBuy.getQuantity()));
         }

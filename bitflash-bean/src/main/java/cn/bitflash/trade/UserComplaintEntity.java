@@ -17,7 +17,7 @@ public class UserComplaintEntity {
 
     @TableId(type = IdType.INPUT)
     //订单id
-    private Integer orderId;
+    private String orderId;
 
     //申拆人uid
     private String complaintUid;
@@ -34,11 +34,11 @@ public class UserComplaintEntity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
-    public Integer getOrderId() {
+    public String getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Integer orderId) {
+    public void setOrderId(String orderId) {
         this.orderId = orderId;
     }
 

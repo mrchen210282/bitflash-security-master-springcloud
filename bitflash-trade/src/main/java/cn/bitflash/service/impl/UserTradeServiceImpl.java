@@ -186,7 +186,7 @@ public class UserTradeServiceImpl extends ServiceImpl<UserTradeDao, UserTradeEnt
 
 
     @Override
-    public UserTradeBean checkSuccess(Integer id){
+    public UserTradeBean checkSuccess(String id){
         return  baseMapper.checkSuccess(id);
     }
 

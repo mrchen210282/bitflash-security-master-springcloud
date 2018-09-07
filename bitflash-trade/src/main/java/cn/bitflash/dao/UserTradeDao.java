@@ -72,6 +72,6 @@ public interface UserTradeDao extends BaseMapper<UserTradeEntity> {
 
 
 
-    UserTradeBean checkSuccess(Integer id);
+    UserTradeBean checkSuccess(String id);
 
 }

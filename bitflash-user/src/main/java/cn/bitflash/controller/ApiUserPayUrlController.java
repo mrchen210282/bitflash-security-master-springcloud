@@ -72,7 +72,7 @@ public class ApiUserPayUrlController {
 
         String imgType = imgForm.getImgType();
         String imgUrl = "";
-        String path = "D:\\upload\\img\\"; ///home/statics/qrcode/
+        String path = "/home/statics/qrcode/";
         String md5 = MD5Util.stringToMD5(user.getMobile() + System.currentTimeMillis());
         switch (imgType) {
             case "1":

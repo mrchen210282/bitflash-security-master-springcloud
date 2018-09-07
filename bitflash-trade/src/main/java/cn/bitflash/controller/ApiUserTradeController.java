@@ -777,7 +777,7 @@ public class ApiUserTradeController {
     @Login
     @PostMapping("viewSuccess")
     public R viewSuccess(@RequestParam String id,@RequestAttribute("uid")String uid) {
-        UserTradeBean userTradeBean = userTradeService.checkSuccess(Integer.parseInt(id));
+        UserTradeBean userTradeBean = userTradeService.checkSuccess(id);
         String name = null;
         String mobile = null;
         if(uid.equals(userTradeBean.getPurUid())){

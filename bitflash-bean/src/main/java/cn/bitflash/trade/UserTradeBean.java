@@ -35,6 +35,7 @@ public class UserTradeBean extends UserTradeEntity implements Serializable {
 
     private String realname;
 
+
     /**
      * 昵称
      */

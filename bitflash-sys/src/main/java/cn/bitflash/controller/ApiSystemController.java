@@ -51,30 +51,45 @@ public class ApiSystemController {
             map.put("status", "-1");
             return R.ok().put("data", map);
         }
-        String[] newversion = appStatusEntity.getVersion().split("\\.");
-        String[] oldversion = version.split("\\.");
-
-        if (newversion.length - oldversion.length != 0) {
+        String[] newNersion = appStatusEntity.getVersion().split("\\.");
+        String[] appVersion = version.split("\\.");
+        StringBuilder av = new StringBuilder(appVersion.toString());
+        StringBuilder nv = new StringBuilder(newNersion.toString());
+        if (newNersion.length > appVersion.length) {
+            for (int i = 0; i < (newNersion.length - appVersion.length); i++) {
+                av.append("0");
+            }
+        } else if (newNersion.length < appVersion.length) {
+            for (int i = 0; i < (appVersion.length - newNersion.length); i++) {
+                nv.append("0");
+            }
+        }
+        System.out.println(nv + "********" + av);
+        int x = Integer.parseInt(av.toString()) - Integer.parseInt(nv.toString());
+        if (x > 0) {
+            map.put("status", "0");
+        } else {
             map.put("status", "1");
             map.put("url", appStatusEntity.getUrl());
             map.put("note", appStatusEntity.getNote());
             map.put("title", appStatusEntity.getTitle());
-            return R.ok().put("data", map);
-        }
-        for (int i = 0; i < newversion.length; i++) {
-            if (!newversion[i].equals(oldversion[i])) {
-                map.put("status", "1");
-                map.put("url", appStatusEntity.getUrl());
-                map.put("note", appStatusEntity.getNote());
-                map.put("title", appStatusEntity.getTitle());
-                return R.ok().put("data", map);
-            } else {
-                map.put("status", "0");
-
-            }
         }
         return R.ok().put("data", map);
     }
+//        int length = newversion.length<=appVersion.length?oldversion.length:newversion.length;
+//        for (int i = 0; i <= length; i++) {
+//            if (Integer.parseInt(newversion[i])>Integer.parseInt(oldversion[i])) {
+//                map.put("status", "1");
+//                map.put("url", appStatusEntity.getUrl());
+//                map.put("note", appStatusEntity.getNote());
+//                map.put("title", appStatusEntity.getTitle());
+//                return R.ok().put("data", map);
+//            } else {
+//
+//
+//            }
+//        }
+//        return R.ok().put("data", map);
 
 
     /**

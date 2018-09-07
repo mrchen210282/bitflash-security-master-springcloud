@@ -427,7 +427,6 @@ public class ApiUserTradeController {
             userTradeService.insertOrUpdate(userTradeEntity);
 
             //删除历史记录
-
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("user_trade_id",orderId);
             userTradeHistoryService.deleteByMap(map);
@@ -635,6 +634,23 @@ public class ApiUserTradeController {
                     .selectOne(new EntityWrapper<UserTradeHistoryEntity>().eq("user_trade_id",orderId));
             userTradeHistory.setState(Common.STATE_CONFIRM);
             userTradeHistoryService.updateById(userTradeHistory);
+
+
+
+            //加入历史记录
+//            UserTradeHistoryEntity userTradeHistory = new UserTradeHistoryEntity();
+//            userTradeHistory.setUserTradeId(orderId);
+//            userTradeHistory.setSellUid(userTradeEntity.getUid());
+//            userTradeHistory.setSellQuantity(userTradeEntity.getQuantity());
+//            userTradeHistory.setPrice(userTradeEntity.getPrice());
+//            userTradeHistory.setPurchaseUid(userAccount.getUid());
+//            userTradeHistory.setPurchaseQuantity(userTradeEntity.getQuantity());
+//            userTradeHistory.setCreateTime(new Date());
+//            userTradeHistory.setState(Common.STATE_CONFIRM);
+//            userTradeHistoryService.insertUserTradeHistory(userTradeHistory);
+
+
+
             return R.ok();
         }
         return R.error();
@@ -737,11 +753,13 @@ public class ApiUserTradeController {
     public R updateTradeState() {
         List<UserTradeEntity> trades = userTradeService.getByState("5");
         trades.stream().forEach((t) -> {
-            String[] str = redisUtils.get(t.getId().toString(), String[].class);
+            String[] str = redisUtils.get(t.getId(), String[].class);
             if (str == null || str.length == 0) {
                 if (t.getState().equals(Common.STATE_LOCK)) {
                     t.setState(Common.STATE_SELL);
                     userTradeService.updateById(t);
+
+                    userTradeHistoryService.delete(new EntityWrapper<UserTradeHistoryEntity>().eq("user_trade_id",t.getId()));
                 }
             }
         });

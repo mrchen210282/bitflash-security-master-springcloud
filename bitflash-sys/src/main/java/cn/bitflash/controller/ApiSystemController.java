@@ -45,35 +45,67 @@ public class ApiSystemController {
     @GetMapping("update")
     public R update(@RequestParam String appid, @RequestParam String version, @RequestParam String imei) {
         logger.info(appid + "**" + version + "**" + imei);
-        Map<String, String> map = new HashMap<String, String>();
+        String one = "1";
+        String zero = "0";
+        String status ="status";
+        Map<String, String> map = new HashMap<>();
         AppStatusEntity appStatusEntity = appStatusService.selectById(appid);
         if (appStatusEntity == null) {
-            map.put("status", "-1");
+            map.put(status, "-1");
             return R.ok().put("data", map);
         }
-        String[] newversion = appStatusEntity.getVersion().split("\\.");
-        String[] oldversion = version.split("\\.");
-
-        if (newversion.length - oldversion.length != 0) {
-            map.put("status", "1");
-            map.put("url", appStatusEntity.getUrl());
-            map.put("note", appStatusEntity.getNote());
-            map.put("title", appStatusEntity.getTitle());
-            return R.ok().put("data", map);
+        String[] newVersion = appStatusEntity.getVersion().split("\\.");
+        String[] appVersion = version.split("\\.");
+        map.put(status, one);
+        map.put("url", appStatusEntity.getUrl());
+        map.put("note", appStatusEntity.getNote());
+        map.put("title", appStatusEntity.getTitle());
+        //长度以数据库为准时
+        /**
+         *  state1: 取每一位与数据库对比，只有当app的版本号小于数据库的版本时，才会提示更新
+         */
+        if (newVersion.length <= appVersion.length) {
+            for (int i = 0; i < newVersion.length; i++) {
+                int nv = Integer.parseInt(newVersion[i]);
+                int av = Integer.parseInt(appVersion[i]);
+                //app版本>= 数据库版本，不提示
+                if (nv <= av) {
+                    map.put(status, zero);
+                }else{
+                    //app版本< 数据库版本，提示
+                    map.put(status, one);
+                    return R.ok().put("data", map);
+                }
+            }
         }
-        for (int i = 0; i < newversion.length; i++) {
-            if (!newversion[i].equals(oldversion[i])) {
-                map.put("status", "1");
-                map.put("url", appStatusEntity.getUrl());
-                map.put("note", appStatusEntity.getNote());
-                map.put("title", appStatusEntity.getTitle());
-                return R.ok().put("data", map);
-            } else {
-                map.put("status", "0");
-
+        //长度以app为准时
+        /**
+         * state1: 数据库版本9.1.14.1，app版本9.1.14,提示更新
+         *         对比下来数据是一样的，所以要在最后一次循环判断下之前对比的结果，如果都一样，则证明数据库版本号长且前几位与app版本一直，则提示更新。
+         * state2: 数据库版本8.1.14.1，app版本9.1.14，提示不更新
+         */
+        else {
+            boolean flag =false;
+            for (int i = 0; i < appVersion.length; i++) {
+                int nv = Integer.parseInt(newVersion[i]);
+                int av = Integer.parseInt(appVersion[i]);
+                if (nv < av) {
+                    flag =true;
+                    map.put(status, zero);
+                }else if(nv == av){
+                    map.put(status, zero);
+                }else{
+                    map.put(status,one);
+                    return R.ok().put("data", map);
+                }
+                if (i == appVersion.length-1 && flag==false) {
+                    map.put(status, one);
+                    return R.ok().put("data", map);
+                }
             }
         }
         return R.ok().put("data", map);
+
     }
 
 
@@ -111,5 +143,6 @@ public class ApiSystemController {
         String value = platFormConfigService.getVal("bitflush_url");
         return R.ok(value);
     }
+
 
 }

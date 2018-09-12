@@ -72,8 +72,8 @@ public class ApiUserPayUrlController {
 
         String imgType = imgForm.getImgType();
         String imgUrl = "";
-        String path = "/home/statics/qrcode/";
-        //String path = "D:\\upload\\img\\";
+        //String path = "/home/statics/qrcode/";
+        String path = "D:\\upload\\img\\";
         String md5 = MD5Util.stringToMD5(user.getMobile() + System.currentTimeMillis());
         switch (imgType) {
             case "1":
@@ -155,8 +155,8 @@ public class ApiUserPayUrlController {
                 .and().eq("img_type", imgType));
         String imgName = imgType.equals("3") ? MD5Util.stringToMD5(user.getMobile() + System.currentTimeMillis()) + "_z" : MD5Util.stringToMD5(user.getMobile() + System.currentTimeMillis()) + "_f";
         String imgUrl = "";
-        String path = "/home/statics/idnumber/" + imgName + ".png";
-        //String path = "D:\\upload\\img\\";
+        //String path = "/home/statics/idnumber/" + imgName + ".png";
+        String path = "D:\\upload\\img\\";
         imgUrl = "http://www.bitflash.vip/auth/" + imgName + ".png";
         BASE64Decoder decoder = new BASE64Decoder();
         try {

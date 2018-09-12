@@ -107,10 +107,10 @@ public class ApiRegisterController {
 		userAccountEntity.setUid(uid);
 		tradeUtils.insert(userAccountEntity);
 
-		UserAccountGameEntity userAccountGameEntity = new UserAccountGameEntity();
-		userAccountGameEntity.setCreateTime(new Date());
-		userAccountGameEntity.setUid(uid);
-		tradeUtils.insertUserAccountGame(userAccountGameEntity);
+//		UserAccountGameEntity userAccountGameEntity = new UserAccountGameEntity();
+//		userAccountGameEntity.setCreateTime(new Date());
+//		userAccountGameEntity.setUid(uid);
+//		tradeUtils.insertUserAccountGame(userAccountGameEntity);
 
 		// 初始化user_info表
 		UserInfoEntity userinfo = new UserInfoEntity();

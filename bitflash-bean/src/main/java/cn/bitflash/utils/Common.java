@@ -138,10 +138,11 @@ public class Common {
 //		randomNum = randomNum.substring(0, 8);
 //		return randomNum;
 //	}
+
     public static String randomUtil() {
 
         // 字符源，可以根据需要删减
-        String generateSource = "23456789abcdefghgklmnpqrstuvwxyz";// 去掉1和i ，0和o
+        String generateSource = "1234567890";// 去掉1和i ，0和o
         String rtnStr = "";
         for (int i = 0; i < 8; i++) {
             // 循环随机获得当次字符，并移走选出的字符
@@ -152,6 +153,11 @@ public class Common {
         }
         return rtnStr.toUpperCase();
     }
+
+
+
+
+
 
     public static void main(String[] arg) {
         System.out.println(Common.randomUtil());
@@ -176,4 +182,7 @@ public class Common {
                 return null;
             }
         }
+
+
+
     }

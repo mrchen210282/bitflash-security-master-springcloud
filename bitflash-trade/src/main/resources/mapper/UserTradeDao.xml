@@ -153,13 +153,13 @@
         update user_trade
           <set>
               <if test="state != null and state != ''">
-                  state = ${state},
+                  state = #{state},
               </if>
               <if test="finishTime != null and finishTime != ''">
-                  finish_time = ${finishTime},
+                  finish_time = #{finishTime},
               </if>
           </set>
-          where id = ${id}
+          where id = #{id}
     </update>
 
     <!-- add by wangjun 2018.6.23 查看订单明细 -->

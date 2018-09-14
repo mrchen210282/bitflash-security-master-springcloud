@@ -1,5 +1,6 @@
 package cn.bitflash.controller;
 
+import ch.qos.logback.classic.util.LoggerNameUtil;
 import cn.bitflash.annotation.Login;
 import cn.bitflash.annotation.UserAccount;
 import cn.bitflash.service.UserBuyHistoryService;
@@ -12,6 +13,8 @@ import cn.bitflash.usertradeutil.UserUtils;
 import cn.bitflash.utils.R;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import common.utils.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +32,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class ApiAccountController {
+
+    private Logger logger = LoggerFactory.getLogger(ApiAccountController.class);
 
 
     @Autowired
@@ -48,9 +53,12 @@ public class ApiAccountController {
     @Login
     @PostMapping("/accountInfo")
     public R accountInfo(@UserAccount UserAccountEntity account) {
+        logger.info("方法accountInfo");
+
         String uid = account.getUid();
         UserInfoEntity infoEntity = userUtils.selectUserInfoById(uid);
         if (!infoEntity.getIsVip().equals("0")) {
+            logger.info("if isVip:" + infoEntity.getIsVip());
             /**
              * yesterDayIncome 昨日收入
              * totelAssets   总收入
@@ -63,6 +71,7 @@ public class ApiAccountController {
                     .put("frozenAssets", account.getFrozenAssets())
                     .put("vip", infoEntity.getIsVip());
         } else {
+            logger.info("else isVip:" + infoEntity.getIsVip());
             Date yesterday = DateUtils.addDateDays(new Date(), -1);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String yester = sdf.format(yesterday);
@@ -70,6 +79,7 @@ public class ApiAccountController {
             List<UserTradeHistoryEntity> trades = userTradeHistoryService.selectList(new EntityWrapper<UserTradeHistoryEntity>().eq("purchase_uid", uid).isNotNull("finish_time"));
             Double alltrade = 0d;
             Double yesttrade = 0d;
+            logger.info("trades:" + trades);
             if (trades != null && trades.size() > 0) {
                 alltrade = trades.stream().mapToDouble(u -> {
                     Double money = u.getPurchaseQuantity().doubleValue();
@@ -86,6 +96,7 @@ public class ApiAccountController {
             List<UserBuyHistoryEntity> buys = userBuyHistoryService.selectList(new EntityWrapper<UserBuyHistoryEntity>().eq("purchase_uid", uid).isNotNull("finish_time"));
             Double allbuy = 0d;
             Double yestbuy = 0d;
+            logger.info("buys:" + buys);
             if (buys != null && buys.size() > 0) {
                 allbuy = buys.stream().mapToDouble(u -> {
                     Double money = u.getQuantity().doubleValue();

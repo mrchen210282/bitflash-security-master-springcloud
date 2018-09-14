@@ -3,11 +3,14 @@ package cn.bitflash.controller;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import cn.bitflash.service.GameAccountHistoryService;
 import cn.bitflash.service.UserAccountService;
+import cn.bitflash.trade.GameAccountHistoryEntity;
 import cn.bitflash.trade.UserAccountEntity;
 import cn.bitflash.trade.UserAccountGameEntity;
 import cn.bitflash.utils.Common;
@@ -20,8 +23,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import cn.bitflash.service.UserAccountGameService;
 
 /**
  * @author chen
@@ -37,6 +38,9 @@ public class ApiExternalController {
 	
 	@Autowired
 	private UserAccountService userAccountService;
+
+	@Autowired
+	private GameAccountHistoryService gameAccountHistoryService;
 
 	/**
 	 *
@@ -133,6 +137,9 @@ public class ApiExternalController {
 				UserAccountEntity accountEntity = userAccountService.selectById(uid);
 				if (null != accountEntity) {
 					BigDecimal regulateIncome = new BigDecimal(bkcNum);
+
+					//添加游戏记录
+					GameAccountHistoryEntity gameAccountHistoryEntity = new GameAccountHistoryEntity();
 					if (flag.equals("0")) {
 						// 加法
 						accountEntity.setRegulateIncome(accountEntity.getRegulateIncome().add(regulateIncome));
@@ -146,8 +153,16 @@ public class ApiExternalController {
 //							accountEntity.setRegulateIncome(accountEntity.getRegulateIncome().subtract(regulateIncome));
 						}
 					}
+
 					accountEntity.setAvailableAssets(accountEntity.getRegulateIncome().add(accountEntity.getRegulateRelease()));
 					userAccountService.updateById(accountEntity);
+
+					//添加游戏贝壳数
+					gameAccountHistoryEntity.setFlag(flag);
+					gameAccountHistoryEntity.setUid(accountEntity.getUid());
+					gameAccountHistoryEntity.setCreateTime(new Date());
+					gameAccountHistoryEntity.setQuantity(regulateIncome);
+					gameAccountHistoryService.insert(gameAccountHistoryEntity);
 					
 //					accountEntity.setAvailableAssets(accountEntity.getRegulateIncome().add(accountEntity.getRegulateRelease()));
 //					userAccountService.updateById(accountEntity);
@@ -164,6 +179,8 @@ public class ApiExternalController {
 //					return R.ok().put("code", 1).put("availableAssets", accountEntity.getAvailableAssets().toString()).put("time", timeVal).put("sign", returnSign);
 				}
 			}
+		} else {
+			logger.info("密钥错误！");
 		}
 		return R.error().put("code", "500");
 	}

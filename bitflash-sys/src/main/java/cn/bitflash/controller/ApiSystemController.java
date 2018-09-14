@@ -115,7 +115,7 @@ public class ApiSystemController {
      * @return
      */
     @Login
-    @GetMapping("getWeekPriceRate")
+    @PostMapping("getWeekPriceRate")
     public R getWeekPriceRate() {
         /*String str=platFormConfigService.getVal(Common.SHOW_DATE);
         Long time = Long.valueOf(str);*/

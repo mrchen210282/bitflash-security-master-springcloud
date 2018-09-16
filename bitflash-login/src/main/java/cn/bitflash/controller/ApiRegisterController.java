@@ -1,6 +1,11 @@
 package cn.bitflash.controller;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.DecimalFormat;
+import java.text.FieldPosition;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -220,19 +225,19 @@ public class ApiRegisterController {
 		logger.info("----校验第三方登录------");
 
 		String clientid = request.getParameter("clientid");
-		System.out.println(clientid);
 		String mobile = request.getParameter("mobile");
 		String ticket = request.getParameter("ticket");
 		String time = request.getParameter("time");
 		String sign = request.getParameter("sign");
 		String apiKey = "b1gtuVZRWVh0BdBX";
 
+		logger.info(clientid);
 		logger.info(mobile);
 		logger.info(ticket);
 		logger.info(time);
 		logger.info(sign);
 
-		List<String> inParam = new ArrayList<String>();
+		List<Object> inParam = new ArrayList<Object>();
 		inParam.add(mobile);
 		inParam.add(ticket);
 		inParam.add(clientid);
@@ -264,22 +269,30 @@ public class ApiRegisterController {
 						}
 
 						Long timeVal = System.currentTimeMillis();
-						List<String> outParam = new ArrayList<String>();
+						List<Object> outParam = new ArrayList<Object>();
 
 						String nickname = "";
 						if(null != userInfoEntity) {
 							nickname = userInfoEntity.getNickname();
 						}
 
+//						Integer intAvailableAssets = new Integer(availableAssets.toString());
 						//返回token信息
 						TokenEntity tokenEntity = tokenService.selectOne(new EntityWrapper<TokenEntity>().eq("mobile", mobile));
 						outParam.add(tokenEntity.getToken());
 						outParam.add(authorityUserEntity.getUid());
-						outParam.add(availableAssets.toEngineeringString());
+						outParam.add(availableAssets);
 						outParam.add(nickname);
 						outParam.add(timeVal.toString());
 						outParam.add(apiKey);
 						String returnSign = Common.returnMD5(outParam);
+
+
+						logger.info("availableAssets:" + availableAssets.toString());
+						logger.info("uid:" + authorityUserEntity.getUid());
+						logger.info("nickname:" + nickname);
+
+
 
 						return R.ok().put("token", tokenEntity.getToken()).put("uid", authorityUserEntity.getUid()).put("availableAssets", availableAssets).put("sign", returnSign).put("nickname", nickname);
 					} else {
@@ -287,6 +300,8 @@ public class ApiRegisterController {
 					}
 				}
 			}
+		} else {
+			logger.info("密钥错误！");
 		}
 		return R.error();
 	}
@@ -299,12 +314,49 @@ public class ApiRegisterController {
 		return UUID.randomUUID().toString().replace("-", "").toUpperCase();
 	}
 
-	public static void main(String arg[]) {
-		for (int i = 0; i < 10; i++)
-			System.out.println(UUID.randomUUID().toString().replace("-", "").toUpperCase());
-		System.out.println(String.valueOf(new Random().nextInt(8999) + 1000));
+//	public static void main(String arg[]) {
+//		for (int i = 0; i < 10; i++)
+//			System.out.println(UUID.randomUUID().toString().replace("-", "").toUpperCase());
+//		System.out.println(String.valueOf(new Random().nextInt(8999) + 1000));
+//
+//		System.out.println(DigestUtils.sha256Hex("123456"));
+//
+//	}
 
-		System.out.println(DigestUtils.sha256Hex("123456"));
+
+	public static void main(String[] args) {
+
+
+
+		String mobile = "13846756663";
+		String ticket = "GR5DH97PEW";
+		String clientid = "1D09E95EAE5F4B6D82683D5BB45681A8";
+		String time = "1537006871686";
+		String apiKey = "b1gtuVZRWVh0BdBX";
+
+		String sign = "2f448a4ba8c084ff69878820672421d9";
+
+		List<Object> inParam = new ArrayList<Object>();
+		inParam.add(mobile);
+		inParam.add(ticket);
+		inParam.add(clientid);
+		inParam.add(time);
+		inParam.add(apiKey);
+
+		String mySign = Common.returnMD5(inParam);
+		//System.out.println(mySign);
+
+
+
+		BigDecimal bigDecimal = new BigDecimal(10.01);
+
+		BigDecimal mData = new BigDecimal("9.655").setScale(0, BigDecimal.ROUND_HALF_UP);
+
+		double i = 10.01;
+		System.out.println( (int)Math.floor(i));
+//		System.out.println(mData);
+//		System.out.println(bigDecimal.toString());
+		//System.out.println(Integer.valueOf(mData.toString()));
 
 	}
 

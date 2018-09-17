@@ -16,6 +16,7 @@ import cn.bitflash.trade.UserAccountEntity;
 import cn.bitflash.trade.UserAccountGameEntity;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
+import jdk.nashorn.internal.ir.TryNode;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,223 +34,233 @@ import sun.applet.Main;
 @RequestMapping("/api/external")
 public class ApiExternalController {
 
-	private Logger logger = LoggerFactory.getLogger(ApiExternalController.class);
+    private Logger logger = LoggerFactory.getLogger(ApiExternalController.class);
 
-	@Autowired
-	private UserAccountGameService userAccountGameService;
-	
-	@Autowired
-	private UserAccountService userAccountService;
+//	@Autowired
+//	private UserAccountGameService userAccountGameService;
 
-	@Autowired
-	private GameAccountHistoryService gameAccountHistoryService;
+    @Autowired
+    private UserAccountService userAccountService;
 
-	/**
-	 *
-	 * @param
-	 * @return count 贝壳数量
-	 * @throws UnsupportedEncodingException
-	 */
-	@ResponseBody
-	// @OtherLogin
-	@GetMapping("getBKCNum")
-	public R getBKCNum(HttpServletRequest request) throws UnsupportedEncodingException {
-		String uid = request.getParameter("uid");
-		String time = request.getParameter("time");
-		String sign =  request.getParameter("sign");
-		String apiKey = "b1gtuVZRWVh0BdBX";
-		
-		List<Object> inParam = new ArrayList<Object>();
-		inParam.add(uid);
-		inParam.add(time);
-		inParam.add(apiKey);
+    @Autowired
+    private GameAccountHistoryService gameAccountHistoryService;
 
-		String mySign = Common.returnMD5(inParam);
-		
-		
-		logger.info("time:" + time);
-		logger.info("uid:" + uid);
-		if (sign.equals(mySign)) {
-			if (StringUtils.isNotBlank(time) && StringUtils.isNotBlank(uid)) {
-				// String uid = token.getUid();
-				// 解密uid
+    /**
+     * @param
+     * @return count 贝壳数量
+     * @throws UnsupportedEncodingException
+     */
+    @ResponseBody
+    // @OtherLogin
+    @GetMapping("getBKCNum")
+    public R getBKCNum(HttpServletRequest request) throws UnsupportedEncodingException {
+        String uid = request.getParameter("uid");
+        String time = request.getParameter("time");
+        String sign = request.getParameter("sign");
+        String apiKey = "b1gtuVZRWVh0BdBX";
 
-				UserAccountEntity accountEntity = userAccountService.selectById(uid);
-				//薛总专用测试 start
-				if("DF3223E855254FB08B4B8A92EA84C230".equals(uid)) {
+        List<Object> inParam = new ArrayList<Object>();
+        inParam.add(uid);
+        inParam.add(time);
+        inParam.add(apiKey);
 
-					if (null != accountEntity) {
-						String count = accountEntity.getAvailableAssets().toString();
-
-//					Integer intAvailableAssets = new Integer(count.toString());
-
-						Long timeVal = System.currentTimeMillis();
-						List<Object> outParam = new ArrayList<Object>();
-						outParam.add(count);
-						outParam.add(timeVal.toString());
-						outParam.add(apiKey);
-						String returnSign = Common.returnMD5(outParam);
-
-						logger.info("availableAssets:" + count);
-
-						return R.ok().put("availableAssets", count.toString()).put("code", 1).put("time", timeVal.toString()).put("sign", returnSign);
-					} else {
-						return R.error().put("code", "500");
-					}
-				}
-				//end
+        String mySign = Common.returnMD5(inParam);
 
 
-				UserAccountGameEntity accountGameEntity = userAccountGameService.selectById(uid);
-				if (null != accountGameEntity) {
-					String count = accountGameEntity.getAvailableAssets().toString();
-					Long timeVal = System.currentTimeMillis();
-					List<Object> outParam = new ArrayList<Object>();
-					outParam.add(count);
-					outParam.add(timeVal.toString());
-					outParam.add(apiKey);
-					String returnSign = Common.returnMD5(outParam);
+        logger.info("time:" + time);
+        logger.info("uid:" + uid);
+        if (sign.equals(mySign)) {
+            if (StringUtils.isNotBlank(time) && StringUtils.isNotBlank(uid)) {
+                // String uid = token.getUid();
+                // 解密uid
 
-					logger.info("availableAssets:" + count);
+                UserAccountEntity accountEntity = userAccountService.selectById(uid);
+//				//薛总专用测试 start
+//				if("DF3223E855254FB08B4B8A92EA84C230".equals(uid)) {
+//
+//					if (null != accountEntity) {
+//						String count = accountEntity.getAvailableAssets().toString();
+//
+////					Integer intAvailableAssets = new Integer(count.toString());
+//
+//						Long timeVal = System.currentTimeMillis();
+//						List<Object> outParam = new ArrayList<Object>();
+//						outParam.add(count);
+//						outParam.add(timeVal.toString());
+//						outParam.add(apiKey);
+//						String returnSign = Common.returnMD5(outParam);
+//
+//						logger.info("availableAssets:" + count);
+//
+//						return R.ok().put("availableAssets", count.toString()).put("code", 1).put("time", timeVal.toString()).put("sign", returnSign);
+//					} else {
+//						return R.error().put("code", "500");
+//					}
+//				}
+                //end
 
-					return R.ok().put("availableAssets", count.toString()).put("code", 1).put("time", timeVal.toString()).put("sign", returnSign);
-				} else {
-					return R.error().put("code", "500");
-				}
-			}
-		}
-		
-		return R.error().put("code", "500");
+                if (null != accountEntity) {
+                    String count = accountEntity.getAvailableAssets().toString();
+                    Long timeVal = System.currentTimeMillis();
+                    List<Object> outParam = new ArrayList<Object>();
+                    outParam.add(count);
+                    outParam.add(timeVal.toString());
+                    outParam.add(apiKey);
+                    String returnSign = Common.returnMD5(outParam);
 
-	}
+                    logger.info("availableAssets:" + count);
 
-	/**
-	 *
-	 * @param token 解密后的token实体类
-	 * @param count 传递过来的入库数量
-	 * @return
-	 * @throws UnsupportedEncodingException
-	 */
-	@ResponseBody
-	// @OtherLogin
-	@GetMapping("changeBKCNum")
-	public R changeBKCNum(HttpServletRequest request) throws UnsupportedEncodingException {
-		// String uid = token.getUid();
-		logger.info("---------------changeBKCNum----------------");
-		String uid = request.getParameter("uid");
-		String flag = request.getParameter("flag");
-		String bkcNum = request.getParameter("bkcNum");
-		String time = request.getParameter("time");
-		String sign = request.getParameter("sign");
-		String apiKey = "b1gtuVZRWVh0BdBX";
+                    return R.ok().put("availableAssets", count.toString()).put("code", 1).put("time", timeVal.toString()).put("sign", returnSign);
+                } else {
+                    return R.error().put("code", "500");
+                }
+            }
+        }
 
-		List<Object> inParam = new ArrayList<Object>();
-		inParam.add(uid);
-		inParam.add(flag);
-		inParam.add(bkcNum);
-		inParam.add(time);
-		inParam.add(apiKey);
+        return R.error().put("code", "500");
 
-		String mySign = Common.returnMD5(inParam);
+    }
 
-		logger.info("uid:" + uid);
-		logger.info("flag:" + flag);
-		logger.info("bkcNum:" + bkcNum);
-		logger.info("time:" + time);
-		logger.info("sign:" + sign);
+    /**
+     * @param token 解密后的token实体类
+     * @param count 传递过来的入库数量
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    @ResponseBody
+    // @OtherLogin
+    @GetMapping("changeBKCNum")
+    public R changeBKCNum(HttpServletRequest request) throws UnsupportedEncodingException {
+        // String uid = token.getUid();
+        logger.info("---------------changeBKCNum----------------");
+        String uid = request.getParameter("uid");
+        String flag = request.getParameter("flag");
+        String bkcNum = request.getParameter("bkcNum");
+        String time = request.getParameter("time");
+        String sign = request.getParameter("sign");
+        String apiKey = "b1gtuVZRWVh0BdBX";
 
-		if (sign.equals(mySign)) {
-			if (StringUtils.isNotBlank(uid) && StringUtils.isNotBlank(bkcNum) && StringUtils.isNotBlank(flag)) {
+        List<Object> inParam = new ArrayList<Object>();
+        inParam.add(uid);
+        inParam.add(flag);
+        inParam.add(bkcNum);
+        inParam.add(time);
+        inParam.add(apiKey);
 
-				// 解密uid
-				UserAccountEntity accountEntity = userAccountService.selectById(uid);
-				//薛总专用测试 start
-				if("DF3223E855254FB08B4B8A92EA84C230".equals(uid)) {
-					if (null != accountEntity) {
-						BigDecimal regulateIncome = new BigDecimal(bkcNum);
+        String mySign = Common.returnMD5(inParam);
 
-						//添加游戏记录
-						GameAccountHistoryEntity gameAccountHistoryEntity = new GameAccountHistoryEntity();
-						if (flag.equals("0")) {
-							// 加法
-							accountEntity.setRegulateIncome(accountEntity.getRegulateIncome().add(regulateIncome));
-//						accountEntity.setRegulateIncome(accountEntity.getRegulateIncome().add(regulateIncome));
-						} else {
-							// 减法
-							if (accountEntity.getAvailableAssets().compareTo(regulateIncome) <= 0) {
-								return R.error().put("code", "500");
-							} else {
-								accountEntity.setRegulateIncome(accountEntity.getRegulateIncome().subtract(regulateIncome));
-//							accountEntity.setRegulateIncome(accountEntity.getRegulateIncome().subtract(regulateIncome));
-							}
-						}
+        logger.info("uid:" + uid);
+        logger.info("flag:" + flag);
+        logger.info("bkcNum:" + bkcNum);
+        logger.info("time:" + time);
+        logger.info("sign:" + sign);
 
-						accountEntity.setAvailableAssets(accountEntity.getRegulateIncome().add(accountEntity.getRegulateRelease()));
-						userAccountService.updateById(accountEntity);
+        if (sign.equals(mySign)) {
+            if (StringUtils.isNotBlank(uid) && StringUtils.isNotBlank(bkcNum) && StringUtils.isNotBlank(flag)) {
 
-						//添加游戏贝壳数
-						gameAccountHistoryEntity.setFlag(flag);
-						gameAccountHistoryEntity.setUid(accountEntity.getUid());
-						gameAccountHistoryEntity.setCreateTime(new Date());
-						gameAccountHistoryEntity.setQuantity(regulateIncome);
-						gameAccountHistoryService.insert(gameAccountHistoryEntity);
+                try {
+                    if (Integer.valueOf(bkcNum) > 0) {
+                        // 解密uid
+                        UserAccountEntity accountEntity = userAccountService.selectById(uid);
+//				//薛总专用测试 start
+//				if("DF3223E855254FB08B4B8A92EA84C230".equals(uid)) {
+//					if (null != accountEntity) {
+//						BigDecimal regulateIncome = new BigDecimal(bkcNum);
+//
+//						//添加游戏记录
+//						GameAccountHistoryEntity gameAccountHistoryEntity = new GameAccountHistoryEntity();
+//						if (flag.equals("0")) {
+//							// 加法
+//							accountEntity.setRegulateIncome(accountEntity.getRegulateIncome().add(regulateIncome));
+////						accountEntity.setRegulateIncome(accountEntity.getRegulateIncome().add(regulateIncome));
+//						} else {
+//							// 减法
+//							if (accountEntity.getAvailableAssets().compareTo(regulateIncome) <= 0) {
+//								return R.error().put("code", "500");
+//							} else {
+//								accountEntity.setRegulateIncome(accountEntity.getRegulateIncome().subtract(regulateIncome));
+////							accountEntity.setRegulateIncome(accountEntity.getRegulateIncome().subtract(regulateIncome));
+//							}
+//						}
+//
+//						accountEntity.setAvailableAssets(accountEntity.getRegulateIncome().add(accountEntity.getRegulateRelease()));
+//						userAccountService.updateById(accountEntity);
+//
+//						//添加游戏贝壳数
+//						gameAccountHistoryEntity.setFlag(flag);
+//						gameAccountHistoryEntity.setUid(accountEntity.getUid());
+//						gameAccountHistoryEntity.setCreateTime(new Date());
+//						gameAccountHistoryEntity.setQuantity(regulateIncome);
+//						gameAccountHistoryService.insert(gameAccountHistoryEntity);
+//
+//						logger.info("availableAssets:" + accountEntity.getAvailableAssets().toString());
+////					Integer intAvailableAssets = new Integer(accountGameEntity.getAvailableAssets().toString());
+//						Long timeVal = System.currentTimeMillis();
+//						List<Object> outParam = new ArrayList<Object>();
+//						outParam.add(accountEntity.getAvailableAssets());
+//						outParam.add(timeVal.toString());
+//						outParam.add(apiKey);
+//						String returnSign = Common.returnMD5(outParam);
+//
+////					Integer intAvailableAssets = new Integer(availableAssets.toString());
+//
+//						return R.ok().put("code", 1).put("availableAssets", accountEntity.getAvailableAssets().toString()).put("time", timeVal).put("sign", returnSign);
+//					} else {
+//						logger.info("查询不到薛总用户信息！");
+//					}
+//				}
+                        // end
 
-						logger.info("availableAssets:" + accountEntity.getAvailableAssets().toString());
-//					Integer intAvailableAssets = new Integer(accountGameEntity.getAvailableAssets().toString());
-						Long timeVal = System.currentTimeMillis();
-						List<Object> outParam = new ArrayList<Object>();
-						outParam.add(accountEntity.getAvailableAssets());
-						outParam.add(timeVal.toString());
-						outParam.add(apiKey);
-						String returnSign = Common.returnMD5(outParam);
+//					UserAccountGameEntity accountGameEntity = userAccountGameService.selectById(uid);
+                        if (null != accountEntity) {
+                            BigDecimal regulateIncome = new BigDecimal(bkcNum);
+                            //添加游戏记录
+                            GameAccountHistoryEntity gameAccountHistoryEntity = new GameAccountHistoryEntity();
+                            if (flag.equals("0")) {
+                                // 加法
+                                accountEntity.setRegulateIncome(accountEntity.getRegulateIncome().add(regulateIncome));
+                            } else {
+                                // 减法
+                                if (accountEntity.getAvailableAssets().compareTo(regulateIncome) <= 0) {
+                                    return R.error().put("code", "500");
+                                } else {
+                                    accountEntity.setRegulateIncome(accountEntity.getRegulateIncome().subtract(regulateIncome));
+                                }
+                            }
+                            accountEntity.setAvailableAssets(accountEntity.getRegulateIncome().add(accountEntity.getRegulateRelease()));
+                            userAccountService.updateById(accountEntity);
 
-//					Integer intAvailableAssets = new Integer(availableAssets.toString());
+                            //添加游戏贝壳数
+                            gameAccountHistoryEntity.setFlag(flag);
+                            gameAccountHistoryEntity.setUid(accountEntity.getUid());
+                            gameAccountHistoryEntity.setCreateTime(new Date());
+                            gameAccountHistoryEntity.setQuantity(regulateIncome);
+                            gameAccountHistoryService.insert(gameAccountHistoryEntity);
 
-						return R.ok().put("code", 1).put("availableAssets", accountEntity.getAvailableAssets().toString()).put("time", timeVal).put("sign", returnSign);
-					} else {
-						logger.info("查询不到薛总用户信息！");
-					}
-				}
-				// end
+                            logger.info("availableAssets:" + accountEntity.getAvailableAssets().toString());
+                            Long timeVal = System.currentTimeMillis();
+                            List<Object> outParam = new ArrayList<Object>();
+                            outParam.add(accountEntity.getAvailableAssets());
+                            outParam.add(timeVal.toString());
+                            outParam.add(apiKey);
+                            String returnSign = Common.returnMD5(outParam);
 
-				UserAccountGameEntity accountGameEntity = userAccountGameService.selectById(uid);
-				if(null != accountGameEntity) {
-
-					Long timeVal = System.currentTimeMillis();
-					List<Object> outParam = new ArrayList<Object>();
-					outParam.add(accountGameEntity.getAvailableAssets());
-					outParam.add(timeVal.toString());
-					outParam.add(apiKey);
-					String returnSign = Common.returnMD5(outParam);
-
-					BigDecimal regulateIncome = new BigDecimal(bkcNum);
-					if (flag.equals("0")) {
-						// 加法
-						accountGameEntity.setRegulateIncome(accountGameEntity.getRegulateIncome().add(regulateIncome));
-					} else {
-						// 减法
-						if (accountGameEntity.getAvailableAssets().compareTo(regulateIncome) <= 0) {
-							return R.error().put("code", "500");
-						} else {
-							accountGameEntity.setRegulateIncome(accountGameEntity.getRegulateIncome().subtract(regulateIncome));
-						}
-					}
-					accountGameEntity.setAvailableAssets(accountGameEntity.getRegulateIncome().add(accountGameEntity.getRegulateRelease()));
-					userAccountGameService.updateById(accountGameEntity);
-					return R.ok().put("code", 1).put("availableAssets", accountGameEntity.getAvailableAssets().toString()).put("time", timeVal).put("sign", returnSign);
-				} else {
-					logger.info("查询不到用户信息！");
-				}
-			}
-		} else {
-			logger.info("密钥错误！");
-		}
-		return R.error().put("code", "500");
-	}
-
-	public static void main(String[] args) {
-		BigDecimal bigDecimal = new BigDecimal("10.01");
-
-		System.out.println(bigDecimal.toString());
-	}
+                            return R.ok().put("code", 1).put("availableAssets", accountEntity.getAvailableAssets().toString()).put("time", timeVal).put("sign", returnSign);
+                        } else {
+                            logger.info("查询不到用户信息！");
+                        }
+                    } else {
+                        logger.info("贝壳数量为:" + bkcNum);
+                    }
+                } catch (Exception ex) {
+                    logger.info("贝壳数量为:" + bkcNum + ",转换为int值失败！");
+                    ex.printStackTrace();
+                    return R.error().put("code", "500");
+                }
+            } else {
+                logger.info("密钥错误！");
+            }
+        }
+        return R.error().put("code", "500");
+    }
 }

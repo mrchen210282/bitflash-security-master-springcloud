@@ -287,14 +287,11 @@ public class ApiRegisterController {
 						outParam.add(apiKey);
 						String returnSign = Common.returnMD5(outParam);
 
-
 						logger.info("availableAssets:" + availableAssets.toString());
 						logger.info("uid:" + authorityUserEntity.getUid());
 						logger.info("nickname:" + nickname);
 
-
-
-						return R.ok().put("token", tokenEntity.getToken()).put("uid", authorityUserEntity.getUid()).put("availableAssets", availableAssets).put("sign", returnSign).put("nickname", nickname);
+						return R.ok().put("token", tokenEntity.getToken()).put("uid", authorityUserEntity.getUid()).put("availableAssets", availableAssets.toString()).put("sign", returnSign).put("nickname", nickname);
 					} else {
 						return R.error();
 					}

@@ -110,7 +110,7 @@ public class ApiExternalController {
 
                     logger.info("availableAssets:" + count);
 
-                    return R.ok().put("availableAssets", count.toString()).put("code", 1).put("time", timeVal.toString()).put("sign", returnSign);
+                    return R.ok().put("availableAssets", count).put("code", "1").put("time", timeVal.toString()).put("sign", returnSign);
                 } else {
                     return R.error().put("code", "500");
                 }
@@ -122,16 +122,12 @@ public class ApiExternalController {
     }
 
     /**
-     * @param token 解密后的token实体类
-     * @param count 传递过来的入库数量
-     * @return
      * @throws UnsupportedEncodingException
      */
     @ResponseBody
     // @OtherLogin
     @GetMapping("changeBKCNum")
     public R changeBKCNum(HttpServletRequest request) throws UnsupportedEncodingException {
-        // String uid = token.getUid();
         logger.info("---------------changeBKCNum----------------");
         String uid = request.getParameter("uid");
         String flag = request.getParameter("flag");
@@ -162,56 +158,7 @@ public class ApiExternalController {
                     if (Integer.valueOf(bkcNum) > 0) {
                         // 解密uid
                         UserAccountEntity accountEntity = userAccountService.selectById(uid);
-//				//薛总专用测试 start
-//				if("DF3223E855254FB08B4B8A92EA84C230".equals(uid)) {
-//					if (null != accountEntity) {
-//						BigDecimal regulateIncome = new BigDecimal(bkcNum);
-//
-//						//添加游戏记录
-//						GameAccountHistoryEntity gameAccountHistoryEntity = new GameAccountHistoryEntity();
-//						if (flag.equals("0")) {
-//							// 加法
-//							accountEntity.setRegulateIncome(accountEntity.getRegulateIncome().add(regulateIncome));
-////						accountEntity.setRegulateIncome(accountEntity.getRegulateIncome().add(regulateIncome));
-//						} else {
-//							// 减法
-//							if (accountEntity.getAvailableAssets().compareTo(regulateIncome) <= 0) {
-//								return R.error().put("code", "500");
-//							} else {
-//								accountEntity.setRegulateIncome(accountEntity.getRegulateIncome().subtract(regulateIncome));
-////							accountEntity.setRegulateIncome(accountEntity.getRegulateIncome().subtract(regulateIncome));
-//							}
-//						}
-//
-//						accountEntity.setAvailableAssets(accountEntity.getRegulateIncome().add(accountEntity.getRegulateRelease()));
-//						userAccountService.updateById(accountEntity);
-//
-//						//添加游戏贝壳数
-//						gameAccountHistoryEntity.setFlag(flag);
-//						gameAccountHistoryEntity.setUid(accountEntity.getUid());
-//						gameAccountHistoryEntity.setCreateTime(new Date());
-//						gameAccountHistoryEntity.setQuantity(regulateIncome);
-//						gameAccountHistoryService.insert(gameAccountHistoryEntity);
-//
-//						logger.info("availableAssets:" + accountEntity.getAvailableAssets().toString());
-////					Integer intAvailableAssets = new Integer(accountGameEntity.getAvailableAssets().toString());
-//						Long timeVal = System.currentTimeMillis();
-//						List<Object> outParam = new ArrayList<Object>();
-//						outParam.add(accountEntity.getAvailableAssets());
-//						outParam.add(timeVal.toString());
-//						outParam.add(apiKey);
-//						String returnSign = Common.returnMD5(outParam);
-//
-////					Integer intAvailableAssets = new Integer(availableAssets.toString());
-//
-//						return R.ok().put("code", 1).put("availableAssets", accountEntity.getAvailableAssets().toString()).put("time", timeVal).put("sign", returnSign);
-//					} else {
-//						logger.info("查询不到薛总用户信息！");
-//					}
-//				}
-                        // end
 
-//					UserAccountGameEntity accountGameEntity = userAccountGameService.selectById(uid);
                         if (null != accountEntity) {
                             BigDecimal regulateIncome = new BigDecimal(bkcNum);
                             //添加游戏记录
@@ -245,7 +192,7 @@ public class ApiExternalController {
                             outParam.add(apiKey);
                             String returnSign = Common.returnMD5(outParam);
 
-                            return R.ok().put("code", 1).put("availableAssets", accountEntity.getAvailableAssets().toString()).put("time", timeVal).put("sign", returnSign);
+                            return R.ok().put("code", "1").put("availableAssets", accountEntity.getAvailableAssets().toString()).put("time", timeVal.toString()).put("sign", returnSign);
                         } else {
                             logger.info("查询不到用户信息！");
                         }

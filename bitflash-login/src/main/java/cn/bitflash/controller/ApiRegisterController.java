@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.*;
 
 @RestController
@@ -210,7 +209,7 @@ public class ApiRegisterController {
         logger.info(time);
         logger.info(sign);
 
-        List<Object> inParam = new ArrayList<Object>();
+        List<String> inParam = new ArrayList<>();
         inParam.add(mobile);
         inParam.add(ticket);
         inParam.add(clientid);
@@ -242,7 +241,7 @@ public class ApiRegisterController {
                         }
 
                         Long timeVal = System.currentTimeMillis();
-                        List<Object> outParam = new ArrayList<Object>();
+                        List<String> outParam = new ArrayList<>();
 
                         String nickname = "";
                         if (null != userInfoEntity) {
@@ -254,7 +253,7 @@ public class ApiRegisterController {
                         TokenEntity tokenEntity = tokenService.selectOne(new EntityWrapper<TokenEntity>().eq("mobile", mobile));
                         outParam.add(tokenEntity.getToken());
                         outParam.add(authorityUserEntity.getUid());
-                        outParam.add(availableAssets);
+                        outParam.add(availableAssets.toString());
                         outParam.add(nickname);
                         outParam.add(timeVal.toString());
                         outParam.add(apiKey);
@@ -322,12 +321,12 @@ public class ApiRegisterController {
         int availableAssets = 0;
         JSONObject jsObject = JSONObject.parseObject(content);
         msg = jsObject.getString("msg");
-        code = Integer.valueOf( jsObject.getString("code"));
+        code = Integer.valueOf(jsObject.getString("code"));
         if (msg.equals("success"))
             availableAssets = new Float(jsObject.getString("availableAssets")).intValue();
-        System.out.println("availableAssets="+availableAssets);
+        System.out.println("availableAssets=" + availableAssets);
         if (msg.equals("success") && code == 1) {
-            System.out.println("code="+code);
+            System.out.println("code=" + code);
         }
 
     }

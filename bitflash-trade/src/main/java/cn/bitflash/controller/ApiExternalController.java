@@ -1,22 +1,11 @@
 package cn.bitflash.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import cn.bitflash.service.GameAccountHistoryService;
-import cn.bitflash.service.UserAccountGameService;
 import cn.bitflash.service.UserAccountService;
 import cn.bitflash.trade.GameAccountHistoryEntity;
 import cn.bitflash.trade.UserAccountEntity;
-import cn.bitflash.trade.UserAccountGameEntity;
 import cn.bitflash.utils.Common;
 import cn.bitflash.utils.R;
-import jdk.nashorn.internal.ir.TryNode;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +14,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import sun.applet.Main;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author chen
@@ -59,7 +54,7 @@ public class ApiExternalController {
         String sign = request.getParameter("sign");
         String apiKey = "b1gtuVZRWVh0BdBX";
 
-        List<Object> inParam = new ArrayList<Object>();
+        List<String> inParam = new ArrayList<>();
         inParam.add(uid);
         inParam.add(time);
         inParam.add(apiKey);
@@ -102,7 +97,7 @@ public class ApiExternalController {
                 if (null != accountEntity) {
                     String count = accountEntity.getAvailableAssets().toString();
                     Long timeVal = System.currentTimeMillis();
-                    List<Object> outParam = new ArrayList<Object>();
+                    List<String> outParam = new ArrayList<>();
                     outParam.add(count);
                     outParam.add(timeVal.toString());
                     outParam.add(apiKey);
@@ -136,7 +131,7 @@ public class ApiExternalController {
         String sign = request.getParameter("sign");
         String apiKey = "b1gtuVZRWVh0BdBX";
 
-        List<Object> inParam = new ArrayList<Object>();
+        List<String> inParam = new ArrayList<>();
         inParam.add(uid);
         inParam.add(flag);
         inParam.add(bkcNum);
@@ -186,8 +181,8 @@ public class ApiExternalController {
 
                             logger.info("availableAssets:" + accountEntity.getAvailableAssets().toString());
                             Long timeVal = System.currentTimeMillis();
-                            List<Object> outParam = new ArrayList<Object>();
-                            outParam.add(accountEntity.getAvailableAssets());
+                            List<String> outParam = new ArrayList<>();
+                            outParam.add(accountEntity.getAvailableAssets().toString());
                             outParam.add(timeVal.toString());
                             outParam.add(apiKey);
                             String returnSign = Common.returnMD5(outParam);

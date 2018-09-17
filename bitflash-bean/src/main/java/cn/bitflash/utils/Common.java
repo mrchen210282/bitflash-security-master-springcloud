@@ -114,7 +114,7 @@ public class Common {
     //申拆状态:已处理1
     public final static String COMPLAINT_YES = "1";
 
-    public static String returnMD5(List<Object> list) {
+    public static String returnMD5(List<String> list) {
         if (list.size() > 0) {
             StringBuffer buf = new StringBuffer();
             for (int i = 0; i < list.size(); i++) {
